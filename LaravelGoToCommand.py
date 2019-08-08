@@ -4,7 +4,6 @@ import re
 import os
 from pprint import pprint
 
-
 class LaravelGoToCommand(sublime_plugin.TextCommand):
     def get_text(self, region) -> str:
       """Returns selection. If selection contains no characters, expands it
@@ -35,30 +34,35 @@ class LaravelGoToCommand(sublime_plugin.TextCommand):
       sel = self.view.substr(sublime.Region(start, end))
       return sel.strip()
 
-    def on_done(self, text):
-        try:
-            line = int(text)
-            if self.window.active_view():
-                self.window.active_view().run_command("goto_line", {"line": line})
-        except ValueError:
-            pass
+    def search(self, path):
+      text = path.replace('.', '/');
+      is_symbol = "@" in path
+      args = {
+        "overlay": "goto",
+        "show_files": True,
+        "text": text + '.blade.php'
+      }
+      if is_symbol:
+        args["text"] = ''
 
+      self.window.run_command("show_overlay", args)
+
+      if is_symbol:
+        self.window.run_command("insert", {
+            "characters": text
+        })
+      return
 
     def run(self, edit, event):
-      if (len(sublime.active_window().folders()) == 0):
+      self.window = sublime.active_window()
+      if (len(self.window.folders()) == 0):
         return
       self.window = sublime.active_window()
       path = self.get_text(self.view.sel()[0])
+      pprint(path)
       if path:
-        self.window.run_command("show_overlay", {
-          "overlay": "goto",
-          "show_files": True,
-          "text": path.replace('.', '/')
-        })
+        self.search(path)
       return
 
     def want_event(self):
       return True
-
-# a = LaravelGoToCommand(sublime_plugin.TextCommand)
-# a.get_path('"admins/guests/index");')
