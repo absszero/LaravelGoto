@@ -6,22 +6,34 @@ from pprint import pprint
 
 
 class LaravelGoToCommand(sublime_plugin.TextCommand):
-    def line_content(self, event):
-      vector = (event["x"], event["y"])
-      point = self.view.window_to_text(vector)
-      region = self.view.word(point)
-      line_range = self.view.line(region)
-      text = self.view.substr(line_range).strip()
-      return text;
+    def get_text(self, region) -> str:
+      """Returns selection. If selection contains no characters, expands it
+      until hitting delimiter chars.
+      """
+      start = region.begin()  # type: int
+      end = region.end()  # type: int
 
-    def get_path(self, line_content):
-      # pattern = re.compile("(['\"])([^'\"]+)\\1")
-      pattern = re.compile("(view|@include)\\s*\\(\\s*(['\"])([^'\"]+)\\2")
-      matched = pattern.match(line_content)
-      pprint(matched)
-      if matched:
-        return matched.group(2).replace('.', '/')
-      return False
+      if start != end:
+          sel = self.view.substr(sublime.Region(start, end))  # type: str
+          return sel.strip()
+
+      # nothing is selected, so expand selection to nearest delimiters
+      view_size = self.view.size()  # type: int
+      delimiters = "\"'"
+
+      # move the selection back to the start of the url
+      while start > 0:
+          if self.view.substr(start - 1) in delimiters:
+              break
+          start -= 1
+
+      # move end of selection forward to the end of the url
+      while end < view_size:
+          if self.view.substr(end) in delimiters:
+              break
+          end += 1
+      sel = self.view.substr(sublime.Region(start, end))
+      return sel.strip()
 
     def on_done(self, text):
         try:
@@ -36,16 +48,17 @@ class LaravelGoToCommand(sublime_plugin.TextCommand):
       if (len(sublime.active_window().folders()) == 0):
         return
       self.window = sublime.active_window()
-      line_content = self.line_content(event)
-      path = self.get_path(line_content)
-      pprint(path)
+      path = self.get_text(self.view.sel()[0])
       if path:
         self.window.run_command("show_overlay", {
           "overlay": "goto",
           "show_files": True,
-          "text": path
+          "text": path.replace('.', '/')
         })
       return
 
     def want_event(self):
       return True
+
+# a = LaravelGoToCommand(sublime_plugin.TextCommand)
+# a.get_path('"admins/guests/index");')
