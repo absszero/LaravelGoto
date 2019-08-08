@@ -1,0 +1,10 @@
+
+[
+  {
+    "button": "button1",
+    "count": 1,
+    "modifiers": ["alt"],
+    "press_command": "drag_select",
+    "command": "laravel_go_to"
+  }
+]
