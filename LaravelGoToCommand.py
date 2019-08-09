@@ -49,7 +49,7 @@ class LaravelGoToCommand(sublime_plugin.TextCommand):
 
       if is_symbol:
         self.window.run_command("insert", {
-            "characters": text
+            "characters": text.replace('@', '.php@')
         })
       return
 
@@ -57,7 +57,6 @@ class LaravelGoToCommand(sublime_plugin.TextCommand):
       self.window = sublime.active_window()
       if (len(self.window.folders()) == 0):
         return
-      self.window = sublime.active_window()
       path = self.get_text(self.view.sel()[0])
       pprint(path)
       if path:
