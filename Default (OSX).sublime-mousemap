@@ -1,8 +1,0 @@
-[
-  {
-      "button": "button1",
-      "count": 2,
-      "modifiers": ["super","shift"],
-      "command": "laravel_go_to"
-  }
-]
