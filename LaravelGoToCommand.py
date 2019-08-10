@@ -36,7 +36,7 @@ class LaravelGoToCommand(sublime_plugin.TextCommand):
 
     def search(self, path):
       text = path.replace('.', '/');
-      is_symbol = "@" in path
+      is_symbol = "@" in path or "Controller" in path
       args = {
         "overlay": "goto",
         "show_files": True,
@@ -53,14 +53,47 @@ class LaravelGoToCommand(sublime_plugin.TextCommand):
         })
       return
 
+    def get_namespace(self, view):
+        sel = view.sel()[0]
+        function_regions = view.find_by_selector('meta.function.closure')
+        function_regions = view.find_by_selector('meta.function')
+
+        # function_regions = view.find_by_selector('meta.array.php')
+        # 'namespace' =>'YOUR_NAMESPACE'
+        # pattern = re.compile(r"['\"]namespace['\"]\s*=>\s*(['\"])([^'\"]+)\1")
+        namespace = ''
+        methods = []
+        for idx, r in enumerate(view.find_by_selector('variable.function')):
+            word = self.view.word(r)
+            method = self.view.substr(word).strip()
+            if method == 'group' or method == 'namespace':
+              methods.append(r);
+        for r in methods:
+            word = self.view.word(r)
+            method = self.view.substr(word).strip()
+
+
+        function_regions = view.find_by_selector('meta.function meta.block punctuation.section.block.end')
+        for r in function_regions:
+            word = self.view.word(r)
+            method = self.view.substr(word).strip()
+            pprint(method)
+            pprint(r)
+        print("\n")
+
+        return
+
     def run(self, edit, event):
       self.window = sublime.active_window()
       if (len(self.window.folders()) == 0):
         return
+
+      fn = self.get_namespace(self.window.active_view())
+
       path = self.get_text(self.view.sel()[0])
-      pprint(path)
-      if path:
-        self.search(path)
+      # pprint(path)
+      # if path:
+      #   self.search(path)
       return
 
     def want_event(self):
