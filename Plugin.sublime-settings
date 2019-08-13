@@ -1,0 +1,26 @@
+{
+    /**
+     * Pleasy use User/Preferences.sublime-settings to apply your settings
+     */
+
+    // If the text ends with the folling extensions, goto the path directly.
+    "static_extensions": [
+        "js",
+        "ts",
+        "jsx",
+        "vue",
+
+        "css",
+        "scss",
+        "sass",
+        "less",
+        "styl",
+
+        "htm",
+        "html",
+        "xhtml",
+        "xml",
+
+        "log"
+    ]
+}
