@@ -4,6 +4,7 @@ import os
 from pprint import pprint
 from unittest import TestCase
 
+
 class TestLaravelGotoCommand(TestCase):
     def setUp(self):
         route = os.path.dirname(__file__) + '/route.php'
@@ -27,7 +28,7 @@ class TestLaravelGotoCommand(TestCase):
         sel.clear()
         sel.add(r)
         self.view.run_command("laravel_goto")
-        file_name = self.window.active_view().file_name();
+        file_name = self.window.active_view().file_name()
         self.assertEqual(os.path.basename(file_name), "HelloController.php")
 
     def testView(self):
@@ -38,16 +39,16 @@ class TestLaravelGotoCommand(TestCase):
         sel.clear()
         sel.add(r)
         self.view.run_command("laravel_goto")
-        file_name = self.window.active_view().file_name();
+        file_name = self.window.active_view().file_name()
         self.assertEqual(os.path.basename(file_name), "hello_view.blade.php")
 
     def testStaticFile(self):
-        r = sublime.Region(119, 119)
+        r = sublime.Region(118, 118)
         while self.view.is_loading():
             pass
         sel = self.view.sel()
         sel.clear()
         sel.add(r)
         self.view.run_command("laravel_goto")
-        file_name = self.window.active_view().file_name();
+        file_name = self.window.active_view().file_name()
         self.assertEqual(os.path.basename(file_name), "hello.js")
