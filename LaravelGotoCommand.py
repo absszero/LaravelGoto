@@ -20,9 +20,6 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
 
     def run(self, edit):
         self.window = sublime.active_window()
-        if (len(self.window.folders()) == 0):
-            return
-
         path = self.get_path(self.view.sel()[0])
         # print(path)
         if path:
