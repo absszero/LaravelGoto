@@ -79,4 +79,4 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
 
     def is_static_file(self, path):
         # get last 3 chars as extension
-        return (path[-3:] in extensions)
+        return (path[-3:].lower() in extensions)
