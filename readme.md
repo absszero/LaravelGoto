@@ -1,6 +1,6 @@
 # Laravel Goto for Sublime Text
 
-Goto `*.blade.php`  or `Controller@Method` by `Alt` + `Left-Click`
+Goto `*.blade.php`  or `Controller@Method` by `Alt`+`Left-Click`
 
 ![example](example.gif)
 
@@ -35,5 +35,5 @@ Goto `*.blade.php`  or `Controller@Method` by `Alt` + `Left-Click`
 
 ## Usage
 
-- Move your cursor on a text, Press `Alt` + `Left-Click` or `Alt` + `;` to run the command.
+- Move your cursor on a text, Press `Alt`+`Left-Click` or `Alt`+`;` to run the command.
 - Select a text, `Right-Click` to open content menu, Press `Laravel Goto`.
