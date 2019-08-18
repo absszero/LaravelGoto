@@ -7,9 +7,11 @@ from unittest import TestCase
 
 class TestLaravelGotoCommand(TestCase):
     def setUp(self):
-        route = os.path.dirname(__file__) + '/route.php'
         self.window = sublime.active_window()
+        route = os.path.dirname(__file__) + '/route.php'
         self.view = self.window.open_file(route)
+        while self.view.is_loading():
+            pass
         # make sure we have a window to work with
         s = sublime.load_settings("Preferences.sublime-settings")
         s.set("close_windows_when_empty", False)
@@ -21,34 +23,25 @@ class TestLaravelGotoCommand(TestCase):
             self.view.window().run_command("close_file")
 
     def testController(self):
-        r = sublime.Region(35, 35)
-        while self.view.is_loading():
-            pass
-        sel = self.view.sel()
-        sel.clear()
-        sel.add(r)
+        self.select(35)
         self.view.run_command("laravel_goto")
         file_name = self.window.active_view().file_name()
         self.assertEqual(os.path.basename(file_name), "HelloController.php")
 
     def testView(self):
-        r = sublime.Region(100, 100)
-        while self.view.is_loading():
-            pass
-        sel = self.view.sel()
-        sel.clear()
-        sel.add(r)
+        self.select(100)
         self.view.run_command("laravel_goto")
         file_name = self.window.active_view().file_name()
         self.assertEqual(os.path.basename(file_name), "hello_view.blade.php")
 
     def testStaticFile(self):
-        r = sublime.Region(118, 118)
-        while self.view.is_loading():
-            pass
-        sel = self.view.sel()
-        sel.clear()
-        sel.add(r)
+        self.select(118)
         self.view.run_command("laravel_goto")
         file_name = self.window.active_view().file_name()
         self.assertEqual(os.path.basename(file_name), "hello.js")
+
+    # select a place
+    def select(self, point):
+        sel = self.view.sel()
+        sel.clear()
+        sel.add(sublime.Region(point, point))
