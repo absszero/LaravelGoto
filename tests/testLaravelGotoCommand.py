@@ -1,7 +1,6 @@
 import sublime
 import sys
 import os
-from pprint import pprint
 from unittest import TestCase
 
 
@@ -22,23 +21,50 @@ class TestLaravelGotoCommand(TestCase):
             self.view.window().focus_view(self.view)
             self.view.window().run_command("close_file")
 
-    def testController(self):
+    def test_controller(self):
         self.select(35)
         self.view.run_command("laravel_goto")
         file_name = self.window.active_view().file_name()
         self.assertEqual(os.path.basename(file_name), "HelloController.php")
 
-    def testView(self):
+    def test_view(self):
         self.select(100)
         self.view.run_command("laravel_goto")
         file_name = self.window.active_view().file_name()
         self.assertEqual(os.path.basename(file_name), "hello_view.blade.php")
 
-    def testStaticFile(self):
+    def test_staticFile(self):
         self.select(118)
         self.view.run_command("laravel_goto")
         file_name = self.window.active_view().file_name()
         self.assertEqual(os.path.basename(file_name), "hello.js")
+
+    def test_namespace58(self):
+        self.select(200)
+        self.view.run_command("laravel_goto")
+        file_name = self.window.active_view().file_name()
+        self.assertEqual(
+            os.path.basename(file_name),
+            "FiveEightController.php"
+        )
+
+    def test_namespace52(self):
+        self.select(300)
+        self.view.run_command("laravel_goto")
+        file_name = self.window.active_view().file_name()
+        self.assertEqual(
+            os.path.basename(file_name),
+            "FiveTwoController.php"
+        )
+
+    def test_namespaceLumen(self):
+        self.select(420)
+        self.view.run_command("laravel_goto")
+        file_name = self.window.active_view().file_name()
+        self.assertEqual(
+            os.path.basename(file_name),
+            "LumenController.php"
+        )
 
     # select a place
     def select(self, point):

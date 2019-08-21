@@ -67,7 +67,7 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         return "@" in path or "Controller" in path
 
     def get_namespace(self, selected):
-        functions = self.view.find_by_selector('meta.function')
+        functions = self.view.find_by_selector('meta.function-call')
         for function in functions:
             if (not function.contains(selected)):
                 continue
