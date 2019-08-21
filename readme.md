@@ -10,16 +10,16 @@ Goto `*.blade.php`  or `Controller@Method` by `Alt`+`Left-Click`
 
 ### Package Control
 
-1. Ctrl+Shift+P then select `Package Control: Install Package`
+1. `Ctrl+Shift+P` then select `Package Control: Install Package`
 2. Type `Laravel Goto`
 
 ### Manually
 
 -  MacOS
 
-    ```shell
-    git clone https://github.com/absszero/LaravelGoto.git ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/LaravelGoto
-    ```
+   ```shell
+   git clone https://github.com/absszero/LaravelGoto.git ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/LaravelGoto
+   ```
 
 - Linux
 
@@ -29,9 +29,9 @@ Goto `*.blade.php`  or `Controller@Method` by `Alt`+`Left-Click`
 
 - Windows
 
-	```shell
-	git clone https://github.com/absszero/LaravelGoto.git %APPDATA%\Sublime Text 3\Packages\LaravelGoto
-	```
+  ```shell
+  git clone https://github.com/absszero/LaravelGoto.git %APPDATA%\Sublime Text 3\Packages\LaravelGoto
+  ```
 
 ## Usage
 
