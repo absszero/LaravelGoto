@@ -20,7 +20,7 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         globals()['user_settings'] = sublime.\
             load_settings("Preferences.sublime-settings")
         extensions = user_settings.get("static_extensions", []) +\
-            plugin_settings.get("static_extensions")
+            plugin_settings.get("static_extensions", [])
         globals()['extensions'] = list(map(
             lambda ext: '.' + ext.lower(), extensions))
 
