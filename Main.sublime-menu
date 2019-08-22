@@ -16,16 +16,22 @@
                         "children":
                         [
                             {
-                                "command": "open_file",
-                                "args": {"file": "${packages}/LaravelGoto/Plugin.sublime-settings"},
-                                "caption": "Settings – Default"
+                                "caption": "Settings",
+                                "command": "edit_settings",
+                                "args": {
+                                    "base_file": "${packages}/LaravelGoto/Plugin.sublime-settings",
+                                    "default": "{}"
+                                }
                             },
+                            { "caption": "-" },
                             {
-                                "command": "open_file",
-                                "args": {"file": "${packages}/User/Preferences.sublime-settings"},
-                                "caption": "Settings – User"
-                            },
-                            { "caption": "-" }
+                                "command": "edit_settings",
+                                "args": {
+                                    "base_file": "${packages}/LaravelGoto/Default.sublime-keymap",
+                                    "default": "{}"
+                                  },
+                                "caption": "Key Bindings"
+                              }
                         ]
                     }
                 ]

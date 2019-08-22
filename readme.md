@@ -4,7 +4,32 @@ Goto `*.blade.php`  or `Controller@Method` by `Alt`+`Left-Click`
 
 ![example](example.gif)
 
+## Feature 
 
+- Open Blade Template files *(EX. hello.blade.php)*
+
+- Open Controller with method *(EX. \Namespace\Controller.php@Method)*
+
+- Open Static files (*EX. hello.js*)
+
+- Default supported static file extensions
+
+    - js
+    - ts
+    - jsx
+    - vue
+    - css
+    - scss
+    - sass
+    - less
+    - styl
+    - htm
+    - html
+    - xhtml
+    - xml
+    - log
+    
+    
 
 ## Installation
 
@@ -33,7 +58,22 @@ Goto `*.blade.php`  or `Controller@Method` by `Alt`+`Left-Click`
   git clone https://github.com/absszero/LaravelGoto.git %APPDATA%\Sublime Text 3\Packages\LaravelGoto
   ```
 
+
+
 ## Usage
 
 - Move your cursor on a text, Press `Alt`+`Left-Click` or `Alt`+`;` to run the command.
 - Select a text, `Right-Click` to open content menu, Press `Laravel Goto`.
+
+
+
+## Extend static file extensions
+
+You can add other file extensions throught `Preferences > Package Settings > LaravelGoto > Settings`, and add this option `static_extensions` 
+
+```json
+    "static_extensions": [
+        "your_extension_here"
+    ]
+```
+
