@@ -66,6 +66,15 @@ class TestLaravelGotoCommand(TestCase):
             "LumenController.php"
         )
 
+    def test_view_namespace(self):
+        self.select(500)
+        self.view.run_command("laravel_goto")
+        file_name = self.window.active_view().file_name()
+        self.assertEqual(
+            os.path.basename(file_name),
+            "hello_view.blade.php"
+        )
+
     # select a place
     def select(self, point):
         sel = self.view.sel()

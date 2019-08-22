@@ -19,3 +19,7 @@ Route::group(['namespace' => '52'], function()
 $router->group(['namespace' => 'Lumen'], function() use ($router) {
     Route::get('/', 'LumenController@index');
 });
+
+Route::get('/', function () {
+    return view('Namespace::hello_view');
+});
