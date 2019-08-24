@@ -3,20 +3,20 @@ env:
         - PACKAGE="LaravelGoto" # Package name
         - SUBLIME_TEXT_VERSION="3"
         # use UNITTESTING_TAG to specific tag of UnitTesting
-        # - UNITTESTING_TAG="master"
+        - UNITTESTING_TAG="master"
 
 # mutliple os matrix
 # https://docs.travis-ci.com/user/multi-os/#Python-example-(unsupported-languages)
 matrix:
     include:
-        - os: linux
-          dist: xenial
-          language: python
-          python: 3.5
-          services:
-            - xvfb
-        # - os: osx
-        #   language: generic
+        # - os: linux
+        #   dist: xenial
+        #   language: python
+        #   python: 3.5
+        #   services:
+        #     - xvfb
+        - os: osx
+          language: generic
 
 
 before_install:
