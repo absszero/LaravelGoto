@@ -22,12 +22,12 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         extensions = user_settings.get("static_extensions", []) +\
             plugin_settings.get("static_extensions", [])
         globals()['extensions'] = list(map(
-            lambda ext: '.' + ext.lower(), extensions))
+            lambda ext: ext.lower(), extensions))
 
     def run(self, edit):
         self.window = sublime.active_window()
-        path = self.get_path(self.view.sel()[0])
-        # print(path)
+        selection = self.get_selection(self.view.sel()[0])
+        path = self.get_path(selection)
         if path:
             self.search(path)
         return
@@ -55,10 +55,9 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         return sublime.Region(start, end)
 
     def get_path(self, selected):
-        selection = self.get_selection(selected)
-        path = self.substr(selection).strip()
+        path = self.substr(selected).strip()
         if (self.is_controller(path)):
-            namespace = self.get_namespace(selection)
+            namespace = self.get_namespace(selected)
             if namespace:
                 path = namespace + '\\' + path
         else:
@@ -111,5 +110,4 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         return
 
     def is_static_file(self, path):
-        # get last 3 chars as extension
-        return (path[-3:].lower() in extensions)
+        return (path.split('.')[-1].lower() in extensions)

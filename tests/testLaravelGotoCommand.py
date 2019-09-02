@@ -22,61 +22,34 @@ class TestLaravelGotoCommand(TestCase):
             self.view.window().run_command("close_file")
 
     def test_controller(self):
-        self.select(35)
-        self.view.run_command("laravel_goto")
-        file_name = self.window.active_view().file_name()
-        self.assertEqual(os.path.basename(file_name), "HelloController.php")
+        self.assert_select(35, 'HelloController.php')
 
     def test_view(self):
-        self.select(100)
-        self.view.run_command("laravel_goto")
-        file_name = self.window.active_view().file_name()
-        self.assertEqual(os.path.basename(file_name), "hello_view.blade.php")
+        self.assert_select(100, 'hello_view.blade.php')
 
     def test_staticFile(self):
-        self.select(118)
-        self.view.run_command("laravel_goto")
-        file_name = self.window.active_view().file_name()
-        self.assertEqual(os.path.basename(file_name), "hello.js")
+        self.assert_select(118, 'hello.js')
 
     def test_namespace58(self):
-        self.select(200)
-        self.view.run_command("laravel_goto")
-        file_name = self.window.active_view().file_name()
-        self.assertEqual(
-            os.path.basename(file_name),
-            "FiveEightController.php"
-        )
+        self.assert_select(200, 'FiveEightController.php')
 
     def test_namespace52(self):
-        self.select(300)
-        self.view.run_command("laravel_goto")
-        file_name = self.window.active_view().file_name()
-        self.assertEqual(
-            os.path.basename(file_name),
-            "FiveTwoController.php"
-        )
+        self.assert_select(300, 'FiveTwoController.php')
 
     def test_namespaceLumen(self):
-        self.select(420)
-        self.view.run_command("laravel_goto")
-        file_name = self.window.active_view().file_name()
-        self.assertEqual(
-            os.path.basename(file_name),
-            "LumenController.php"
-        )
+        self.assert_select(420, 'LumenController.php')
 
     def test_view_namespace(self):
-        self.select(500)
-        self.view.run_command("laravel_goto")
-        file_name = self.window.active_view().file_name()
-        self.assertEqual(
-            os.path.basename(file_name),
-            "hello_view.blade.php"
-        )
+        self.assert_select(500, 'hello_view.blade.php')
+
+    def test_css(self):
+        self.assert_select(530, 'hello.css')
 
     # select a place
-    def select(self, point):
+    def assert_select(self, point, expectation):
         sel = self.view.sel()
         sel.clear()
         sel.add(sublime.Region(point, point))
+        self.view.run_command("laravel_goto")
+        filename = self.window.active_view().file_name()
+        self.assertEqual(os.path.basename(filename), expectation)
