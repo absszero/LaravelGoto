@@ -45,6 +45,10 @@ class TestLaravelGotoCommand(TestCase):
     def test_css(self):
         self.assert_select(530, 'hello.css')
 
+    def test_absolute_path(self):
+        self.assert_select(630, 'IndexController.php')
+
+
     # select a place
     def assert_select(self, point, expectation):
         sel = self.view.sel()

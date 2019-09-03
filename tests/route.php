@@ -24,3 +24,7 @@ Route::get('/', function () {
 });
 
 'hello.css';
+
+Route::group(['namespace' => 'Abc'], function () {
+    Route::get('/', '\Absolute\IndexController@index')->name('index');
+});

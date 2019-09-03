@@ -57,9 +57,11 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
     def get_path(self, selected):
         path = self.substr(selected).strip()
         if (self.is_controller(path)):
-            namespace = self.get_namespace(selected)
-            if namespace:
-                path = namespace + '\\' + path
+            # it's not absolute path namespace
+            if '\\' != path[0]:
+                namespace = self.get_namespace(selected)
+                if namespace:
+                    path = namespace + '\\' + path
         else:
             # remove Blade Namespace
             path = path.split(':')[-1]
