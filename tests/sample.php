@@ -28,3 +28,13 @@ Route::get('/', function () {
 Route::group(['namespace' => 'Abc'], function () {
     Route::get('/', '\Absolute\IndexController@index')->name('index');
 });
+
+Config::get('app.timezone');
+
+Config::set(   'app.timezone', 'UTC');
+
+config('app.timezone');
+
+config(     ['app.timezone' => 'UTC']);
+
+env('APP_DEBUG', false);

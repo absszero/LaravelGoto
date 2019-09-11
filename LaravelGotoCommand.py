@@ -10,6 +10,18 @@ patterns = [
     re.compile(r"namespace\s*\(\s*(['\"])\s*([^'\"]+)\1"),
     re.compile(r"['\"]namespace['\"]\s*=>\s*(['\"])([^'\"]+)\1"),
 ]
+config_patterns = [
+    re.compile(r"Config::[^'\"]*(['\"])([^'\"]*)\1"),
+    re.compile(r"config\([^'\"]*(['\"])([^'\"]*)\1"),
+]
+
+env_pattern = re.compile(r"env\([^'\"]*(['\"])([^'\"]*)\1")
+
+
+class Place:
+    def __init__(self, path, is_controller):
+        self.path = path
+        self.is_controller = is_controller
 
 
 class LaravelGotoCommand(sublime_plugin.TextCommand):
@@ -27,9 +39,8 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         self.window = sublime.active_window()
         selection = self.get_selection(self.view.sel()[0])
-        path = self.get_path(selection)
-        if path:
-            self.search(path)
+        place = self.get_place(selection)
+        self.search(place)
         return
 
     def substr(self, mixed):
@@ -54,21 +65,50 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
 
         return sublime.Region(start, end)
 
-    def get_path(self, selected):
+    def get_place(self, selected):
+        region = self.view.line(selected.a)
+        line = self.substr(region).strip()
         path = self.substr(selected).strip()
-        if (self.is_controller(path)):
+        is_controller = self.is_controller(path)
+        if (is_controller):
+            path = path.replace('@', '.php@')
             # it's not absolute path namespace
             if '\\' != path[0]:
                 namespace = self.get_namespace(selected)
                 if namespace:
                     path = namespace + '\\' + path
+
+        elif(self.is_static_file(path)):
+            pass
+
+        elif(self.is_config(path, line)):
+            path = 'config/' + path.split('.')[0] + '.php'
+
+        elif(self.is_env(path, line)):
+            path = '.env'
+
         else:
             # remove Blade Namespace
             path = path.split(':')[-1]
-        return path
+            path = path.replace('.', '/') + '.blade.php'
+        return Place(path, is_controller)
 
     def is_controller(self, path):
         return "@" in path or "Controller" in path
+
+    def is_config(self, path, line):
+        for pattern in config_patterns:
+            matched = pattern.search(line)
+            if (matched and path == matched.group(2)):
+                return True
+        return False
+
+    def is_static_file(self, path):
+        return (path.split('.')[-1].lower() in extensions)
+
+    def is_env(self, path, line):
+        matched = env_pattern.search(line)
+        return (matched and path == matched.group(2))
 
     def get_namespace(self, selected):
         functions = self.view.find_by_selector('meta.function-call')
@@ -80,36 +120,22 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
             for pattern in patterns:
                 matched = pattern.search(block)
                 if (matched):
-                    # print(matched.group(2))
                     return matched.group(2)
         return
 
-    def search(self, path):
+    def search(self, place):
         args = {
             "overlay": "goto",
             "show_files": True,
-            "text": path
+            "text": place.path
         }
 
-        # open static file
-        if (self.is_static_file(path)):
+        if (not place.is_controller):
             self.window.run_command("show_overlay", args)
-            return
-
-        is_controller = self.is_controller(path)
-        if is_controller:
+        else:
             args["text"] = ''
-        else:  # it's a view file
-            args["text"] = args["text"].replace('.', '/') + '.blade.php'
-
-        self.window.run_command("show_overlay", args)
-
-        # if it 's Controller path, use insert command to trigger symbol search
-        if is_controller:
+            self.window.run_command("show_overlay", args)
             self.window.run_command("insert", {
-                "characters": path.replace('@', '.php@')
+                "characters": place.path
             })
         return
-
-    def is_static_file(self, path):
-        return (path.split('.')[-1].lower() in extensions)

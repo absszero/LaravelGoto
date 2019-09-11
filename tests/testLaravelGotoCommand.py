@@ -7,8 +7,8 @@ from unittest import TestCase
 class TestLaravelGotoCommand(TestCase):
     def setUp(self):
         self.window = sublime.active_window()
-        route = os.path.dirname(__file__) + '/route.php'
-        self.view = self.window.open_file(route)
+        sample = os.path.dirname(__file__) + '/sample.php'
+        self.view = self.window.open_file(sample)
         while self.view.is_loading():
             pass
         # make sure we have a window to work with
@@ -47,6 +47,24 @@ class TestLaravelGotoCommand(TestCase):
 
     def test_absolute_path(self):
         self.assert_select(630, 'IndexController.php')
+
+    def test_facade_config_get(self):
+        self.assert_select(685, 'app.php')
+
+    def test_facade_config_set(self):
+        self.assert_select(720, 'app.php')
+
+    def test_config_get(self):
+        self.assert_select(750, 'app.php')
+
+    def test_config_set(self):
+        self.assert_select(785, 'app.php')
+
+    def test_config_set(self):
+        self.assert_select(785, 'app.php')
+
+    def test_env(self):
+        self.assert_select(815, '.env')
 
 
     # select a place
