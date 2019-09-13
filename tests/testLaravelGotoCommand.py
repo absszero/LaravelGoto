@@ -16,6 +16,12 @@ class TestLaravelGotoCommand(TestCase):
         s.set("close_windows_when_empty", False)
 
     def tearDown(self):
+        if (self.window.active_view() != self.view):
+            try:
+                self.window.active_view().window().run_command("close_file")
+            except Exception as e:
+                pass
+
         if self.view:
             self.view.set_scratch(True)
             self.view.window().focus_view(self.view)
@@ -54,20 +60,18 @@ class TestLaravelGotoCommand(TestCase):
     def test_facade_config_set(self):
         self.assert_select(720, 'app.php')
 
+    def test_config_get_only_file(self):
+        self.assert_select(747, 'app.php')
+
     def test_config_get(self):
-        self.assert_select(750, 'app.php')
+        self.assert_select(765, 'app.php')
 
     def test_config_set(self):
-        self.assert_select(785, 'app.php')
-
-    def test_config_set(self):
-        self.assert_select(785, 'app.php')
+        self.assert_select(800, 'app.php')
 
     def test_env(self):
-        self.assert_select(815, '.env')
+        self.assert_select(830, '.env')
 
-
-    # select a place
     def assert_select(self, point, expectation):
         sel = self.view.sel()
         sel.clear()

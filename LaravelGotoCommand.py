@@ -1,6 +1,7 @@
 import sublime
 import sublime_plugin
 import re
+import os
 
 
 plugin_settings = None
@@ -14,14 +15,16 @@ config_patterns = [
     re.compile(r"Config::[^'\"]*(['\"])([^'\"]*)\1"),
     re.compile(r"config\([^'\"]*(['\"])([^'\"]*)\1"),
 ]
-
 env_pattern = re.compile(r"env\([^'\"]*(['\"])([^'\"]*)\1")
+
+excludes_dir = ['.git', '.svn', 'node_modules', 'vendor']
 
 
 class Place:
-    def __init__(self, path, is_controller):
+    def __init__(self, path, is_controller, find):
         self.path = path
         self.is_controller = is_controller
+        self.find = find
 
 
 class LaravelGotoCommand(sublime_plugin.TextCommand):
@@ -31,8 +34,10 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
             .load_settings("Plugin.sublime-settings")
         globals()['user_settings'] = sublime.\
             load_settings("Preferences.sublime-settings")
+        # combine extensions
         extensions = user_settings.get("static_extensions", []) +\
             plugin_settings.get("static_extensions", [])
+        # make sure extensions are lower case
         globals()['extensions'] = list(map(
             lambda ext: ext.lower(), extensions))
 
@@ -70,6 +75,8 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         line = self.substr(region).strip()
         path = self.substr(selected).strip()
         is_controller = self.is_controller(path)
+        find = None
+
         if (is_controller):
             path = path.replace('@', '.php@')
             # it's not absolute path namespace
@@ -81,17 +88,28 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         elif(self.is_static_file(path)):
             pass
 
-        elif(self.is_config(path, line)):
-            path = 'config/' + path.split('.')[0] + '.php'
-
         elif(self.is_env(path, line)):
-            path = '.env'
+            dirs = self.get_dir('.env', 'artisan')
+            if (dirs):
+                find = path
+                path = os.path.join(dirs, '.env')
+            else:
+                path = '.env'
 
+        elif(self.is_config(path, line)):
+            splited = path.split('.')
+            path = splited[0] + '.php'
+            dirs = self.get_dir('config', 'database')
+            if (dirs):
+                find = True
+                path = os.path.join(dirs, 'config', path)
+                if (2 <= len(splited)):
+                    find = splited[1]
         else:
             # remove Blade Namespace
             path = path.split(':')[-1]
             path = path.replace('.', '/') + '.blade.php'
-        return Place(path, is_controller)
+        return Place(path, is_controller, find)
 
     def is_controller(self, path):
         return "@" in path or "Controller" in path
@@ -109,6 +127,35 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
     def is_env(self, path, line):
         matched = env_pattern.search(line)
         return (matched and path == matched.group(2))
+
+    def get_dir(self, target1, target2, folders=False):
+        if (folders is False):
+            folders = self.window.folders()
+        for folder in folders:
+            files = os.listdir(folder)
+            if (target1 in files and target2 in files):
+                return folder
+            '''
+            rules:
+            1. not in excludes_dir
+            2. no dot in filename
+            3. is a folder
+            '''
+            sub_folders = [
+                f for f in files if
+                f not in excludes_dir and
+                '.' not in f and
+                os.path.isdir(os.path.join(folder, f))
+            ]
+            if (len(sub_folders)):
+                # get full path
+                sub_folders = list(map(
+                    lambda f: os.path.join(folder, f), sub_folders
+                ))
+                find = self.get_dir(target1, target2, sub_folders)
+                if (find):
+                    return find
+        return False
 
     def get_namespace(self, selected):
         functions = self.view.find_by_selector('meta.function-call')
@@ -130,12 +177,31 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
             "text": place.path
         }
 
-        if (not place.is_controller):
-            self.window.run_command("show_overlay", args)
-        else:
+        if (place.is_controller):
             args["text"] = ''
             self.window.run_command("show_overlay", args)
             self.window.run_command("insert", {
                 "characters": place.path
             })
+        else:
+
+            if (place.find):
+                view = self.window.open_file(place.path)
+                self.find_location(view, place.find)
+            else:
+                self.window.run_command("show_overlay", args)
         return
+
+    def find_location(self, view, find):
+        if view.is_loading():
+            sublime.set_timeout(lambda: self.find_location(view, find), 100)
+            return
+
+        if (isinstance(find, str)):
+            sublime.active_window().run_command('show_panel', {
+                'panel': 'find',
+                'case_sensitive': True,
+            })
+            sublime.active_window().run_command("insert", {
+                "characters": find
+            })
