@@ -196,11 +196,14 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
 
     def find_location(self, view, find):
         if view.is_loading():
-            sublime.set_timeout(lambda: self.find_location(view, find), 100)
+            sublime.set_timeout(lambda: self.find_location(view, find), 50)
             return
 
         if (isinstance(find, str)):
             view = self.window.active_view()
             location = view.find(find, 0)
-            view.show(location)
+            # fix .env not show selected if no scrolling happened
+            view.set_viewport_position((0, 1))
+            view.sel().clear()
             view.sel().add(location)
+            view.show(location)

@@ -1,6 +1,6 @@
 # Laravel Goto for Sublime Text
 
-Goto `*.blade.php`  or `Controller@Method` by `Alt`+`Left-Click`
+Goto various Laravel files by `Alt`+`Left-Click`
 
 ![example](example.gif)
 
@@ -8,9 +8,13 @@ Goto `*.blade.php`  or `Controller@Method` by `Alt`+`Left-Click`
 
 - Open Blade Template files *(EX. hello.blade.php)*
 
-- Open Controller with method *(EX. \Namespace\Controller.php@Method)*
+- Open Controller and highlight method *(EX. \Namespace\Controller.php@Method)*
 
 - Open Static files (*EX. hello.js*)
+
+- Open Config files and highlight option (EX. config\app.php)
+
+- Open .env and highlight option 
 
 - Default supported static file extensions
 
