@@ -105,6 +105,8 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
                 path = os.path.join(dirs, 'config', path)
                 if (2 <= len(splited)):
                     find = splited[1]
+                    find = "(['\"]{1})" + find + "\\1\\s*=>"
+
         else:
             # remove Blade Namespace
             path = path.split(':')[-1]
@@ -198,10 +200,7 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
             return
 
         if (isinstance(find, str)):
-            sublime.active_window().run_command('show_panel', {
-                'panel': 'find',
-                'case_sensitive': True,
-            })
-            sublime.active_window().run_command("insert", {
-                "characters": find
-            })
+            view = self.window.active_view()
+            location = view.find(find, 0)
+            view.show(location)
+            view.sel().add(location)
