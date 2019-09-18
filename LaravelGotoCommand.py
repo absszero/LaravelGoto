@@ -15,7 +15,7 @@ config_patterns = [
     re.compile(r"Config::[^'\"]*(['\"])([^'\"]*)\1"),
     re.compile(r"config\([^'\"]*(['\"])([^'\"]*)\1"),
 ]
-env_pattern = re.compile(r"env\([^'\"]*(['\"])([^'\"]*)\1")
+env_pattern = re.compile(r"env\(\s*(['\"])([^'\"]*)\1")
 
 excludes_dir = ['.git', '.svn', 'node_modules', 'vendor']
 

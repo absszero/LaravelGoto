@@ -39,4 +39,4 @@ config('app.timezone');
 
 config(     ['app.timezone' => 'UTC']);
 
-env('APP_DEBUG', false);
+env(   'APP_DEBUG', false);
