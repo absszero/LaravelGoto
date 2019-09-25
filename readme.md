@@ -4,17 +4,19 @@ Goto various Laravel files by `Alt`+`Left-Click`
 
 ![example](example.gif)
 
-## Feature 
+## Feature
 
-- Open Blade Template files *(EX. hello.blade.php)*
+- Go to Blade Template files *(EX. hello.blade.php)*
 
-- Open Controller and highlight method *(EX. \Namespace\Controller.php@Method)*
+- Go to Controller and highlight method *(EX. \Namespace\Controller.php@Method)*
 
-- Open Static files (*EX. hello.js*)
+- Go to Static files (*EX. hello.js*)
 
-- Open Config files and highlight option (EX. config\app.php)
+- Go to Config files and highlight option (EX. config\app.php)
 
-- Open .env and highlight option 
+- Go to Language files (EX. resources/lang/en/messages.php )
+
+- Go to .env and highlight option
 
 - Default supported static file extensions
 
@@ -32,8 +34,8 @@ Goto various Laravel files by `Alt`+`Left-Click`
     - xhtml
     - xml
     - log
-    
-    
+
+
 
 ## Installation
 
@@ -73,7 +75,7 @@ Goto various Laravel files by `Alt`+`Left-Click`
 
 ## Extend static file extensions
 
-You can add other file extensions throught `Preferences > Package Settings > LaravelGoto > Settings`, and add this option `static_extensions` 
+You can add other file extensions throught `Preferences > Package Settings > LaravelGoto > Settings`, and add this option `static_extensions`
 
 ```json
     "static_extensions": [

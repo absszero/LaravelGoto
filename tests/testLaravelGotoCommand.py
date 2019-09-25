@@ -72,6 +72,21 @@ class TestLaravelGotoCommand(TestCase):
     def test_env(self):
         self.assert_select(830, '.env')
 
+    def test_lang_undersocre(self):
+        self.assert_select(860, 'messages.php')
+
+    def test_lang_blade_directive(self):
+        self.assert_select(890, 'messages.php')
+
+    def test_lang_trans(self):
+        self.assert_select(920, 'messages.php')
+
+    def test_lang_trans_choice(self):
+        self.assert_select(950, 'messages.php')
+
+    def test_lang_trans_package(self):
+        self.assert_select(985, 'messages.php')
+
     def assert_select(self, point, expectation):
         sel = self.view.sel()
         sel.clear()

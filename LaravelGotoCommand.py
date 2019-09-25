@@ -15,6 +15,13 @@ config_patterns = [
     re.compile(r"Config::[^'\"]*(['\"])([^'\"]*)\1"),
     re.compile(r"config\([^'\"]*(['\"])([^'\"]*)\1"),
 ]
+lang_patterns = [
+    re.compile(r"__\([^'\"]*(['\"])([^'\"]*)\1"),
+    re.compile(r"@lang\([^'\"]*(['\"])([^'\"]*)\1"),
+    re.compile(r"trans\([^'\"]*(['\"])([^'\"]*)\1"),
+    re.compile(r"trans_choice\([^'\"]*(['\"])([^'\"]*)\1"),
+]
+
 env_pattern = re.compile(r"env\(\s*(['\"])([^'\"]*)\1")
 
 excludes_dir = ['.git', '.svn', 'node_modules', 'vendor']
@@ -106,6 +113,13 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
                 if (2 <= len(splited)):
                     find = splited[1]
                     find = "(['\"]{1})" + find + "\\1\\s*=>"
+        elif(self.is_lang(path, line)):
+            # a package lang file
+            if '::' in path:
+                path = path.split(':')[-1] + '.php'
+            else:
+                splited = path.split('.')
+                path = 'resources/lang/' + splited[0] + '.php'
 
         else:
             # remove Blade Namespace
@@ -118,6 +132,13 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
 
     def is_config(self, path, line):
         for pattern in config_patterns:
+            matched = pattern.search(line)
+            if (matched and path == matched.group(2)):
+                return True
+        return False
+
+    def is_lang(self, path, line):
+        for pattern in lang_patterns:
             matched = pattern.search(line)
             if (matched and path == matched.group(2)):
                 return True
