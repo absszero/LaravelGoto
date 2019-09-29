@@ -7,6 +7,7 @@ import os
 plugin_settings = None
 user_settings = None
 extensions = None
+place = None
 patterns = [
     re.compile(r"namespace\s*\(\s*(['\"])\s*([^'\"]+)\1"),
     re.compile(r"['\"]namespace['\"]\s*=>\s*(['\"])([^'\"]+)\1"),
@@ -26,12 +27,34 @@ env_pattern = re.compile(r"env\(\s*(['\"])([^'\"]*)\1")
 
 excludes_dir = ['.git', '.svn', 'node_modules', 'vendor']
 
+find_pattern = "(['\"]{1})%s\\1\\s*=>"
+
 
 class Place:
     def __init__(self, path, is_controller, find):
         self.path = path
         self.is_controller = is_controller
         self.find = find
+
+
+class GotoLocaltion(sublime_plugin.EventListener):
+    def on_activated(self, view):
+        place = globals()['place']
+        filepath = view.file_name()
+        if (not place or not filepath):
+            return
+        if (os.path.basename(filepath) != os.path.basename(place.path)):
+            return
+        if (not isinstance(place.find, str)):
+            return
+
+        location = view.find(place.find, 0)
+        # fix .env not show selected if no scrolling happened
+        view.set_viewport_position((0, 1))
+        view.sel().clear()
+        view.sel().add(location)
+        view.show(location)
+        place = None
 
 
 class LaravelGotoCommand(sublime_plugin.TextCommand):
@@ -52,8 +75,16 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         self.window = sublime.active_window()
         selection = self.get_selection(self.view.sel()[0])
         place = self.get_place(selection)
+        globals()['place'] = place
         self.search(place)
         return
+
+    def is_visible(self):
+        # find <?php
+        regions = self.view.find_by_selector(
+            'punctuation.section.embedded.begin.php'
+        )
+        return 0 != len(regions)
 
     def substr(self, mixed):
         return self.view.substr(mixed)
@@ -111,8 +142,7 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
                 find = True
                 path = os.path.join(dirs, 'config', path)
                 if (2 <= len(splited)):
-                    find = splited[1]
-                    find = "(['\"]{1})" + find + "\\1\\s*=>"
+                    find = find_pattern % (splited[1])
         elif(self.is_lang(path, line)):
             # a package lang file
             if '::' in path:
@@ -120,6 +150,8 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
             else:
                 splited = path.split('.')
                 path = 'resources/lang/' + splited[0] + '.php'
+                if (2 <= len(splited)):
+                    find = find_pattern % (splited[1])
 
         else:
             # remove Blade Namespace
@@ -210,21 +242,6 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
 
             if (place.find):
                 view = self.window.open_file(place.path)
-                self.find_location(view, place.find)
             else:
                 self.window.run_command("show_overlay", args)
         return
-
-    def find_location(self, view, find):
-        if view.is_loading():
-            sublime.set_timeout(lambda: self.find_location(view, find), 50)
-            return
-
-        if (isinstance(find, str)):
-            view = self.window.active_view()
-            location = view.find(find, 0)
-            # fix .env not show selected if no scrolling happened
-            view.set_viewport_position((0, 1))
-            view.sel().clear()
-            view.sel().add(location)
-            view.show(location)
