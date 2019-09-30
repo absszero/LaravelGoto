@@ -5,6 +5,6 @@
     <title>Document</title>
 </head>
 <body>
-
+    @lang('messages.welcome');
 </body>
 </html>

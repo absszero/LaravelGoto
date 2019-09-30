@@ -1,7 +1,7 @@
 import sublime
 import sublime_plugin
-import re
-import os
+from re import compile
+from os.path import basename
 
 
 plugin_settings = None
@@ -9,21 +9,21 @@ user_settings = None
 extensions = None
 place = None
 patterns = [
-    re.compile(r"namespace\s*\(\s*(['\"])\s*([^'\"]+)\1"),
-    re.compile(r"['\"]namespace['\"]\s*=>\s*(['\"])([^'\"]+)\1"),
+    compile(r"namespace\s*\(\s*(['\"])\s*([^'\"]+)\1"),
+    compile(r"['\"]namespace['\"]\s*=>\s*(['\"])([^'\"]+)\1"),
 ]
 config_patterns = [
-    re.compile(r"Config::[^'\"]*(['\"])([^'\"]*)\1"),
-    re.compile(r"config\([^'\"]*(['\"])([^'\"]*)\1"),
+    compile(r"Config::[^'\"]*(['\"])([^'\"]*)\1"),
+    compile(r"config\([^'\"]*(['\"])([^'\"]*)\1"),
 ]
 lang_patterns = [
-    re.compile(r"__\([^'\"]*(['\"])([^'\"]*)\1"),
-    re.compile(r"@lang\([^'\"]*(['\"])([^'\"]*)\1"),
-    re.compile(r"trans\([^'\"]*(['\"])([^'\"]*)\1"),
-    re.compile(r"trans_choice\([^'\"]*(['\"])([^'\"]*)\1"),
+    compile(r"__\([^'\"]*(['\"])([^'\"]*)\1"),
+    compile(r"@lang\([^'\"]*(['\"])([^'\"]*)\1"),
+    compile(r"trans\([^'\"]*(['\"])([^'\"]*)\1"),
+    compile(r"trans_choice\([^'\"]*(['\"])([^'\"]*)\1"),
 ]
 
-env_pattern = re.compile(r"env\(\s*(['\"])([^'\"]*)\1")
+env_pattern = compile(r"env\(\s*(['\"])([^'\"]*)\1")
 
 excludes_dir = ['.git', '.svn', 'node_modules', 'vendor']
 
@@ -40,10 +40,11 @@ class Place:
 class GotoLocaltion(sublime_plugin.EventListener):
     def on_activated(self, view):
         place = globals()['place']
+        globals()['place'] = place
         filepath = view.file_name()
         if (not place or not filepath):
             return
-        if (os.path.basename(filepath) != os.path.basename(place.path)):
+        if (basename(filepath) != basename(place.path)):
             return
         if (not isinstance(place.find, str)):
             return
@@ -54,7 +55,6 @@ class GotoLocaltion(sublime_plugin.EventListener):
         view.sel().clear()
         view.sel().add(location)
         view.show(location)
-        place = None
 
 
 class LaravelGotoCommand(sublime_plugin.TextCommand):
@@ -80,11 +80,8 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         return
 
     def is_visible(self):
-        # find <?php
-        regions = self.view.find_by_selector(
-            'punctuation.section.embedded.begin.php'
-        )
-        return 0 != len(regions)
+        filename = self.view.file_name()
+        return bool(filename and filename.endswith('.php'))
 
     def substr(self, mixed):
         return self.view.substr(mixed)
@@ -127,22 +124,15 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
             pass
 
         elif(self.is_env(path, line)):
-            dirs = self.get_dir('.env', 'artisan')
-            if (dirs):
-                find = path
-                path = os.path.join(dirs, '.env')
-            else:
-                path = '.env'
+            find = path
+            path = '.env'
 
         elif(self.is_config(path, line)):
             splited = path.split('.')
-            path = splited[0] + '.php'
-            dirs = self.get_dir('config', 'database')
-            if (dirs):
-                find = True
-                path = os.path.join(dirs, 'config', path)
-                if (2 <= len(splited)):
-                    find = find_pattern % (splited[1])
+            path = 'config/' + splited[0] + '.php'
+            if (2 <= len(splited)):
+                find = find_pattern % (splited[1])
+
         elif(self.is_lang(path, line)):
             # a package lang file
             if '::' in path:
@@ -183,35 +173,6 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         matched = env_pattern.search(line)
         return (matched and path == matched.group(2))
 
-    def get_dir(self, target1, target2, folders=False):
-        if (folders is False):
-            folders = self.window.folders()
-        for folder in folders:
-            files = os.listdir(folder)
-            if (target1 in files and target2 in files):
-                return folder
-            '''
-            rules:
-            1. not in excludes_dir
-            2. no dot in filename
-            3. is a folder
-            '''
-            sub_folders = [
-                f for f in files if
-                f not in excludes_dir and
-                '.' not in f and
-                os.path.isdir(os.path.join(folder, f))
-            ]
-            if (len(sub_folders)):
-                # get full path
-                sub_folders = list(map(
-                    lambda f: os.path.join(folder, f), sub_folders
-                ))
-                find = self.get_dir(target1, target2, sub_folders)
-                if (find):
-                    return find
-        return False
-
     def get_namespace(self, selected):
         functions = self.view.find_by_selector('meta.function-call')
         for function in functions:
@@ -239,9 +200,5 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
                 "characters": place.path
             })
         else:
-
-            if (place.find):
-                view = self.window.open_file(place.path)
-            else:
-                self.window.run_command("show_overlay", args)
+            self.window.run_command("show_overlay", args)
         return
