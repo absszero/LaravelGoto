@@ -40,7 +40,7 @@ class Place:
 class GotoLocaltion(sublime_plugin.EventListener):
     def on_activated(self, view):
         place = globals()['place']
-        globals()['place'] = place
+        globals()['place'] = None
         filepath = view.file_name()
         if (not place or not filepath):
             return
