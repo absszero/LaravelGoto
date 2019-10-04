@@ -40,7 +40,6 @@ class Place:
 class GotoLocaltion(sublime_plugin.EventListener):
     def on_activated(self, view):
         place = globals()['place']
-        globals()['place'] = None
         filepath = view.file_name()
         if (not place or not filepath):
             return
@@ -55,7 +54,7 @@ class GotoLocaltion(sublime_plugin.EventListener):
         view.sel().clear()
         view.sel().add(location)
         view.show(location)
-
+        globals()['place'] = None
 
 class LaravelGotoCommand(sublime_plugin.TextCommand):
     def __init__(self, view):
