@@ -3,7 +3,6 @@ import sublime_plugin
 from re import compile
 from os.path import basename
 
-
 plugin_settings = None
 user_settings = None
 extensions = None
@@ -56,6 +55,53 @@ class GotoLocaltion(sublime_plugin.EventListener):
         view.show(location)
         globals()['place'] = None
 
+class Namespace:
+    def __init__(self):
+        self._patterns = [
+            compile(r"namespace\s*\(\s*(['\"])\s*([^'\"]+)\1"),
+            compile(r"['\"]namespace['\"]\s*=>\s*(['\"])([^'\"]+)\1"),
+        ]
+
+    def find(self, view, selection):
+        ''' find the namespace of the selection'''
+        self._fullText = view.substr(sublime.Region(0, view.size()))
+        self._length = len(self._fullText)
+
+        blocks = self.blocks(selection)
+        for closure in blocks:
+            if closure['range'].contains(selection):
+                return closure['namespace']
+        return ''
+
+    def blocks(self, selection):
+        '''get all closure blocks'''
+        blocks = []
+        for pattern in self._patterns:
+            for match in pattern.finditer(self._fullText):
+                start = match.start()
+                if selection.a > start:
+                    end = self.getEndPosition(start)
+                    blocks.append({
+                        'namespace': match.group(2),
+                        'range': sublime.Region(start, end)
+                    })
+        return blocks
+
+    def getEndPosition(self, start):
+        '''get the end postion from the start postion'''
+        result = []
+        while self._length > start:
+            if ('{' == self._fullText[start]):
+                result.append(start)
+            elif ('}' == self._fullText[start]):
+                result.pop()
+                if (0 == len(result)):
+                    return start
+            start = start + 1
+
+        return start
+
+
 class LaravelGotoCommand(sublime_plugin.TextCommand):
     def __init__(self, view):
         super().__init__(view)
@@ -69,6 +115,7 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         # make sure extensions are lower case
         globals()['extensions'] = list(map(
             lambda ext: ext.lower(), extensions))
+        self._namespace = Namespace()
 
     def run(self, edit):
         self.window = sublime.active_window()
@@ -115,7 +162,7 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
             path = path.replace('@', '.php@')
             # it's not absolute path namespace
             if '\\' != path[0]:
-                namespace = self.get_namespace(selected)
+                namespace = self._namespace.find(self.view, selected)
                 if namespace:
                     path = namespace + '\\' + path
 
@@ -172,19 +219,6 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         matched = env_pattern.search(line)
         return (matched and path == matched.group(2))
 
-    def get_namespace(self, selected):
-        functions = self.view.find_by_selector('meta.function-call')
-        for function in functions:
-            if (not function.contains(selected)):
-                continue
-            region = self.view.line(function)
-            block = self.substr(region).strip()
-            for pattern in patterns:
-                matched = pattern.search(block)
-                if (matched):
-                    return matched.group(2)
-        return
-
     def search(self, place):
         args = {
             "overlay": "goto",
@@ -201,3 +235,7 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         else:
             self.window.run_command("show_overlay", args)
         return
+
+
+
+
