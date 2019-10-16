@@ -87,6 +87,9 @@ class TestLaravelGotoCommand(TestCase):
     def test_lang_trans_package(self):
         self.assert_select(985, 'messages.php')
 
+    def test_relative_path_static_file(self):
+        self.assert_select(1005, 'hello.css')
+
     def assert_select(self, point, expectation):
         sel = self.view.sel()
         sel.clear()

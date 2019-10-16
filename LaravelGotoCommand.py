@@ -55,6 +55,7 @@ class GotoLocaltion(sublime_plugin.EventListener):
         view.show(location)
         globals()['place'] = None
 
+
 class Namespace:
     def __init__(self):
         self._patterns = [
@@ -167,6 +168,11 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
                     path = namespace + '\\' + path
 
         elif(self.is_static_file(path)):
+            # remove dot symbols
+            splited = list(filter(
+                lambda x: x != '..' and x != '.',
+                path.split('/')))
+            path = '/'.join(splited)
             pass
 
         elif(self.is_env(path, line)):

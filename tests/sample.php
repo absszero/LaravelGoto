@@ -50,3 +50,6 @@ trans('messages.welcome');
 trans_choice('messages.apples', 10);
 
 trans('package::messages');
+
+'./../../hello.css'
+
