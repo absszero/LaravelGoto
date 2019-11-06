@@ -36,9 +36,9 @@ class Place:
         self.find = find
 
 
-class GotoLocaltion(sublime_plugin.EventListener):
+class GotoLocation(sublime_plugin.EventListener):
     def on_activated(self, view):
-        place = globals()['place']
+        global place
         filepath = view.file_name()
         if (not place or not filepath):
             return
@@ -53,7 +53,7 @@ class GotoLocaltion(sublime_plugin.EventListener):
         view.sel().clear()
         view.sel().add(location)
         view.show(location)
-        globals()['place'] = None
+        place = None
 
 
 class Namespace:
@@ -89,7 +89,7 @@ class Namespace:
         return blocks
 
     def getEndPosition(self, start):
-        '''get the end postion from the start postion'''
+        '''get the end position from the start position'''
         result = []
         while self._length > start:
             if ('{' == self._fullText[start]):
@@ -119,10 +119,10 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         self._namespace = Namespace()
 
     def run(self, edit):
+        global place
         self.window = sublime.active_window()
         selection = self.get_selection(self.view.sel()[0])
         place = self.get_place(selection)
-        globals()['place'] = place
         self.search(place)
         return
 
@@ -169,10 +169,10 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
 
         elif(self.is_static_file(path)):
             # remove dot symbols
-            splited = list(filter(
+            split = list(filter(
                 lambda x: x != '..' and x != '.',
                 path.split('/')))
-            path = '/'.join(splited)
+            path = '/'.join(split)
             pass
 
         elif(self.is_env(path, line)):
@@ -180,20 +180,20 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
             path = '.env'
 
         elif(self.is_config(path, line)):
-            splited = path.split('.')
-            path = 'config/' + splited[0] + '.php'
-            if (2 <= len(splited)):
-                find = find_pattern % (splited[1])
+            split = path.split('.')
+            path = 'config/' + split[0] + '.php'
+            if (2 <= len(split)):
+                find = find_pattern % (split[1])
 
         elif(self.is_lang(path, line)):
             # a package lang file
             if '::' in path:
                 path = path.split(':')[-1] + '.php'
             else:
-                splited = path.split('.')
-                path = 'resources/lang/' + splited[0] + '.php'
-                if (2 <= len(splited)):
-                    find = find_pattern % (splited[1])
+                split = path.split('.')
+                path = 'resources/lang/' + split[0] + '.php'
+                if (2 <= len(split)):
+                    find = find_pattern % (split[1])
 
         else:
             # remove Blade Namespace
@@ -241,7 +241,3 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         else:
             self.window.run_command("show_overlay", args)
         return
-
-
-
-

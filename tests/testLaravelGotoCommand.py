@@ -72,7 +72,7 @@ class TestLaravelGotoCommand(TestCase):
     def test_env(self):
         self.assert_select(830, '.env')
 
-    def test_lang_undersocre(self):
+    def test_lang_underscore(self):
         self.assert_select(860, 'messages.php')
 
     def test_lang_blade_directive(self):
