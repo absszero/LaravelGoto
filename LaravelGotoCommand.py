@@ -206,9 +206,10 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
 
     def is_config(self, path, line):
         for pattern in config_patterns:
-            matched = pattern.search(line)
-            if (matched and path == matched.group(2)):
-                return True
+            matcheds = pattern.finditer(line)
+            for matched in matcheds:
+                if (matched and path == matched.group(2)):
+                    return True
         return False
 
     def is_lang(self, path, line):

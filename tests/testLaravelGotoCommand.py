@@ -69,6 +69,9 @@ class TestLaravelGotoCommand(TestCase):
     def test_config_set(self):
         self.assert_select(800, 'app.php')
 
+    def test_config_in_config(self):
+        self.assert_select(1055, 'app.php')
+
     def test_env(self):
         self.assert_select(830, '.env')
 

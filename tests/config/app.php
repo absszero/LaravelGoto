@@ -2,4 +2,5 @@
 
 return [
     'timezone' => 'UTC',
+    'tz' => 'UTC'
 ];
