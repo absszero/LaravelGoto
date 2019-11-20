@@ -93,6 +93,9 @@ class TestLaravelGotoCommand(TestCase):
     def test_relative_path_static_file(self):
         self.assert_select(1005, 'hello.css')
 
+    def test_package_view(self):
+        self.assert_select(1080, 'hello_view.blade.php')
+
     def assert_select(self, point, expectation):
         sel = self.view.sel()
         sel.clear()

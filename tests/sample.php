@@ -54,3 +54,5 @@ trans('package::messages');
 './../../hello.css'
 
 config(['app.timezone' => config('app.tz')]);
+
+view('package::hello_view');

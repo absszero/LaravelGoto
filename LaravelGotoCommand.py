@@ -186,19 +186,28 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
                 find = find_pattern % (split[1])
 
         elif(self.is_lang(path, line)):
-            # a package lang file
-            if '::' in path:
-                path = path.split(':')[-1] + '.php'
-            else:
-                split = path.split('.')
-                path = 'resources/lang/' + split[0] + '.php'
-                if (2 <= len(split)):
-                    find = find_pattern % (split[1])
+            split = path.split(':')
+            vendor = ''
+            # it's package trans
+            if (3 == len(split)):
+                vendor = '/vendor/' + split[0]
+            keys = split[-1].split('.')
+            path = 'resources/lang' + vendor + '/' + keys[0] + '.php'
+
+            if (2 <= len(keys)):
+                find = find_pattern % (keys[1])
 
         else:
-            # remove Blade Namespace
-            path = path.split(':')[-1]
-            path = path.replace('.', '/') + '.blade.php'
+            split = path.split(':')
+            vendor = ''
+            # vendor or namespace
+            if (3 == len(split)):
+                # vendor probably is lowercase
+                if (split[0] == split[0].lower()):
+                    vendor = split[0] + '/'
+
+            path = split[-1]
+            path = vendor + path.replace('.', '/') + '.blade.php'
         return Place(path, is_controller, find)
 
     def is_controller(self, path):
