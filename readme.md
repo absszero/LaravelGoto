@@ -1,6 +1,6 @@
 # Laravel Goto for Sublime Text
 
-Goto various Laravel files by `Alt`+`Left-Click`
+Goto various Laravel files
 
 ![example](example.gif)
 
@@ -68,9 +68,7 @@ Goto various Laravel files by `Alt`+`Left-Click`
 
 ## Usage
 
-- Move your cursor on a text, Press `Alt`+`Left-Click` or `Alt`+`;` to run the command.
-- Select a text, `Right-Click` to open content menu, Press `Laravel Goto`.
-
+- Select a text, `Right-Click` to open content menu, Press `Laravel Goto` or use `Alt + ;`.
 
 
 ## Extend static file extensions
