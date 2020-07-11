@@ -7,10 +7,6 @@ plugin_settings = None
 user_settings = None
 extensions = None
 place = None
-patterns = [
-    compile(r"namespace\s*\(\s*(['\"])\s*([^'\"]+)\1"),
-    compile(r"['\"]namespace['\"]\s*=>\s*(['\"])([^'\"]+)\1"),
-]
 config_patterns = [
     compile(r"Config::[^'\"]*(['\"])([^'\"]*)\1"),
     compile(r"config\([^'\"]*(['\"])([^'\"]*)\1"),
@@ -24,16 +20,17 @@ lang_patterns = [
 
 env_pattern = compile(r"env\(\s*(['\"])([^'\"]*)\1")
 
-excludes_dir = ['.git', '.svn', 'node_modules', 'vendor']
+path_helper_pattern = compile(r"([^_]+)_path\(\s*(['\"])([^'\"]*)\2")
 
 find_pattern = "(['\"]{1})%s\\1\\s*=>"
 
 
 class Place:
-    def __init__(self, path, is_controller, find):
+    is_controller = False
+
+    def __init__(self, path, location=None):
         self.path = path
-        self.is_controller = is_controller
-        self.find = find
+        self.location = location
 
 
 class GotoLocation(sublime_plugin.EventListener):
@@ -156,84 +153,105 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         region = self.view.line(selected.a)
         line = self.substr(region).strip()
         path = self.substr(selected).strip()
-        is_controller = self.is_controller(path)
-        find = None
 
-        if (is_controller):
-            path = path.replace('@', '.php@')
-            # it's not absolute path namespace
-            if '\\' != path[0]:
-                namespace = self._namespace.find(self.view, selected)
-                if namespace:
-                    path = namespace + '\\' + path
+        places = (
+            self.controller_place,
+            self.static_file_place,
+            self.env_place,
+            self.config_place,
+            self.lang_place,
+        )
 
-        elif(self.is_static_file(path)):
-            # remove dot symbols
-            split = list(filter(
-                lambda x: x != '..' and x != '.',
-                path.split('/')))
-            path = '/'.join(split)
-            pass
+        for fn in places:
+            place = fn(path, line, selected)
+            if place:
+                return place
 
-        elif(self.is_env(path, line)):
-            find = path
-            path = '.env'
+        return self.view_place(path, line, selected)
 
-        elif(self.is_config(path, line)):
-            split = path.split('.')
-            path = 'config/' + split[0] + '.php'
-            if (2 <= len(split)):
-                find = find_pattern % (split[1])
+    def controller_place(self, path, line, selected):
+        find = "@" in path or "Controller" in path
+        if find is False:
+            return False
+        path = path.replace('@', '.php@')
+        # it's not absolute path namespace
+        if '\\' != path[0]:
+            namespace = self._namespace.find(self.view, selected)
+            if namespace:
+                path = namespace + '\\' + path
+        place = Place(path)
+        place.is_controller = True
+        return place
 
-        elif(self.is_lang(path, line)):
-            split = path.split(':')
-            vendor = ''
-            # it's package trans
-            if (3 == len(split)):
-                vendor = '/vendor/' + split[0]
-            keys = split[-1].split('.')
-            path = 'resources/lang' + vendor + '/' + keys[0] + '.php'
-
-            if (2 <= len(keys)):
-                find = find_pattern % (keys[1])
-
-        else:
-            split = path.split(':')
-            vendor = ''
-            # vendor or namespace
-            if (3 == len(split)):
-                # vendor probably is lowercase
-                if (split[0] == split[0].lower()):
-                    vendor = split[0] + '/'
-
-            path = split[-1]
-            path = vendor + path.replace('.', '/') + '.blade.php'
-        return Place(path, is_controller, find)
-
-    def is_controller(self, path):
-        return "@" in path or "Controller" in path
-
-    def is_config(self, path, line):
+    def config_place(self, path, line, selected):
         for pattern in config_patterns:
             matcheds = pattern.finditer(line)
             for matched in matcheds:
                 if (matched and path == matched.group(2)):
-                    return True
+                    split = path.split('.')
+                    path = 'config/' + split[0] + '.php'
+                    location = None
+                    if (2 <= len(split)):
+                        location = find_pattern % (split[1])
+                    return Place(path, location)
+
         return False
 
-    def is_lang(self, path, line):
+    def lang_place(self, path, line, selected):
         for pattern in lang_patterns:
             matched = pattern.search(line)
             if (matched and path == matched.group(2)):
-                return True
+                split = path.split(':')
+                vendor = ''
+                # it's package trans
+                if (3 == len(split)):
+                    vendor = '/vendor/' + split[0]
+                keys = split[-1].split('.')
+                path = 'resources/lang' + vendor + '/' + keys[0] + '.php'
+
+                location = None
+                if (2 <= len(keys)):
+                    location = find_pattern % (keys[1])
+                return Place(path, location)
+
         return False
 
-    def is_static_file(self, path):
-        return (path.split('.')[-1].lower() in extensions)
+    def static_file_place(self, path, line, selected):
+        find = (path.split('.')[-1].lower() in extensions)
+        if find is False:
+            return False
 
-    def is_env(self, path, line):
+        # remove dot symbols
+        split = list(filter(
+            lambda x: x != '..' and x != '.',
+            path.split('/')))
+        return Place('/'.join(split))
+
+    def env_place(self, path, line, selected):
         matched = env_pattern.search(line)
-        return (matched and path == matched.group(2))
+        find = (matched and path == matched.group(2))
+        if find:
+            return Place('.env', path)
+        return False
+
+    def view_place(self, path, line, selected):
+        split = path.split(':')
+        vendor = ''
+        # vendor or namespace
+        if (3 == len(split)):
+            # vendor probably is lowercase
+            if (split[0] == split[0].lower()):
+                vendor = split[0] + '/'
+
+        path = split[-1]
+        path = vendor + path.replace('.', '/') + '.blade.php'
+        return Place(path)
+
+    def path_helper_place(self, path, line, selected):
+        matched = env_pattern.search(line)
+        if (matched and path == matched.group(2)):
+            return Place(path)
+        return False
 
     def search(self, place):
         args = {
