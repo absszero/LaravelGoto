@@ -155,6 +155,7 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         path = self.substr(selected).strip()
 
         places = (
+            self.path_helper_place,
             self.controller_place,
             self.static_file_place,
             self.env_place,
@@ -248,9 +249,15 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         return Place(path)
 
     def path_helper_place(self, path, line, selected):
-        matched = env_pattern.search(line)
-        if (matched and path == matched.group(2)):
-            return Place(path)
+        matched = path_helper_pattern.search(line)
+        if (matched and path == matched.group(3)):
+            prefix = matched.group(1) + '/'
+            if 'base/' == prefix:
+                prefix = ''
+            elif 'resource/' == prefix:
+                prefix = 'resources/'
+
+            return Place(prefix + path)
         return False
 
     def search(self, place):

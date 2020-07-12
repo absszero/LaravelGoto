@@ -96,6 +96,24 @@ class TestLaravelGotoCommand(TestCase):
     def test_package_view(self):
         self.assert_select(1080, 'hello_view.blade.php')
 
+    def test_app_path(self):
+        self.assert_select(1110, 'User.php')
+
+    def test_config_path(self):
+        self.assert_select(1155, 'app.php')
+
+    def test_database_path(self):
+        self.assert_select(1185, 'UserFactory.php')
+
+    def test_public_path(self):
+        self.assert_select(1220, 'app.css')
+
+    def test_resource_path(self):
+        self.assert_select(1250, 'app.scss')
+
+    def test_storage_path(self):
+        self.assert_select(1285, 'laravel.log')
+
     def assert_select(self, point, expectation):
         sel = self.view.sel()
         sel.clear()
