@@ -41,10 +41,10 @@ class GotoLocation(sublime_plugin.EventListener):
             return
         if (basename(filepath) != basename(place.path)):
             return
-        if (not isinstance(place.find, str)):
+        if (not isinstance(place.location, str)):
             return
 
-        location = view.find(place.find, 0)
+        location = view.find(place.location, 0)
         # fix .env not show selected if no scrolling happened
         view.set_viewport_position((0, 1))
         view.sel().clear()

@@ -18,6 +18,15 @@ Goto various Laravel files
 
 - Go to .env and highlight option
 
+- Go to paths by path helers, EX:
+  - app_path('User.php');
+  - base_path('vendor');
+  - config_path('app.php');
+  - database_path('UserFactory.php');
+  - public_path('css/app.css');
+  - resource_path('sass/app.scss');
+  - storage_path('logs/laravel.log');
+
 - Default supported static file extensions
 
     - js
