@@ -18,7 +18,7 @@ Goto various Laravel files
 
 - Go to .env and highlight option
 
-- Go to paths by path helers, EX:
+- Go to paths by path helpers, EX:
   - app_path('User.php');
   - base_path('vendor');
   - config_path('app.php');
