@@ -20,7 +20,7 @@ lang_patterns = [
 
 env_pattern = compile(r"env\(\s*(['\"])([^'\"]*)\1")
 
-path_helper_pattern = compile(r"([^_]+)_path\(\s*(['\"])([^'\"]*)\2")
+path_helper_pattern = compile(r"([\w^_]+)_path\(\s*(['\"])([^'\"]*)\2")
 
 find_pattern = "(['\"]{1})%s\\1\\s*=>"
 

@@ -114,6 +114,9 @@ class TestLaravelGotoCommand(TestCase):
     def test_storage_path(self):
         self.assert_select(1285, 'laravel.log')
 
+    def test_double_brackets_path(self):
+        self.assert_select(1330, 'laravel.log')
+
     def assert_select(self, point, expectation):
         sel = self.view.sel()
         sel.clear()
