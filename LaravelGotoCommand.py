@@ -131,23 +131,7 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         return self.view.substr(mixed)
 
     def get_selection(self, selected):
-        start = selected.begin()
-        end = selected.end()
-
-        if start == end:
-            line = self.view.line(start)
-            delimiters = "\"'"
-            while start > line.a:
-                if self.substr(start - 1) in delimiters:
-                    break
-                start -= 1
-
-            while end < line.b:
-                if self.substr(end) in delimiters:
-                    break
-                end += 1
-
-        return sublime.Region(start, end)
+        return self.view.extract_scope(selected.begin())
 
     def get_place(self, selected):
         region = self.view.line(selected.a)
@@ -170,16 +154,70 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
 
         return self.view_place(path, line, selected)
 
+    def set_controller_action(self, path, score, selected):
+        ''' set the controller action '''
+
+        path = path.replace('@', '.php@')
+        if 'support.class.php' in score:
+            path = path + '.php'
+            action = ''
+            if 'meta.array.php' in score:
+                pos = selected.end()
+                line = self.view.line(pos)
+                delimiters = "\"'"
+                while pos < line.b:
+                    if self.substr(pos) in delimiters:
+                        action = self.view.extract_scope(pos+1)
+                        action = '@' + self.substr(action)
+                        break
+                    pos += 1
+            path = path + action
+
+        return path
+
+    def set_controller_namespace(self, path, score, selected):
+        ''' set the controller namespace '''
+
+        is_class = 'support.class.php' in score
+
+        if is_class:
+            ''' get class namespace '''
+            pos = selected.begin()
+            line = self.view.line(pos)
+            while pos > line.a:
+                namespace_matched = self.view.match_selector(
+                    pos,
+                    'support.other.namespace.php'
+                )
+                separator_matched = self.view.match_selector(
+                    pos,
+                    'punctuation.separator.namespace.php'
+                )
+                if False == (namespace_matched or separator_matched):
+                    break
+                pos -= 1
+
+            if pos != selected.begin():
+                region = sublime.Region(pos + 1, selected.begin())
+                path = self.substr(region) + path
+
+        if '\\' != path[0] or is_class:
+            # it's not absolute path namespace, get group namespace
+            namespace = self._namespace.find(self.view, selected)
+            if namespace:
+                path = namespace + '\\' + path.lstrip('\\')
+
+        return path
+
     def controller_place(self, path, line, selected):
         find = "@" in path or "Controller" in path
         if find is False:
             return False
-        path = path.replace('@', '.php@')
-        # it's not absolute path namespace
-        if '\\' != path[0]:
-            namespace = self._namespace.find(self.view, selected)
-            if namespace:
-                path = namespace + '\\' + path
+
+        score = self.view.scope_name(selected.begin()+1)
+        path = self.set_controller_action(path, score, selected)
+        path = self.set_controller_namespace(path, score, selected)
+
         place = Place(path)
         place.is_controller = True
         return place

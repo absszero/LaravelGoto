@@ -117,6 +117,15 @@ class TestLaravelGotoCommand(TestCase):
     def test_double_brackets_path(self):
         self.assert_select(1330, 'laravel.log')
 
+    def test_v8_namespace_route(self):
+        self.assert_select(1365, 'EightController.php')
+
+    def test_v8_route(self):
+        self.assert_select(1420, 'EightController.php')
+
+    def test_v8_group_namespae_route(self):
+        self.assert_select(1520, 'EightController.php')
+
     def assert_select(self, point, expectation):
         sel = self.view.sel()
         sel.clear()
