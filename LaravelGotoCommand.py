@@ -125,7 +125,15 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
 
     def is_visible(self):
         filename = self.view.file_name()
-        return bool(filename and filename.endswith('.php'))
+        return bool(filename and
+            (
+                filename.endswith('.php') or
+                filename.endswith('.js') or
+                filename.endswith('.ts') or
+                filename.endswith('.jsx') or
+                filename.endswith('.vue')
+                )
+            )
 
     def substr(self, mixed):
         return self.view.substr(mixed)
@@ -136,7 +144,7 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
     def get_place(self, selected):
         region = self.view.line(selected.a)
         line = self.substr(region).strip()
-        path = self.substr(selected).strip()
+        path = self.substr(selected).strip("'\"")
 
         places = (
             self.path_helper_place,
