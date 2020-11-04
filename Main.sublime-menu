@@ -19,7 +19,7 @@
                                 "caption": "Settings",
                                 "command": "edit_settings",
                                 "args": {
-                                    "base_file": "${packages}/LaravelGoto/Plugin.sublime-settings",
+                                    "base_file": "${packages}/LaravelGoto/LaravelGoto.sublime-settings",
                                     "default": "{}"
                                 }
                             },

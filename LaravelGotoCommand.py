@@ -104,7 +104,7 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
     def __init__(self, view):
         super().__init__(view)
         globals()['plugin_settings'] = sublime\
-            .load_settings("Plugin.sublime-settings")
+            .load_settings("LaravelGoto.sublime-settings")
         globals()['user_settings'] = sublime.\
             load_settings("Preferences.sublime-settings")
         # combine extensions
