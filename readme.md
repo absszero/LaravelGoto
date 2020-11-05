@@ -87,6 +87,6 @@ You can add other file extensions throught `Preferences > Package Settings > Lar
 ```json
     "static_extensions": [
         "your_extension_here"
-    ]
+]
 ```
 
