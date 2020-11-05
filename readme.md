@@ -85,8 +85,8 @@ Goto various Laravel files
 You can add other file extensions throught `Preferences > Package Settings > LaravelGoto > Settings`, and add this option `static_extensions`
 
 ```json
-    "static_extensions": [
-        "your_extension_here"
+"static_extensions": [
+    "your_extension_here"
 ]
 ```
 
