@@ -139,7 +139,26 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         return self.view.substr(mixed)
 
     def get_selection(self, selected):
-        return self.view.extract_scope(selected.begin())
+        start = selected.begin()
+        end = selected.end()
+
+        if start == end:
+            line = self.view.line(start)
+            selected = self.view.extract_scope(start)
+            if line.contains(selected):
+                return selected
+            delimiters = "\"'"
+            while start > line.a:
+                if self.substr(start - 1) in delimiters:
+                    break
+                start -= 1
+
+            while end < line.b:
+                if self.substr(end) in delimiters:
+                    break
+                end += 1
+
+        return sublime.Region(start, end)
 
     def get_place(self, selected):
         region = self.view.line(selected.a)
