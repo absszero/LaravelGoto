@@ -125,8 +125,12 @@ class TestLaravelGotoCommand(TestCase):
     def test_v8_route(self):
         self.assert_select(1420, 'EightController.php')
 
+    def test_v8_group_namespae_abs_route(self):
+        self.assert_select(1520, '\\EightController.php@index')
+
     def test_v8_group_namespae_route(self):
-        self.assert_select(1520, 'L8\\EightController.php@index')
+        self.assert_select(1630, 'L8\\EightController.php@index')
+
 
     def assert_select(self, point, expectation):
         sel = self.view.sel()

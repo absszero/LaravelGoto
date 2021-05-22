@@ -80,3 +80,7 @@ Route::get('/', EightController::class);
 Route::group(['namespace' => 'L8'], function () {
     Route::get('/', [\EightController::class, 'index']);
 });
+
+Route::group(['namespace' => 'L8'], function () {
+    Route::get('/', [EightController::class, 'index']);
+});
