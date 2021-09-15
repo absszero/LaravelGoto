@@ -1,5 +1,9 @@
 # Laravel Goto for Sublime Text
 
+[![Github Action](https://github.com/absszero/LaravelGoto/workflows/build/badge.svg)](https://github.com/absszero/LaravelGoto/actions)
+
+------------
+
 Goto various Laravel files
 
 ![example](example.gif)
