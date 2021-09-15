@@ -1,0 +1,185 @@
+import sublime
+from re import compile
+from . import namespace
+
+config_patterns = [
+    compile(r"Config::[^'\"]*(['\"])([^'\"]*)\1"),
+    compile(r"config\([^'\"]*(['\"])([^'\"]*)\1"),
+]
+
+lang_patterns = [
+    compile(r"__\([^'\"]*(['\"])([^'\"]*)\1"),
+    compile(r"@lang\([^'\"]*(['\"])([^'\"]*)\1"),
+    compile(r"trans\([^'\"]*(['\"])([^'\"]*)\1"),
+    compile(r"trans_choice\([^'\"]*(['\"])([^'\"]*)\1"),
+]
+
+env_pattern = compile(r"env\(\s*(['\"])([^'\"]*)\1")
+
+path_helper_pattern = compile(r"([\w^_]+)_path\(\s*(['\"])([^'\"]*)\2")
+
+find_pattern = "(['\"]{1})%s\\1\\s*=>"
+
+class_controller_pattern = compile(r"(.+)\.php\s*,\s*[\"']{1}(.+)")
+
+extensions = []
+
+
+class Place:
+    is_controller = False
+
+    def __init__(self, path, location=None):
+        self.path = path
+        self.location = location
+
+
+def init_extensions():
+    plugin_settings = sublime.load_settings("LaravelGoto.sublime-settings")
+    user_settings = sublime.load_settings("Preferences.sublime-settings")
+
+    # combine extensions
+    extensions = user_settings.get("static_extensions", []) +\
+        plugin_settings.get("static_extensions", [])
+    # make sure extensions are lower case
+    globals()['extensions'] = list(map(
+        lambda ext: ext.lower(), extensions))
+
+
+def get_place(selection):
+    line = selection.substr_line().strip()
+    path = selection.substr().strip(selection.delimiters + ' ')
+
+    places = (
+        path_helper_place,
+        controller_place,
+        static_file_place,
+        env_place,
+        config_place,
+        lang_place,
+    )
+
+    for fn in places:
+        place = fn(path, line, selection)
+        if place:
+            return place
+
+    return view_place(path, line, selection)
+
+
+def set_controller_action(path, selected):
+    ''' set the controller action '''
+
+    path = path.replace('@', '.php@')
+    path = path.replace('::class', '.php')
+    if selected.is_class:
+        matched = class_controller_pattern.search(path)
+        if matched:
+            path = matched.group(1) + '.php@' + matched.group(2)
+    return path
+
+
+def set_controller_namespace(path, selection):
+    ''' set the controller namespace '''
+
+    if '\\' != path[0]:
+        # it's not absolute path namespace, get group namespace
+        ns = namespace.find(selection.view, selection)
+        if ns:
+            path = ns + '\\' + path.lstrip('\\')
+
+    return path
+
+
+def controller_place(path, line, selection):
+    find = "@" in path or "Controller" in path or selection.is_class
+    if find is False:
+        return False
+
+    path = set_controller_action(path, selection)
+    path = set_controller_namespace(path, selection)
+
+    place = Place(path)
+    place.is_controller = True
+    return place
+
+
+def config_place(path, line, selected):
+    for pattern in config_patterns:
+        matcheds = pattern.finditer(line)
+        for matched in matcheds:
+            if (matched and path == matched.group(2)):
+                split = path.split('.')
+                path = 'config/' + split[0] + '.php'
+                location = None
+                if (2 <= len(split)):
+                    location = find_pattern % (split[1])
+                return Place(path, location)
+
+    return False
+
+
+def lang_place(path, line, selected):
+    for pattern in lang_patterns:
+        matched = pattern.search(line)
+        if (matched and path == matched.group(2)):
+            split = path.split(':')
+            vendor = ''
+            # it's package trans
+            if (3 == len(split)):
+                vendor = '/vendor/' + split[0]
+            keys = split[-1].split('.')
+            path = 'resources/lang' + vendor + '/' + keys[0] + '.php'
+
+            location = None
+            if (2 <= len(keys)):
+                location = find_pattern % (keys[1])
+            return Place(path, location)
+
+    return False
+
+
+def static_file_place(path, line, selected):
+    find = (path.split('.')[-1].lower() in extensions)
+    if find is False:
+        return False
+
+    # remove dot symbols
+    split = list(filter(
+        lambda x: x != '..' and x != '.',
+        path.split('/')))
+    return Place('/'.join(split))
+
+
+def env_place(path, line, selected):
+    matched = env_pattern.search(line)
+    find = (matched and path == matched.group(2))
+    if find:
+        return Place('.env', path)
+    return False
+
+
+def view_place(path, line, selected):
+    split = path.split(':')
+    vendor = ''
+    # vendor or namespace
+    if (3 == len(split)):
+        # vendor probably is lowercase
+        if (split[0] == split[0].lower()):
+            vendor = split[0] + '/'
+
+    path = split[-1]
+    path = vendor + path.replace('.', '/') + '.blade.php'
+    return Place(path)
+
+
+def path_helper_place(path, line, selected):
+    matched = path_helper_pattern.search(line)
+    if (matched and path == matched.group(3)):
+        prefix = matched.group(1) + '/'
+        if 'base/' == prefix:
+            prefix = ''
+        elif 'resource/' == prefix:
+            prefix = 'resources/'
+
+        return Place(prefix + path)
+    return False
