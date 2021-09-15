@@ -41,7 +41,7 @@ def init_extensions():
     extensions = user_settings.get("static_extensions", []) +\
         plugin_settings.get("static_extensions", [])
     # make sure extensions are lower case
-    extensions = list(map(
+    globals()['extensions'] = list(map(
         lambda ext: ext.lower(), extensions))
 
 

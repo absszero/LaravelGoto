@@ -1,6 +1,6 @@
 name: build
 
-on: [push, pull_request]
+on: [push]
 
 # if need master branch of UnitTesting
 #  env:
@@ -22,13 +22,13 @@ jobs:
           sh github.sh install_package_control
           sh github.sh run_tests --coverage
           # sh github.sh run_syntax_tests --coverage
-      - run: |
-          apt-get update
-          apt-get install python3-pip -y
-          pip3 install coverage==4.5.4 codecov==2.0.15
-          codecov
-        env:
-          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
+      # - run: |
+      #     apt-get update
+      #     apt-get install python3-pip -y
+      #     pip3 install coverage==4.5.4 codecov==2.0.15
+      #     codecov
+      #   env:
+      #     CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
   macos:
     runs-on: macos-latest
     steps:
@@ -40,11 +40,11 @@ jobs:
           sh github.sh install_package_control
           sh github.sh run_tests --coverage
           # sh github.sh run_syntax_tests --coverage
-      - run: |
-          pip3 install coverage==4.5.4 codecov==2.0.15
-          codecov
-        env:
-          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
+      # - run: |
+      #     pip3 install coverage==4.5.4 codecov==2.0.15
+      #     codecov
+      #   env:
+      #     CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
   windows:
     runs-on: windows-latest
     steps:
@@ -55,8 +55,8 @@ jobs:
           ./github.ps1 "install_package_control" -verbose
           ./github.ps1 "run_tests" -coverage -verbose
           # ./github.ps1 "run_syntax_tests" -coverage -verbose
-      - run: |
-          pip3 install coverage==4.5.4 codecov==2.0.15
-          codecov
-        env:
-          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
+      # - run: |
+      #     pip3 install coverage==4.5.4 codecov==2.0.15
+      #     codecov
+      #   env:
+      #     CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
