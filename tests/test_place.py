@@ -17,6 +17,30 @@ class TestPlace(unittest.ViewTestCase):
         self.assertEqual(True, place.is_controller)
         self.assertEqual("HelloController.php@index", place.path)
 
+    def test_component(self):
+        self.fixture("""<x-form.|input/>""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual("form/input.php", place.path)
+
+    def test_closing_tag_component(self):
+        self.fixture("""</x-al|ert>""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual("alert.php", place.path)
+
+    def test_component_with_namespace(self):
+        self.fixture("""<x-namespace::|alert/>""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual("namespace/alert.php", place.path)
+
     def test_view(self):
         self.fixture("""Route::get('/', function () {
     return view('hello|_view');

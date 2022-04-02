@@ -84,3 +84,9 @@ Route::group(['namespace' => 'L8'], function () {
 Route::group(['namespace' => 'L8'], function () {
     Route::get('/', [EightController::class, 'index']);
 });
+
+<x-vendor::hello />
+
+</x-alert>
+
+<x-forms.input/>

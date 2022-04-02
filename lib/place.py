@@ -22,6 +22,8 @@ find_pattern = "(['\"]{1})%s\\1\\s*=>"
 
 class_controller_pattern = compile(r"(.+)\.php\s*,\s*[\"']{1}(.+)")
 
+component_pattern = compile(r"<\/?x-([^\/>]*)")
+
 extensions = []
 
 
@@ -159,6 +161,10 @@ def env_place(path, line, selected):
 
 
 def view_place(path, line, selected):
+    matched = component_pattern.search(line)
+    if matched:
+        path = matched.group(1).strip()
+
     split = path.split(':')
     vendor = ''
     # vendor or namespace
@@ -168,7 +174,12 @@ def view_place(path, line, selected):
             vendor = split[0] + '/'
 
     path = split[-1]
-    path = vendor + path.replace('.', '/') + '.blade.php'
+    path = vendor + path.replace('.', '/')
+    if matched:
+        path += '.php'
+    else:
+        path += '.blade.php'
+
     return Place(path)
 
 
