@@ -29,7 +29,7 @@ class Selection(sublime.Region):
         selected = self.view.extract_scope(start)
         if self.line.contains(selected):
             if self.is_class:
-                selected = self.get_selected_by_delimiters(selected, ',[', '])')
+                selected = self.get_selected_by_delimiters(selected, ',[<', '>])')
             return selected
         return self.get_selected_by_delimiters(selected, self.delimiters)
 

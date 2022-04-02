@@ -10,11 +10,15 @@ Goto various Laravel files
 
 ## Feature
 
-- Go to Blade Template files *(EX. hello.blade.php)*
+- Go to Blade Template files (EX. hello.blade.php)
 
-- Go to Controller and highlight method *(EX. \Namespace\Controller.php@Method)*
+- Go to Blade Component files (EX. &lt;x-alert&gt;)
 
-- Go to Static files (*EX. hello.js*)
+- Go to Blade Template files (EX. hello.blade.php)
+
+- Go to Controller and highlight method (EX. \Namespace\Controller.php@Method)
+
+- Go to Static files (EX. hello.js)
 
 - Go to Config files and highlight option (EX. config/app.php)
 
