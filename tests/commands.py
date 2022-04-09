@@ -2,7 +2,7 @@ from sublime_plugin import TextCommand
 from sublime import Region
 
 
-class JesterSetupFixtureCommand(TextCommand):
+class SetupFixtureCommand(TextCommand):
     def run(self, edit, text):
         self.view.replace(edit, Region(0, self.view.size()), text)
 

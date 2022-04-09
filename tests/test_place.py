@@ -68,7 +68,7 @@ class TestPlace(unittest.ViewTestCase):
         place = get_place(selection)
 
         self.assertEqual(True, place.is_controller)
-        self.assertEqual('FiveEightController.php@index', place.path)
+        self.assertEqual('58\\FiveEightController.php@index', place.path)
 
     def test_namespace52(self):
         self.fixture("""Route::group(['namespace' => '52'], function () {
@@ -79,7 +79,7 @@ class TestPlace(unittest.ViewTestCase):
         place = get_place(selection)
 
         self.assertEqual(True, place.is_controller)
-        self.assertEqual('FiveTwoController.php@index', place.path)
+        self.assertEqual('52\\FiveTwoController.php@index', place.path)
 
     def test_namespaceLumen(self):
         self.fixture("""$router->group(['namespace' => 'Lumen'], function () use ($router) {
@@ -90,7 +90,7 @@ class TestPlace(unittest.ViewTestCase):
         place = get_place(selection)
 
         self.assertEqual(True, place.is_controller)
-        self.assertEqual('LumenController.php@index', place.path)
+        self.assertEqual('Lumen\\LumenController.php@index', place.path)
 
     def test_view_namespace(self):
         self.fixture("""Route::get('/', function () {
@@ -313,4 +313,4 @@ class TestPlace(unittest.ViewTestCase):
         selection = Selection(self.view)
         place = get_place(selection)
         self.assertEqual(True, place.is_controller)
-        self.assertEqual('EightController.php@index', place.path)
+        self.assertEqual('L8\\EightController.php@index', place.path)

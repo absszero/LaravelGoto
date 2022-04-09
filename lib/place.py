@@ -1,6 +1,6 @@
 import sublime
 from re import compile
-from . import namespace
+from .namespace import Namespace
 
 config_patterns = [
     compile(r"Config::[^'\"]*(['\"])([^'\"]*)\1"),
@@ -85,7 +85,9 @@ def set_controller_namespace(path, selection):
 
     if '\\' != path[0]:
         # it's not absolute path namespace, get group namespace
-        ns = namespace.find(selection.view, selection)
+        namespace = Namespace(selection.view)
+        blocks = namespace.get_blocks(selection)
+        ns = namespace.find(blocks)
         if ns:
             path = ns + '\\' + path.lstrip('\\')
 

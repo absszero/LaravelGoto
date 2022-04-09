@@ -11,7 +11,7 @@ class ViewTestCase(TestCase):
 
     def setUp(self):
         self.view = active_window().create_output_panel(
-            'jester_test_view',
+            'test_view',
             unlisted=True
         )
         self.view.set_scratch(True)
@@ -29,4 +29,4 @@ class ViewTestCase(TestCase):
             self.view.close()
 
     def fixture(self, text):
-        self.view.run_command('jester_setup_fixture', {'text': '<?php ' + text})
+        self.view.run_command('setup_fixture', {'text': '<?php ' + text})
