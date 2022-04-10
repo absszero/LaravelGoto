@@ -68,7 +68,7 @@ def get_place(selection):
     return view_place(path, line, selection)
 
 
-def set_controller_action(path, selected):
+def set_controller_action(path, selected, blocks):
     ''' set the controller action '''
 
     path = path.replace('@', '.php@')
@@ -77,30 +77,40 @@ def set_controller_action(path, selected):
         matched = class_controller_pattern.search(path)
         if matched:
             path = matched.group(1) + '.php@' + matched.group(2)
+
+    elif len(blocks) and blocks[0]['is_namespace'] is False:
+        """resource or controller route"""
+        new_path = blocks[0]['namespace']
+        if new_path != path:
+            path = new_path + '.php@' + path
+        else:
+            path = new_path + '.php'
+
     return path
 
 
-def set_controller_namespace(path, selection):
+def set_controller_namespace(path, selection, ns):
     ''' set the controller namespace '''
 
-    if '\\' != path[0]:
+    if '\\' != path[0] and ns:
         # it's not absolute path namespace, get group namespace
-        namespace = Namespace(selection.view)
-        blocks = namespace.get_blocks(selection)
-        ns = namespace.find(blocks)
-        if ns:
-            path = ns + '\\' + path.lstrip('\\')
+        path = ns + '\\' + path.lstrip('\\')
 
     return path
 
 
 def controller_place(path, line, selection):
-    find = "@" in path or "Controller" in path or selection.is_class
-    if find is False:
+    namespace = Namespace(selection.view)
+    blocks = namespace.get_blocks(selection)
+    is_controller = "Controller" in path or selection.is_class
+
+    if is_controller is False and 0 == len(blocks):
         return False
 
-    path = set_controller_action(path, selection)
-    path = set_controller_namespace(path, selection)
+    path = set_controller_action(path, selection, blocks)
+
+    ns = namespace.find(blocks)
+    path = set_controller_namespace(path, selection, ns)
 
     place = Place(path)
     place.is_controller = True
@@ -132,7 +142,7 @@ def lang_place(path, line, selected):
             if (3 == len(split)):
                 vendor = '/vendor/' + split[0]
             keys = split[-1].split('.')
-            path = 'resources/lang' + vendor + '/' + keys[0] + '.php'
+            path = 'lang' + vendor + '/' + keys[0] + '.php'
 
             location = None
             if (2 <= len(keys)):

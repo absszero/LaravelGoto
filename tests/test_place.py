@@ -8,6 +8,48 @@ from LaravelGoto.lib.place import get_place
 
 
 class TestPlace(unittest.ViewTestCase):
+    def test_controller_route(self):
+        self.fixture("""
+        Route::group(['namespace' => 'Resource'], function () {
+            Route::controller('HelloController')->group(function () {
+                Route::get('/posts/{id}', 'sh|ow');
+            });
+        });""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual(True, place.is_controller)
+        self.assertEqual("Resource\\HelloController.php@show", place.path)
+
+    def test_resource_route(self):
+        self.fixture("""
+        Route::group(['namespace' => 'Resource'], function () {
+            Route::resource('photo', 'Hello|Controller', ['only' => [
+                'index', 'show'
+            ]]);
+        });""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual(True, place.is_controller)
+        self.assertEqual("Resource\\HelloController.php", place.path)
+
+    def test_resource_route_action(self):
+        self.fixture("""
+        Route::group(['namespace' => 'Resource'], function () {
+            Route::resource('photo', 'HelloController', ['only' => [
+                'index', 'sho|w'
+            ]]);
+        });""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual(True, place.is_controller)
+        self.assertEqual("Resource\\HelloController.php@show", place.path)
+
     def test_controller(self):
         self.fixture("""Route::get('/', 'HelloControll|er@index');""")
 
@@ -42,9 +84,10 @@ class TestPlace(unittest.ViewTestCase):
         self.assertEqual("namespace/alert.php", place.path)
 
     def test_view(self):
-        self.fixture("""Route::get('/', function () {
-    return view('hello|_view');
-});""")
+        self.fixture("""
+        Route::get('/', function () {
+            return view('hello|_view');
+        });""")
 
         selection = Selection(self.view)
         place = get_place(selection)
@@ -60,9 +103,10 @@ class TestPlace(unittest.ViewTestCase):
         self.assertEqual("hello.JS", place.path)
 
     def test_namespace58(self):
-        self.fixture("""Route::namespace('58')->group(function () {
-    Route::get('/', 'FiveEightC|ontroller@index');
-});""")
+        self.fixture("""
+        Route::namespace('58')->group(function () {
+            Route::get('/', 'FiveEightC|ontroller@index');
+        });""")
 
         selection = Selection(self.view)
         place = get_place(selection)
@@ -71,9 +115,10 @@ class TestPlace(unittest.ViewTestCase):
         self.assertEqual('58\\FiveEightController.php@index', place.path)
 
     def test_namespace52(self):
-        self.fixture("""Route::group(['namespace' => '52'], function () {
-    Route::get('/', 'FiveTw|oController@index');
-});""")
+        self.fixture("""
+        Route::group(['namespace' => '52'], function () {
+            Route::get('/', 'FiveTw|oController@index');
+        });""")
 
         selection = Selection(self.view)
         place = get_place(selection)
@@ -82,9 +127,10 @@ class TestPlace(unittest.ViewTestCase):
         self.assertEqual('52\\FiveTwoController.php@index', place.path)
 
     def test_namespaceLumen(self):
-        self.fixture("""$router->group(['namespace' => 'Lumen'], function () use ($router) {
-    Route::get('/', 'LumenCo|ntroller@index');
-});""")
+        self.fixture("""
+        $router->group(['namespace' => 'Lumen'], function () use ($router) {
+            Route::get('/', 'LumenCo|ntroller@index');
+        });""")
 
         selection = Selection(self.view)
         place = get_place(selection)
@@ -93,9 +139,10 @@ class TestPlace(unittest.ViewTestCase):
         self.assertEqual('Lumen\\LumenController.php@index', place.path)
 
     def test_view_namespace(self):
-        self.fixture("""Route::get('/', function () {
-    return view('Namespace::h|ello_view');
-});""")
+        self.fixture("""
+        Route::get('/', function () {
+            return view('Namespace::h|ello_view');
+        });""")
 
         selection = Selection(self.view)
         place = get_place(selection)
@@ -103,9 +150,10 @@ class TestPlace(unittest.ViewTestCase):
         self.assertEqual('hello_view.blade.php', place.path)
 
     def test_absolute_path(self):
-        self.fixture("""Route::group(['namespace' => 'Abc'], function () {
-    Route::get('/', '\\Absolute\\IndexCont|roller@index')->name('index');
-});""")
+        self.fixture("""
+        Route::group(['namespace' => 'Abc'], function () {
+            Route::get('/', '\\Absolute\\IndexCont|roller@index')->name('index');
+        });""")
 
         selection = Selection(self.view)
         place = get_place(selection)
@@ -172,7 +220,7 @@ class TestPlace(unittest.ViewTestCase):
         selection = Selection(self.view)
         place = get_place(selection)
 
-        self.assertEqual('resources/lang/messages.php', place.path)
+        self.assertEqual('lang/messages.php', place.path)
 
     def test_lang_blade_directive(self):
         self.fixture("""@lang('messages.we|lcome');""")
@@ -180,7 +228,7 @@ class TestPlace(unittest.ViewTestCase):
         selection = Selection(self.view)
         place = get_place(selection)
 
-        self.assertEqual('resources/lang/messages.php', place.path)
+        self.assertEqual('lang/messages.php', place.path)
 
     def test_lang_trans(self):
         self.fixture("""trans('messages.we|lcome');""")
@@ -188,7 +236,7 @@ class TestPlace(unittest.ViewTestCase):
         selection = Selection(self.view)
         place = get_place(selection)
 
-        self.assertEqual('resources/lang/messages.php', place.path)
+        self.assertEqual('lang/messages.php', place.path)
 
     def test_lang_trans_choice(self):
         self.fixture("""trans_choice('messages.a|pples', 10);""")
@@ -196,7 +244,7 @@ class TestPlace(unittest.ViewTestCase):
         selection = Selection(self.view)
         place = get_place(selection)
 
-        self.assertEqual('resources/lang/messages.php', place.path)
+        self.assertEqual('lang/messages.php', place.path)
 
     def test_lang_trans_package(self):
         self.fixture("""trans('package::messa|ges');""")
@@ -204,7 +252,7 @@ class TestPlace(unittest.ViewTestCase):
         selection = Selection(self.view)
         place = get_place(selection)
 
-        self.assertEqual('resources/lang/vendor/package/messages.php', place.path)
+        self.assertEqual('lang/vendor/package/messages.php', place.path)
 
     def test_relative_path_static_file(self):
         self.fixture("""'./../../hel|lo.css'""")
@@ -296,9 +344,10 @@ class TestPlace(unittest.ViewTestCase):
         self.assertEqual('EightController.php', place.path)
 
     def test_v8_group_namespae_abs_route(self):
-        self.fixture("""Route::group(['namespace' => 'L8'], function () {
-    Route::get('/', [\\EightControl|ler::class, 'index']);
-});""")
+        self.fixture("""
+        Route::group(['namespace' => 'L8'], function () {
+            Route::get('/', [\\EightControl|ler::class, 'index']);
+        });""")
 
         selection = Selection(self.view)
         place = get_place(selection)
@@ -306,9 +355,10 @@ class TestPlace(unittest.ViewTestCase):
         self.assertEqual('\\EightController.php@index', place.path)
 
     def test_v8_group_namespae_route(self):
-        self.fixture("""Route::group(['namespace' => 'L8'], function () {
-    Route::get('/', [EightCon|troller::class, 'index']);
-});""")
+        self.fixture("""
+        Route::group(['namespace' => 'L8'], function () {
+            Route::get('/', [EightCon|troller::class, 'index']);
+        });""")
 
         selection = Selection(self.view)
         place = get_place(selection)

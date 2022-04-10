@@ -22,7 +22,7 @@ Goto various Laravel files
 
 - Go to Config files and highlight option (EX. config/app.php)
 
-- Go to Language files and highlight option (EX. resources/lang/en/messages.php )
+- Go to Language files and highlight option (EX. lang/en/messages.php )
 
 - Go to .env and highlight option
 

@@ -90,3 +90,17 @@ Route::group(['namespace' => 'L8'], function () {
 </x-alert>
 
 <x-forms.input/>
+
+Route::controller(HelloController::class)->group(function () {
+    Route::get('/posts/{id}', 'show');
+});
+
+Route::controller('HelloController')->group(function () {
+    Route::get('/posts/{id}', 'show');
+});
+
+Route::group(['namespace' => 'Resource'], function () {
+    Route::resource('photo', 'HelloController', ['only' => [
+        'index', 'show'
+    ]]);
+});

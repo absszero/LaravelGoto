@@ -1,12 +1,12 @@
 import sublime
 from re import compile
 
-patterns = dict([
-    (compile(r"""namespace\s*\(\s*(['"])\s*([^'"]+)\1"""), True),
-    (compile(r"""['"]namespace['"]\s*=>\s*(['"])([^'"]+)\1"""), True),
+patterns = [
     (compile(r"""(controller)\s*\(\s*['"]?([^'")]+)"""), False),
     (compile(r"""resource\s*\(\s*['"][^'"]+['"]\s*,\s*(['"]?)([^,'"]+)"""), False),
-])
+    (compile(r"""namespace\s*\(\s*(['"])\s*([^'"]+)\1"""), True),
+    (compile(r"""['"]namespace['"]\s*=>\s*(['"])([^'"]+)\1"""), True),
+]
 
 
 class Namespace:
@@ -24,7 +24,7 @@ class Namespace:
     def get_blocks(self, selection):
         '''get all closure blocks'''
         blocks = []
-        for pattern, isNamespace in patterns.items():
+        for pattern, isNamespace in patterns:
             for match in pattern.finditer(self.fullText):
                 start = match.start()
                 if selection.a < start:
