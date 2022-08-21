@@ -104,3 +104,13 @@ Route::group(['namespace' => 'Resource'], function () {
         'index', 'show'
     ]]);
 });
+
+Route::inertia('/about', 'About/AboutComponent');
+
+return Inertia::render('About/AboutComponent');
+
+return inertia('About/AboutComponent');
+
+@livewire('nav.show-post')
+
+<livewire:nav.show-post />

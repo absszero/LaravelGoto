@@ -26,6 +26,10 @@ Goto various Laravel files
 
 - Go to .env and highlight option
 
+- Go to Inertia.js components (EX. Inertia::render('MyComponent');)
+
+- Go to Livewire classes (EX. &lt;livewire:nav.show-post /&gt; => Nav/ShowPost.php )
+
 - Go to paths by path helpers, EX:
   - app_path('User.php');
   - base_path('vendor');

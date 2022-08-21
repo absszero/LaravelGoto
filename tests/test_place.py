@@ -364,3 +364,44 @@ class TestPlace(unittest.ViewTestCase):
         place = get_place(selection)
         self.assertEqual(True, place.is_controller)
         self.assertEqual('L8\\EightController.php@index', place.path)
+
+    def test_inertiajs_function(self):
+        self.fixture("""inertia("About/AboutCo|mponent");""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual("About/AboutComponent", place.path)
+
+    def test_inertiajs_render(self):
+        self.fixture("""Inertia::render("About/AboutC|omponent");""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual("About/AboutComponent", place.path)
+
+    def test_inertiajs_route(self):
+        self.fixture("""Route::inertia("/about", "About/AboutCom|ponent");""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual("About/AboutComponent", place.path)
+
+    def test_livewire_tag(self):
+        self.fixture("""<livewire:nav.sho|w-post />""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual("Nav/ShowPost.php", place.path)
+
+    def test_livewire_blade_directive(self):
+        self.fixture("""@livewire("nav.show|-post")""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual("Nav/ShowPost.php", place.path)
+

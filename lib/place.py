@@ -14,6 +14,18 @@ lang_patterns = [
     compile(r"trans_choice\([^'\"]*(['\"])([^'\"]*)\1"),
 ]
 
+inertiajs_patterns = [
+    compile(r"Route::inertia\s*\([^,]+,\s*['\"]([^'\"]+)"),
+    compile(r"Inertia::render\s*\(\s*['\"]([^'\"]+)"),
+    compile(r"inertia\s*\(\s*['\"]([^'\"]+)"),
+]
+
+livewire_patterns = [
+    compile(r"livewire:([^ ]+)"),
+    compile(r"@livewire\s*\(\s*['\"]([^'\"]+)"),
+]
+
+
 env_pattern = compile(r"env\(\s*(['\"])([^'\"]*)\1")
 
 path_helper_pattern = compile(r"([\w^_]+)_path\(\s*(['\"])([^'\"]*)\2")
@@ -58,6 +70,8 @@ def get_place(selection):
         env_place,
         config_place,
         lang_place,
+        inertiajs_place,
+        livewire_place
     )
 
     for fn in places:
@@ -130,6 +144,31 @@ def config_place(path, line, selected):
                 return Place(path, location)
 
     return False
+
+
+def inertiajs_place(path, line, selected):
+    for pattern in inertiajs_patterns:
+        matched = pattern.search(line)
+        if (matched and matched.group(1) in path):
+            return Place(matched.group(1))
+
+    return False
+
+
+def livewire_place(path, line, selected):
+    for pattern in livewire_patterns:
+        matched = pattern.search(line)
+        if (matched):
+            path = camel_case(matched.group(1))
+            path = path.replace('.', '/') + '.php'
+            return Place(path)
+
+    return False
+
+
+def camel_case(snake_str):
+    components = snake_str.split('-')
+    return components[0].title() + ''.join(x.title() for x in components[1:])
 
 
 def lang_place(path, line, selected):
