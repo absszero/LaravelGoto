@@ -34,7 +34,14 @@ find_pattern = "(['\"]{1})%s\\1\\s*=>"
 
 class_controller_pattern = compile(r"(.+)\.php\s*,\s*[\"']{1}(.+)")
 
-component_pattern = compile(r"<\/?x-([^\/>]*)")
+component_pattern = compile(r"<\/?x-([^\/\s>]*)")
+
+view_patterns = [
+    compile(r"view\(\s*(['\"])([^'\"]*)\1"),
+    compile(r"View::exists\(\s*(['\"])([^'\"]*)\1"),
+    compile(r"View::first[^'\"]*(['\"])([^'\"]*)\1"),
+]
+
 
 extensions = []
 
@@ -65,21 +72,21 @@ def get_place(selection):
 
     places = (
         path_helper_place,
-        controller_place,
         static_file_place,
         env_place,
         config_place,
         lang_place,
         inertiajs_place,
-        livewire_place
+        livewire_place,
+        view_place,
+        component_place,
+        controller_place,
     )
 
     for fn in places:
         place = fn(path, line, selection)
         if place:
             return place
-
-    return view_place(path, line, selection)
 
 
 def set_controller_action(path, selected, blocks):
@@ -210,28 +217,46 @@ def env_place(path, line, selected):
         return Place('.env', path)
     return False
 
-
-def view_place(path, line, selected):
+def component_place(path, line, selected):
     matched = component_pattern.search(line)
     if matched:
         path = matched.group(1).strip()
 
-    split = path.split(':')
-    vendor = ''
-    # vendor or namespace
-    if (3 == len(split)):
-        # vendor probably is lowercase
-        if (split[0] == split[0].lower()):
-            vendor = split[0] + '/'
+        split = path.split(':')
+        vendor = ''
+        # vendor or namespace
+        if (3 == len(split)):
+            # vendor probably is lowercase
+            if (split[0] == split[0].lower()):
+                vendor = split[0] + '/'
 
-    path = split[-1]
-    path = vendor + path.replace('.', '/')
-    if matched:
+        path = split[-1]
+        path = vendor + path.replace('.', '/')
         path += '.php'
-    else:
-        path += '.blade.php'
 
-    return Place(path)
+        return Place(path)
+
+
+def view_place(path, line, selected):
+    for pattern in view_patterns:
+        matched = pattern.search(line)
+
+        if (matched and path == matched.group(2)):
+            path = matched.group(2).strip()
+            split = path.split(':')
+            vendor = ''
+            # vendor or namespace
+            if (3 == len(split)):
+                # vendor probably is lowercase
+                if (split[0] == split[0].lower()):
+                    vendor = split[0] + '/'
+
+            path = split[-1]
+            path = vendor + path.replace('.', '/')
+            path += '.blade.php'
+            return Place(path)
+
+    return False
 
 
 def path_helper_place(path, line, selected):

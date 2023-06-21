@@ -270,6 +270,22 @@ class TestPlace(unittest.ViewTestCase):
 
         self.assertEqual('package/hello_view.blade.php', place.path)
 
+    def test_view_first(self):
+        self.fixture("""View::first(['custom|.admin', 'admin'], $data);""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual('custom/admin.blade.php', place.path)
+
+    def test_view_exists(self):
+        self.fixture("""View::exists('emails.c|ustomer');""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual('emails/customer.blade.php', place.path)
+
     def test_app_path(self):
         self.fixture("""app_path('Us|er.php');""")
 
