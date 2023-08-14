@@ -21,7 +21,7 @@ inertiajs_patterns = [
 ]
 
 livewire_patterns = [
-    compile(r"livewire:([^ ]+)"),
+    compile(r"livewire:([^\s\"'>]+)"),
     compile(r"@livewire\s*\(\s*['\"]([^'\"]+)"),
 ]
 
@@ -36,11 +36,15 @@ class_controller_pattern = compile(r"(.+)\.php\s*,\s*[\"']{1}(.+)")
 
 component_pattern = compile(r"<\/?x-([^\/\s>]*)")
 
-view_patterns = [
+blade_patterns = [
     compile(r"view\(\s*(['\"])([^'\"]*)\1"),
+    compile(r"layout\(\s*(['\"])([^'\"]*)\1"),
     compile(r"View::exists\(\s*(['\"])([^'\"]*)\1"),
     compile(r"View::first[^'\"]*(['\"])([^'\"]*)\1"),
+    compile(r"\$view\s*=\s*(['\"])([^'\"]*)\1"),
 ]
+
+resource_blade_pattern = compile(r"resources([\/.])views[^\s\"']+")
 
 
 extensions = []
@@ -78,7 +82,7 @@ def get_place(selection):
         lang_place,
         inertiajs_place,
         livewire_place,
-        view_place,
+        blade_place,
         component_place,
         controller_place,
     )
@@ -237,24 +241,32 @@ def component_place(path, line, selected):
         return Place(path)
 
 
-def view_place(path, line, selected):
-    for pattern in view_patterns:
+def transform_blade(path):
+    split = path.split(':')
+    vendor = ''
+    # vendor or namespace
+    if (3 == len(split)):
+        # vendor probably is lowercase
+        if (split[0] == split[0].lower()):
+            vendor = split[0] + '/'
+
+    path = split[-1]
+    path = vendor + path.replace('.', '/')
+    path += '.blade.php'
+    return path
+
+def blade_place(path, line, selected):
+    for pattern in blade_patterns:
         matched = pattern.search(line)
 
         if (matched and path == matched.group(2)):
             path = matched.group(2).strip()
-            split = path.split(':')
-            vendor = ''
-            # vendor or namespace
-            if (3 == len(split)):
-                # vendor probably is lowercase
-                if (split[0] == split[0].lower()):
-                    vendor = split[0] + '/'
-
-            path = split[-1]
-            path = vendor + path.replace('.', '/')
-            path += '.blade.php'
+            path = transform_blade(path)
             return Place(path)
+
+    if resource_blade_pattern.search(path):
+        path = transform_blade(path)
+        return Place(path)
 
     return False
 

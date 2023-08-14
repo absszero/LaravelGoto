@@ -94,6 +94,22 @@ class TestPlace(unittest.ViewTestCase):
 
         self.assertEqual("hello_view.blade.php", place.path)
 
+    def test_layout_method(self):
+        self.fixture("""layout('hello|_view');""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual("hello_view.blade.php", place.path)
+
+    def test_view_var(self):
+        self.fixture("""$view = 'hello|_view'""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual("hello_view.blade.php", place.path)
+
     def test_staticFile(self):
         self.fixture("""'hello|.JS';""")
 
@@ -277,6 +293,15 @@ class TestPlace(unittest.ViewTestCase):
         place = get_place(selection)
 
         self.assertEqual('custom/admin.blade.php', place.path)
+
+    def test_view_resource_string(self):
+        self.fixture("""'resources/views/pages/public/cha|rge'""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual('resources/views/pages/public/charge.blade.php', place.path)
+
 
     def test_view_exists(self):
         self.fixture("""View::exists('emails.c|ustomer');""")

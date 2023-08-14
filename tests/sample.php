@@ -114,3 +114,9 @@ return inertia('About/AboutComponent');
 @livewire('nav.show-post')
 
 <livewire:nav.show-post />
+
+$view = 'hello.world'
+
+layout('layouts.app')
+
+"resources/views/pages/public/charge"
