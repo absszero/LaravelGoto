@@ -42,6 +42,8 @@ blade_patterns = [
     compile(r"View::exists\(\s*(['\"])([^'\"]*)\1"),
     compile(r"View::first[^'\"]*(['\"])([^'\"]*)\1"),
     compile(r"\$view\s*=\s*(['\"])([^'\"]*)\1"),
+    compile(r"view:\s*(['\"])([^'\"]*)\1"),
+    compile(r"view\(\s*['\"][^'\"]*['\"],\s*(['\"])([^'\"]*)\1"),
 ]
 
 resource_blade_pattern = compile(r"resources([\/.])views[^\s\"']+")

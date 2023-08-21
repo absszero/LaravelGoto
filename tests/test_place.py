@@ -110,6 +110,22 @@ class TestPlace(unittest.ViewTestCase):
 
         self.assertEqual("hello_view.blade.php", place.path)
 
+    def test_view_in_mailble(self):
+        self.fixture("""view: 'ema|ils.test',""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual("emails/test.blade.php", place.path)
+
+    def test_view_in_route_view(self):
+        self.fixture("""Route::view('/welcome', 'pages.wel|come', ['name' => 'Taylor']);""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual("pages/welcome.blade.php", place.path)
+
     def test_staticFile(self):
         self.fixture("""'hello|.JS';""")
 
