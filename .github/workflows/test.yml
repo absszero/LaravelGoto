@@ -1,9 +1,11 @@
 name: test
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
-if need master branch of UnitTesting
-  env:
+env:
     UNITTESTING_TAG: master
 
 jobs:
