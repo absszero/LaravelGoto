@@ -126,6 +126,15 @@ class TestPlace(unittest.ViewTestCase):
 
         self.assertEqual("pages/welcome.blade.php", place.path)
 
+    def test_view_in_config_livewire_php(self):
+        self.fixture("""'layout' => 'layou|ts.app',""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual("layouts/app.blade.php", place.path)
+
+
     def test_staticFile(self):
         self.fixture("""'hello|.JS';""")
 

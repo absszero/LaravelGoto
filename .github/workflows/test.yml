@@ -2,9 +2,9 @@ name: test
 
 on: [push]
 
-# if need master branch of UnitTesting
-#  env:
-#     UNITTESTING_TAG: master
+if need master branch of UnitTesting
+  env:
+    UNITTESTING_TAG: master
 
 jobs:
   run-tests:
