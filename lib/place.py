@@ -278,7 +278,6 @@ def blade_place(path, line, selected):
             return Place(path)
 
     for pattern in multi_views_patterns:
-        print (pattern.search(line), path)
         if pattern.search(line):
             path = transform_blade(path)
             return Place(path)
