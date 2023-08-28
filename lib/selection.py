@@ -2,7 +2,7 @@ import sublime
 
 
 class Selection(sublime.Region):
-    delimiters = "\"'"
+    delimiters = "\"'-<>{}"
 
     def __init__(self, view):
         self.view = view
@@ -49,3 +49,9 @@ class Selection(sublime.Region):
                 break
             end += 1
         return sublime.Region(start, end)
+
+    def get_line(self):
+        return self.substr_line().strip()
+
+    def get_path(self):
+        return self.substr().strip(self.delimiters + ' ')

@@ -81,8 +81,8 @@ def init_extensions():
 
 
 def get_place(selection):
-    line = selection.substr_line().strip()
-    path = selection.substr().strip(selection.delimiters + ' ')
+    line = selection.get_line()
+    path = selection.get_path()
 
     places = (
         path_helper_place,
@@ -262,6 +262,9 @@ def transform_blade(path):
 
     path = split[-1]
     path = vendor + path.replace('.', '/')
+    if path.endswith('/blade/php'):
+        path = path[:-1*len('/blade/php')]
+
     path += '.blade.php'
     return path
 

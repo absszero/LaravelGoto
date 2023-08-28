@@ -174,6 +174,23 @@ class TestPlace(unittest.ViewTestCase):
 
         self.assertEqual("view/empty.blade.php", place.path)
 
+    def test_blade_comment(self):
+        self.fixture("""'{{-- resources/views/comp|onents/layout --}}'""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual('resources/views/components/layout.blade.php', place.path)
+
+    def test_full_blade_path(self):
+        self.fixture("""'resources/views/comp|onents/layout.blade.php'""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual('resources/views/components/layout.blade.php', place.path)
+
+
     def test_staticFile(self):
         self.fixture("""'hello|.JS';""")
 
