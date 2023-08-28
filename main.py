@@ -68,13 +68,17 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
             )
 
     def search(self, place):
+        if place is None:
+            sublime.status_message('No matched filename.')
+            return
+
         args = {
             "overlay": "goto",
             "show_files": True,
             "text": place.path
         }
 
-        if (place.is_controller):
+        if place.is_controller:
             args["text"] = ''
             self.window.run_command("show_overlay", args)
             self.window.run_command("insert", {
