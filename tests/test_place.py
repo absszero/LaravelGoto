@@ -134,6 +134,45 @@ class TestPlace(unittest.ViewTestCase):
 
         self.assertEqual("layouts/app.blade.php", place.path)
 
+    def test_blade_include_and_includeIf(self):
+        self.fixture("""@includeIf('view.na|me', ['status' => 'complete'])""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual("view/name.blade.php", place.path)
+
+    def test_blade_extends(self):
+        self.fixture("""@extends('view.na|me')""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual("view/name.blade.php", place.path)
+
+    def test_blade_inclcudeUnless_and_inclcudeWhen(self):
+        self.fixture("""@includeUnless($boolean, 'view|.name', ['status' => 'complete'])""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual("view/name.blade.php", place.path)
+
+    def test_blade_includeFirst(self):
+        self.fixture("""@includeFirst(['custom.admin', 'ad|min'], ['status' => 'complete'])""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual("admin.blade.php", place.path)
+
+    def test_blade_each(self):
+        self.fixture("""@each('view.name', $jobs, 'job', 'view|.empty')""")
+
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertEqual("view/empty.blade.php", place.path)
 
     def test_staticFile(self):
         self.fixture("""'hello|.JS';""")

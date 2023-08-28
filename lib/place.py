@@ -3,51 +3,58 @@ from re import compile
 from .namespace import Namespace
 
 config_patterns = [
-    compile(r"Config::[^'\"]*(['\"])([^'\"]*)\1"),
-    compile(r"config\([^'\"]*(['\"])([^'\"]*)\1"),
+    compile(r"""Config::[^'"]*(['"])([^'"]*)\1"""),
+    compile(r"""config\([^'"]*(['"])([^'"]*)\1"""),
 ]
 
 lang_patterns = [
-    compile(r"__\([^'\"]*(['\"])([^'\"]*)\1"),
-    compile(r"@lang\([^'\"]*(['\"])([^'\"]*)\1"),
-    compile(r"trans\([^'\"]*(['\"])([^'\"]*)\1"),
-    compile(r"trans_choice\([^'\"]*(['\"])([^'\"]*)\1"),
+    compile(r"""__\([^'"]*(['"])([^'"]*)\1"""),
+    compile(r"""@lang\([^'"]*(['"])([^'"]*)\1"""),
+    compile(r"""trans\([^'"]*(['"])([^'"]*)\1"""),
+    compile(r"""trans_choice\([^'"]*(['"])([^'"]*)\1"""),
 ]
 
 inertiajs_patterns = [
-    compile(r"Route::inertia\s*\([^,]+,\s*['\"]([^'\"]+)"),
-    compile(r"Inertia::render\s*\(\s*['\"]([^'\"]+)"),
-    compile(r"inertia\s*\(\s*['\"]([^'\"]+)"),
+    compile(r"""Route::inertia\s*\([^,]+,\s*['"]([^'"]+)"""),
+    compile(r"""Inertia::render\s*\(\s*['"]([^'"]+)"""),
+    compile(r"""inertia\s*\(\s*['"]([^'"]+)"""),
 ]
 
 livewire_patterns = [
-    compile(r"livewire:([^\s\"'>]+)"),
-    compile(r"@livewire\s*\(\s*['\"]([^'\"]+)"),
+    compile(r"""livewire:([^\s"'>]+)"""),
+    compile(r"""@livewire\s*\(\s*['"]([^'"]+)"""),
 ]
 
 
-env_pattern = compile(r"env\(\s*(['\"])([^'\"]*)\1")
+env_pattern = compile(r"""env\(\s*(['"])([^'"]*)\1""")
 
-path_helper_pattern = compile(r"([\w^_]+)_path\(\s*(['\"])([^'\"]*)\2")
+path_helper_pattern = compile(r"""([\w^_]+)_path\(\s*(['"])([^'"]*)\2""")
 
-find_pattern = "(['\"]{1})%s\\1\\s*=>"
+find_pattern = """(['"]{1})%s\\1\\s*=>"""
 
-class_controller_pattern = compile(r"(.+)\.php\s*,\s*[\"']{1}(.+)")
+class_controller_pattern = compile(r"""(.+)\.php\s*,\s*["']{1}(.+)""")
 
-component_pattern = compile(r"<\/?x-([^\/\s>]*)")
+component_pattern = compile(r"""<\/?x-([^\/\s>]*)""")
 
 blade_patterns = [
-    compile(r"view\(\s*(['\"])([^'\"]*)\1"),
-    compile(r"[lL]ayout\(\s*(['\"])([^'\"]*)\1"),
-    compile(r"View::exists\(\s*(['\"])([^'\"]*)\1"),
-    compile(r"View::first[^'\"]*(['\"])([^'\"]*)\1"),
-    compile(r"\$view\s*=\s*(['\"])([^'\"]*)\1"),
-    compile(r"view:\s*(['\"])([^'\"]*)\1"),
-    compile(r"view\(\s*['\"][^'\"]*['\"],\s*(['\"])([^'\"]*)\1"),
-    compile(r"['\"]layout['\"]\s*=>\s*(['\"])([^'\"]*)\1")
+    compile(r"""view\(\s*(['"])([^'"]*)\1"""),
+    compile(r"""[lL]ayout\(\s*(['"])([^'"]*)\1"""),
+    compile(r"""View::exists\(\s*(['"])([^'"]*)\1"""),
+    compile(r"""View::first[^'"]*(['"])([^'"]*)\1"""),
+    compile(r"""\$view\s*=\s*(['"])([^'"]*)\1"""),
+    compile(r"""view:\s*(['"])([^'"]*)\1"""),
+    compile(r"""view\(\s*['"][^'"]*['"],\s*(['"])([^'"]*)\1"""),
+    compile(r"""['"]layout['"]\s*=>\s*(['"])([^'"]*)\1"""),
+    compile(r"""@include(If\b)?\(\s*(['"])([^'"]*)\2"""),
+    compile(r"""@extends\(\s*(['"])([^'"]*)\1"""),
+    compile(r"""@include(When|Unless\b)?\([^'"]+(['"])([^'"]+)"""),
+    compile(r"""(resources\/views[^\s'"-]+)"""),
 ]
 
-resource_blade_pattern = compile(r"resources([\/.])views[^\s\"']+")
+multi_views_patterns = [
+    compile(r"""@includeFirst\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""),
+    compile(r"""@each\(['"][^'"]+['"]\s*,[^,]+,[^,]+,[^)]+"""),
+]
 
 
 extensions = []
@@ -261,15 +268,20 @@ def transform_blade(path):
 def blade_place(path, line, selected):
     for pattern in blade_patterns:
         matched = pattern.search(line)
+        if matched is None:
+            continue
 
-        if (matched and path == matched.group(2)):
-            path = matched.group(2).strip()
+        groups = matched.groups()
+        if path == groups[-1]:
+            path = groups[-1].strip()
             path = transform_blade(path)
             return Place(path)
 
-    if resource_blade_pattern.search(path):
-        path = transform_blade(path)
-        return Place(path)
+    for pattern in multi_views_patterns:
+        print (pattern.search(line), path)
+        if pattern.search(line):
+            path = transform_blade(path)
+            return Place(path)
 
     return False
 
