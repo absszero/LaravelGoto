@@ -69,7 +69,7 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
 
     def search(self, place):
         if place is None:
-            sublime.status_message('No matched filename.')
+            sublime.status_message('Laravel Goto: unidentified string.')
             return
 
         args = {
