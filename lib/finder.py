@@ -2,6 +2,8 @@ import sublime
 from re import compile
 from .namespace import Namespace
 from .place import Place
+from .workspace import get_file_content
+from .middleware import parse
 
 config_patterns = [
     compile(r"""Config::[^'"]*(['"])([^'"]*)\1"""),
@@ -62,7 +64,6 @@ middleware_patterns = [
     compile(r"""['"]middleware['"]\s*=>\s*\s*\[?\s*(['"][^'"]+['"]\s*,?\s*){1,}\]?"""),
 ]
 
-
 extensions = []
 
 
@@ -92,6 +93,7 @@ def get_place(selection):
         livewire_place,
         blade_place,
         component_place,
+        middleware_place,
         controller_place,
     )
 
@@ -298,28 +300,23 @@ def path_helper_place(path, line, selected):
         return Place(prefix + path)
     return False
 
-# def middleware_place(path, line, selected):
-#     const httpKernel = await getFileContent('Http/Kernel.php');
-#     if (!httpKernel) {
-#         return place;
-#     }
-#     const middlewares = parse(httpKernel);
+def middleware_place(path, line, selected):
+    folders = sublime.active_window().folders()
+    for folder in folders:
+        kernel_content = get_file_content(folder, 'app/Http/Kernel.php')
+        if kernel_content:
+            break
+    if not kernel_content:
+        return
 
-#     const patterns = [
-#         /[m|M]iddleware\(\s*\[?\s*(['"][^'"]+['"]\s*,?\s*)+/,
-#         /['"]middleware['"]\s*=>\s*\s*\[?\s*(['"][^'"]+['"]\s*,?\s*){1,}\]?/,
-#     ];
-#     for (const pattern of patterns) {
-#         if (!pattern.exec(ctx.line)) {
-#             continue;
-#         }
-#         // remove middleware parameters
-#         const alias = ctx.path.split(':')[0];
-#         let place = middlewares.get(alias);
-#         if (place) {
-#             return place;
-#         }
-#     }
+    middlewares = parse(kernel_content)
 
-#     return place;
-# }
+    for pattern in middleware_patterns:
+        matched = pattern.search(line)
+        if not matched:
+            continue
+        # remove middleware parameters
+        alias = path.split(':')[0]
+        place = middlewares.get(alias)
+        if place:
+            return place
