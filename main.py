@@ -18,7 +18,7 @@ if int(sublime.version()) >= 3114:
     prefix = None
 
 from .lib.selection import Selection
-from .lib.place import get_place, init_extensions
+from .lib.finder import get_place, init_extensions
 
 place = None
 
@@ -35,7 +35,7 @@ class GotoLocation(sublime_plugin.EventListener):
             return
 
         location = view.find(place.location, 0)
-        # fix .env not show selected if no scrolling happened
+        # fix .env not showing selected if no scrolling happened
         view.set_viewport_position((0, 1))
         view.sel().clear()
         view.sel().add(location)

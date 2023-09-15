@@ -4,10 +4,10 @@ import os
 
 from . import unittest
 from LaravelGoto.lib.selection import Selection
-from LaravelGoto.lib.place import get_place
+from LaravelGoto.lib.finder import get_place
 
 
-class TestPlace(unittest.ViewTestCase):
+class TestFinder(unittest.ViewTestCase):
     def test_controller_route(self):
         self.fixture("""
         Route::group(['namespace' => 'Resource'], function () {

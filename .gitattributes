@@ -1,0 +1,4 @@
+.gitattributes export-ignore
+example.gif export-ignore
+.github/ export-ignore
+tests/ export-ignore
