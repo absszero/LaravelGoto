@@ -12,13 +12,13 @@ def get_file_content(folder, filepath):
         mTime = os.path.getmtime(fullpath)
         # from cache
         if mTimes.get(fullpath) == mTime:
-            return contents[fullpath];
+            return contents.get(fullpath);
 
         # from disk
         with open(fullpath, mode = "r", encoding = "utf-8") as f:
             content = f.read()
             mTimes[fullpath] = mTime
-            contents[fullpath] = contents
+            contents[fullpath] = content
             return content
 
 def get_path(folder, filepath, recursion = False):
