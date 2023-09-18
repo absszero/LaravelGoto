@@ -311,9 +311,13 @@ def middleware_place(path, line, selected):
         return False
 
     middlewares = parse(kernel_content)
+    print('middlewares', middlewares)
+    print("\n")
 
+    print(path, line, selected)
     for pattern in middleware_patterns:
         matched = pattern.search(line)
+        print(pattern.pattern , matched)
         if not matched:
             continue
         # remove middleware parameters
