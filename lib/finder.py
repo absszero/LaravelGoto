@@ -302,6 +302,7 @@ def path_helper_place(path, line, selected):
 
 def middleware_place(path, line, selected):
     folders = sublime.active_window().folders()
+    kernel_content = None
     for folder in folders:
         kernel_content = workspace.get_file_content(folder, 'app/Http/Kernel.php')
         if kernel_content:
