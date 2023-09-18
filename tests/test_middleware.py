@@ -9,7 +9,7 @@ from LaravelGoto.lib.workspace import get_file_content
 
 class TestMiddleware(unittest.ViewTestCase):
     def test_parse(self):
-        content = unittest.ViewTestCase.get_kernel()
+        content = self.get_kernel()
         middlewares = parse(content)
 
         self.assertEqual('App/Http/Middleware/Authenticate.php', middlewares.get('auth').path)

@@ -530,7 +530,7 @@ class TestFinder(unittest.ViewTestCase):
 
     @patch('LaravelGoto.lib.workspace.get_file_content')
     def test_middleware(self, mock_get_file_content):
-        mock_get_file_content.return_value = unittest.ViewTestCase.get_kernel()
+        mock_get_file_content.return_value = self.get_kernel()
         self.fixture("""Route::middleware(['web:1234', 'auth|:abc']);""")
         selection = Selection(self.view)
         place = get_place(selection)
