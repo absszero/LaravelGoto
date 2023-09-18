@@ -32,9 +32,12 @@ class ViewTestCase(TestCase):
     def fixture(self, text):
         self.view.run_command('setup_fixture', {'text': '<?php ' + text})
 
+    def get_test_dir(self):
+        return path.dirname(path.abspath(__file__))
 
     def get_kernel(self):
-        test_dir = path.dirname(path.abspath(__file__))
+        test_dir = self.get_test_dir()
         fullpath = path.join(test_dir, 'fixtures/app/Http/Kernel.php')
         with open(fullpath, mode = "r", encoding = "utf-8") as f:
             return f.read()
+

@@ -301,19 +301,15 @@ def path_helper_place(path, line, selected):
     return False
 
 def middleware_place(path, line, selected):
-    folders = sublime.active_window().folders()
-    print("folders", folders)
     kernel_content = None
-    for folder in folders:
+    for folder in workspace.get_folders():
         kernel_content = workspace.get_file_content(folder, 'app/Http/Kernel.php')
-        print('kernel_content', len(kernel_content))
         if kernel_content:
             break
     if not kernel_content:
         return False
 
     middlewares = parse(kernel_content)
-    print(middlewares)
 
     for pattern in middleware_patterns:
         matched = pattern.search(line)

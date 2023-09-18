@@ -1,5 +1,5 @@
 import os
-
+import sublime
 
 mTimes = {}
 contents = {}
@@ -39,3 +39,6 @@ def get_path(folder, filepath, recursion = False):
         fullpath = os.path.join(folder, filepath)
         if os.path.isfile(fullpath):
             return fullpath;
+
+def get_folders():
+    return sublime.active_window().folders()
