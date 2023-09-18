@@ -1,63 +1,140 @@
-# Laravel Goto for Sublime Text
+# Laravel Goto
 
 [![Github Action](https://github.com/absszero/LaravelGoto/workflows/build/badge.svg)](https://github.com/absszero/LaravelGoto/actions)
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/absszero)
 
-------------
-
 Goto various Laravel files
 
 ![example](example.gif)
 
-## Feature
+## Features
 
-- Go to Blade Template files (EX. hello.blade.php)
+### Go to Blade
 
-- Go to Blade Component files (EX. &lt;x-alert&gt;)
+Go to blade template files.
 
-- Go to Blade Template files (EX. hello.blade.php)
+  ```php
+  view('hello_view', ['name' => 'James']);
 
-- Go to Controller and highlight method (EX. \Namespace\Controller.php@Method)
+  Route::view('/', 'pages.public.index');
 
-- Go to Static files (EX. hello.js)
+  @includeIf('view.name', ['status' => 'complete'])
 
-- Go to Config files and highlight option (EX. config/app.php)
+  @each('view.name', $jobs, 'job', 'view.empty')
 
-- Go to Language files and highlight option (EX. lang/en/messages.php )
+  @extends('layouts.app')
+  ```
 
-- Go to .env and highlight option
+Go to blade Component files.
 
-- Go to Inertia.js components (EX. Inertia::render('MyComponent');)
+  ```php
+  <x-alert:hello />
+  ```
 
-- Go to Livewire classes (EX. &lt;livewire:nav.show-post /&gt; => Nav/ShowPost.php )
+### Go to Controller
 
-- Go to paths by path helpers, EX:
-  - app_path('User.php');
-  - base_path('vendor');
-  - config_path('app.php');
-  - database_path('UserFactory.php');
-  - public_path('css/app.css');
-  - resource_path('sass/app.scss');
-  - storage_path('logs/laravel.log');
+Go to controllers and highlight method.
 
-- Default supported static file extensions
+```php
+Route::get('/', 'HelloController@index');
 
-    - js
-    - ts
-    - jsx
-    - vue
-    - css
-    - scss
-    - sass
-    - less
-    - styl
-    - htm
-    - html
-    - xhtml
-    - xml
-    - log
+Route::resource('photo', 'HelloController', ['only' => [
+  'index', 'show'
+]]);
+```
 
+### Go to Middleware
+
+![](middleware.gif)
+
+### Go to Config
+
+Go to config files and highlight option.
+
+```php
+Config::get('app.timezone');
+Config::set('app.timezone', 'UTC');
+```
+
+### Go to Language
+
+Go to language files and highlight option.
+
+```php
+__('messages.welcome');
+
+@lang('messages.welcome');
+
+trans('messages.welcome');
+
+trans_choice('messages.apples', 10);
+```
+
+### Go to .env
+
+```
+env('APP_DEBUG', false);
+```
+
+### Go to Inertia.js
+
+```php
+Route::inertia('/about', 'About/AboutComponent');
+
+Inertia::render('MyComponent');
+
+inertia('About/AboutComponent');
+```
+
+### Go to Livewire
+
+```php
+@livewire('nav.show-post')
+
+<livewire:nav.show-post />
+```
+
+### Go to path helper
+
+```php
+app_path('User.php');
+
+base_path('vendor');
+
+config_path('app.php');
+
+database_path('UserFactory.php');
+
+public_path('css/app.css');
+
+resource_path('sass/app.scss');
+
+storage_path('logs/laravel.log');
+```
+
+### Go to Static files
+
+```php
+$file = 'js/hello.js';
+```
+
+Default supported static file extensions:
+
+- js
+- ts
+- jsx
+- vue
+- css
+- scss
+- sass
+- less
+- styl
+- htm
+- html
+- xhtml
+- xml
+- log
 
 
 ## Installation
