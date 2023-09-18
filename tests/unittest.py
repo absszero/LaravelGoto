@@ -36,6 +36,5 @@ class ViewTestCase(TestCase):
     def get_kernel(self):
         test_dir = path.dirname(path.abspath(__file__))
         fullpath = path.join(test_dir, 'fixtures/app/Http/Kernel.php')
-        self.assertEqual(fullpath, 'aaa', fullpath + str(path.isfile(fullpath)))
         with open(fullpath, mode = "r", encoding = "utf-8") as f:
             return f.read()
