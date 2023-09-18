@@ -6,6 +6,8 @@ from unittest import skipIf  # noqa: F401
 from os import path
 from sublime import find_resources
 from sublime import active_window
+import logging
+import sys
 
 
 class ViewTestCase(TestCase):
@@ -34,6 +36,12 @@ class ViewTestCase(TestCase):
 
 
     def get_kernel():
-        fullpath = path.dirname(path.abspath(__file__)) + '/fixtures/app/Http/Kernel.php'
+        test_dir = path.dirname(path.abspath(__file__))
+        fullpath = path.join(test_dir, 'fixtures/app/Http/Kernel.php')
+        logging.basicConfig( stream=sys.stderr, level=logging.DEBUG )
+        logger = logging.getLogger(__name__)
+        logger.info(fullpath)
+        logger.info(path.isfile(fullpath))
+
         with open(fullpath, mode = "r", encoding = "utf-8") as f:
             return f.read()
