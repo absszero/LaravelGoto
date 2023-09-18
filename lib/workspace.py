@@ -1,6 +1,4 @@
-import sublime
 import os
-from glob import glob
 
 
 mTimes = {}
@@ -8,18 +6,20 @@ contents = {}
 
 def get_file_content(folder, filepath):
     fullpath = get_path(folder, filepath, True)
-    if fullpath:
-        mTime = os.path.getmtime(fullpath)
-        # from cache
-        if mTimes.get(fullpath) == mTime:
-            return contents.get(fullpath);
+    if not fullpath:
+        return
 
-        # from disk
-        with open(fullpath, mode = "r", encoding = "utf-8") as f:
-            content = f.read()
-            mTimes[fullpath] = mTime
-            contents[fullpath] = content
-            return content
+    mTime = os.path.getmtime(fullpath)
+    # from cache
+    if mTimes.get(fullpath) == mTime:
+        return contents.get(fullpath);
+
+    # from disk
+    with open(fullpath, mode = "r", encoding = "utf-8") as f:
+        content = f.read()
+        mTimes[fullpath] = mTime
+        contents[fullpath] = content
+        return content
 
 def get_path(folder, filepath, recursion = False):
     top_dir = filepath.split('/')[0];

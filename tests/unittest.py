@@ -3,6 +3,7 @@ from unittest import TestCase
 from unittest import mock  # noqa: F401
 from unittest import skipIf  # noqa: F401
 
+from os import path
 from sublime import find_resources
 from sublime import active_window
 
@@ -30,3 +31,9 @@ class ViewTestCase(TestCase):
 
     def fixture(self, text):
         self.view.run_command('setup_fixture', {'text': '<?php ' + text})
+
+
+    def get_kernel():
+        fullpath = path.dirname(path.abspath(__file__)) + '/fixtures/app/Http/Kernel.php'
+        with open(fullpath, mode = "r", encoding = "utf-8") as f:
+            return f.read()

@@ -1,10 +1,11 @@
 import sublime
-import sys
-import os
 
+from unittest.mock import patch
 from . import unittest
+
 from LaravelGoto.lib.selection import Selection
 from LaravelGoto.lib.finder import get_place
+import LaravelGoto.lib.workspace
 
 
 class TestFinder(unittest.ViewTestCase):
@@ -526,4 +527,17 @@ class TestFinder(unittest.ViewTestCase):
         place = get_place(selection)
 
         self.assertEqual("Nav/ShowPost.php", place.path)
+
+    @patch('LaravelGoto.lib.workspace.get_file_content')
+    def test_middleware(self, mock_get_file_content):
+        mock_get_file_content.return_value = unittest.ViewTestCase.get_kernel()
+        self.fixture("""Route::middleware(['web:1234', 'auth|:abc']);""")
+        selection = Selection(self.view)
+        place = get_place(selection)
+        self.assertEqual("App/Http/Middleware/Authenticate.php", place.path)
+
+        self.fixture("""Route::group(['middleware' => ['auth.|basic',]]);""")
+        selection = Selection(self.view)
+        place = get_place(selection)
+        self.assertEqual("Illuminate/Auth/Middleware/AuthenticateWithBasicAuth.php", place.path)
 

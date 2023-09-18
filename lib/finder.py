@@ -2,8 +2,8 @@ import sublime
 from re import compile
 from .namespace import Namespace
 from .place import Place
-from .workspace import get_file_content
 from .middleware import parse
+from . import workspace
 
 config_patterns = [
     compile(r"""Config::[^'"]*(['"])([^'"]*)\1"""),
@@ -303,7 +303,7 @@ def path_helper_place(path, line, selected):
 def middleware_place(path, line, selected):
     folders = sublime.active_window().folders()
     for folder in folders:
-        kernel_content = get_file_content(folder, 'app/Http/Kernel.php')
+        kernel_content = workspace.get_file_content(folder, 'app/Http/Kernel.php')
         if kernel_content:
             break
     if not kernel_content:
