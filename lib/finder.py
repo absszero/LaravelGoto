@@ -308,7 +308,7 @@ def middleware_place(path, line, selected):
         if kernel_content:
             break
     if not kernel_content:
-        return
+        return False
 
     middlewares = parse(kernel_content)
 
