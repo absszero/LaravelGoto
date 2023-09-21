@@ -5,8 +5,6 @@ from . import unittest
 
 from LaravelGoto.lib.selection import Selection
 from LaravelGoto.lib.finder import get_place
-import LaravelGoto.lib.workspace
-
 
 class TestFinder(unittest.ViewTestCase):
     def test_controller_route(self):

@@ -301,22 +301,22 @@ def path_helper_place(path, line, selected):
     return False
 
 def middleware_place(path, line, selected):
-    kernel_content = None
-    for folder in workspace.get_folders():
-        kernel_content = workspace.get_file_content(folder, 'app/Http/Kernel.php')
-        if kernel_content:
-            break
-    if not kernel_content:
-        return False
-
-    middlewares = parse(kernel_content)
-
     for pattern in middleware_patterns:
         matched = pattern.search(line)
         if not matched:
             continue
         # remove middleware parameters
         alias = path.split(':')[0]
+
+        kernel_content = None
+        for folder in workspace.get_folders():
+            kernel_content = workspace.get_file_content(folder, 'app/Http/Kernel.php')
+            if kernel_content:
+                break
+        if not kernel_content:
+            return False
+
+        middlewares = parse(kernel_content)
         place = middlewares.get(alias)
         if place:
             return place
