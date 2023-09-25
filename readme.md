@@ -1,6 +1,6 @@
 # Laravel Goto
 
-[![Github Action](https://github.com/absszero/LaravelGoto/workflows/build/badge.svg)](https://github.com/absszero/LaravelGoto/actions)
+[![Github Action](https://github.com/absszero/LaravelGoto/workflows/test/badge.svg)](https://github.com/absszero/LaravelGoto/actions)
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/absszero)
 
