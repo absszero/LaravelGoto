@@ -81,6 +81,8 @@ def init_extensions():
 
 def get_place(selection):
     line = selection.get_line()
+    lines = selection.get_lines_after_delimiter()
+
     path = selection.get_path()
 
     places = (
@@ -98,7 +100,7 @@ def get_place(selection):
     )
 
     for fn in places:
-        place = fn(path, line, selection)
+        place = fn(path, line, lines, selection)
         if place:
             return place
 
@@ -124,7 +126,7 @@ def set_controller_action(path, selected, blocks):
     return path
 
 
-def set_controller_namespace(path, selection, ns):
+def set_controller_namespace(path, selected, ns):
     ''' set the controller namespace '''
 
     if '\\' != path[0] and ns:
@@ -134,52 +136,51 @@ def set_controller_namespace(path, selection, ns):
     return path
 
 
-def controller_place(path, line, selection):
-    namespace = Namespace(selection.view)
-    blocks = namespace.get_blocks(selection)
-    is_controller = "Controller" in path or selection.is_class
+def controller_place(path, line, lines, selected):
+    namespace = Namespace(selected.view)
+    blocks = namespace.get_blocks(selected)
+    is_controller = "Controller" in path or selected.is_class
 
     if is_controller is False and 0 == len(blocks):
         return False
 
-    path = set_controller_action(path, selection, blocks)
+    path = set_controller_action(path, selected, blocks)
 
     ns = namespace.find(blocks)
-    path = set_controller_namespace(path, selection, ns)
+    path = set_controller_namespace(path, selected, ns)
 
     place = Place(path)
     place.is_controller = True
     return place
 
 
-def config_place(path, line, selected):
+def config_place(path, line, lines, selected):
     for pattern in config_patterns:
-        matcheds = pattern.finditer(line)
-        for matched in matcheds:
-            if (matched and path == matched.group(2)):
-                split = path.split('.')
-                path = 'config/' + split[0] + '.php'
-                location = None
-                if (2 <= len(split)):
-                    location = find_pattern % (split[1])
-                return Place(path, location)
+        matched = pattern.search(line) or pattern.search(lines)
+        if (matched and path == matched.group(2)):
+            split = path.split('.')
+            path = 'config/' + split[0] + '.php'
+            location = None
+            if (2 <= len(split)):
+                location = find_pattern % (split[1])
+            return Place(path, location)
 
     return False
 
 
-def inertiajs_place(path, line, selected):
+def inertiajs_place(path, line, lines, selected):
     for pattern in inertiajs_patterns:
-        matched = pattern.search(line)
+        matched = pattern.search(line) or pattern.search(lines)
         if (matched and matched.group(1) in path):
             return Place(matched.group(1))
 
     return False
 
 
-def livewire_place(path, line, selected):
+def livewire_place(path, line, lines, selected):
     for pattern in livewire_patterns:
-        matched = pattern.search(line)
-        if (matched):
+        matched = pattern.search(line) or pattern.search(lines)
+        if matched:
             path = camel_case(matched.group(1))
             path = path.replace('.', '/') + '.php'
             return Place(path)
@@ -192,9 +193,9 @@ def camel_case(snake_str):
     return components[0].title() + ''.join(x.title() for x in components[1:])
 
 
-def lang_place(path, line, selected):
+def lang_place(path, line, lines, selected):
     for pattern in lang_patterns:
-        matched = pattern.search(line)
+        matched = pattern.search(line) or pattern.search(lines)
         if (matched and path == matched.group(2)):
             split = path.split(':')
             vendor = ''
@@ -212,7 +213,7 @@ def lang_place(path, line, selected):
     return False
 
 
-def static_file_place(path, line, selected):
+def static_file_place(path, line, lines, selected):
     find = (path.split('.')[-1].lower() in extensions)
     if find is False:
         return False
@@ -224,15 +225,15 @@ def static_file_place(path, line, selected):
     return Place('/'.join(split))
 
 
-def env_place(path, line, selected):
-    matched = env_pattern.search(line)
+def env_place(path, line, lines, selected):
+    matched = env_pattern.search(line) or env_pattern.search(lines)
     find = (matched and path == matched.group(2))
     if find:
         return Place('.env', path)
     return False
 
-def component_place(path, line, selected):
-    matched = component_pattern.search(line)
+def component_place(path, line, lines, selected):
+    matched = component_pattern.search(line)  or component_pattern.search(lines)
     if matched:
         path = matched.group(1).strip()
 
@@ -268,9 +269,9 @@ def transform_blade(path):
     path += '.blade.php'
     return path
 
-def blade_place(path, line, selected):
+def blade_place(path, line, lines, selected):
     for pattern in blade_patterns:
-        matched = pattern.search(line)
+        matched = pattern.search(line) or pattern.search(lines)
         if matched is None:
             continue
 
@@ -288,8 +289,8 @@ def blade_place(path, line, selected):
     return False
 
 
-def path_helper_place(path, line, selected):
-    matched = path_helper_pattern.search(line)
+def path_helper_place(path, line, lines, selected):
+    matched = path_helper_pattern.search(line) or path_helper_pattern.search(lines)
     if (matched and path == matched.group(3)):
         prefix = matched.group(1) + '/'
         if 'base/' == prefix:
@@ -300,9 +301,9 @@ def path_helper_place(path, line, selected):
         return Place(prefix + path)
     return False
 
-def middleware_place(path, line, selected):
+def middleware_place(path, line, lines, selected):
     for pattern in middleware_patterns:
-        matched = pattern.search(line)
+        matched = pattern.search(line) or pattern.search(lines)
         if not matched:
             continue
         # remove middleware parameters

@@ -53,5 +53,20 @@ class Selection(sublime.Region):
     def get_line(self):
         return self.substr_line().strip()
 
+    def get_lines_after_delimiter(self, delimiter = '('):
+        lines = [];
+        line_number, _ = self.view.rowcol(self.line.a)
+        while line_number >= 0:
+            point = self.view.text_point(line_number, 0)
+            line = self.view.full_line(point)
+            text = self.view.substr(line).strip()
+            lines.insert(0, text)
+            if text.__contains__(delimiter):
+                return ''.join(lines);
+
+            line_number = line_number - 1
+
+        return ''
+
     def get_path(self):
         return self.substr().strip(self.delimiters + ' ')

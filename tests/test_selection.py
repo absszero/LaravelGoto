@@ -26,3 +26,15 @@ class TestSelection(unittest.ViewTestCase):
         self.assertEqual('resources/views/components/layout', selection.get_path())
 
 
+    def test_get_lines_after_delimiter(self):
+        self.fixture("""
+view(
+    'hell|o_view',
+    ['name' => 'James']
+);
+        """)
+
+        selection = Selection(self.view)
+        lines = selection.get_lines_after_delimiter()
+        self.assertEqual("view('hello_view',", lines)
+

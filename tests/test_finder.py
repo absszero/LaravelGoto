@@ -14,12 +14,8 @@ class TestFinder(unittest.ViewTestCase):
                 Route::get('/posts/{id}', 'sh|ow');
             });
         });""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
+        place = self.assertPath("Resource\\HelloController.php@show")
         self.assertEqual(True, place.is_controller)
-        self.assertEqual("Resource\\HelloController.php@show", place.path)
 
     def test_resource_route(self):
         self.fixture("""
@@ -28,12 +24,9 @@ class TestFinder(unittest.ViewTestCase):
                 'index', 'show'
             ]]);
         });""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
+        place = self.assertPath("Resource\\HelloController.php")
         self.assertEqual(True, place.is_controller)
-        self.assertEqual("Resource\\HelloController.php", place.path)
+
 
     def test_resource_route_action(self):
         self.fixture("""
@@ -42,185 +35,101 @@ class TestFinder(unittest.ViewTestCase):
                 'index', 'sho|w'
             ]]);
         });""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
+        place = self.assertPath("Resource\\HelloController.php@show")
         self.assertEqual(True, place.is_controller)
-        self.assertEqual("Resource\\HelloController.php@show", place.path)
 
     def test_controller(self):
         self.fixture("""Route::get('/', 'HelloControll|er@index');""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
+        place = self.assertPath("HelloController.php@index")
         self.assertEqual(True, place.is_controller)
-        self.assertEqual("HelloController.php@index", place.path)
 
     def test_component(self):
         self.fixture("""<x-form.|input/>""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual("form/input.php", place.path)
+        self.assertPath("form/input.php")
 
     def test_closing_tag_component(self):
         self.fixture("""</x-al|ert>""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual("alert.php", place.path)
+        self.assertPath("alert.php")
 
     def test_component_with_namespace(self):
         self.fixture("""<x-namespace::|alert/>""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual("namespace/alert.php", place.path)
+        self.assertPath("namespace/alert.php")
 
     def test_view(self):
         self.fixture("""
         Route::get('/', function () {
             return view('hello|_view');
         });""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual("hello_view.blade.php", place.path)
+        self.assertPath("hello_view.blade.php")
 
     def test_layout_method(self):
         self.fixture("""layout('hello|_view');""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual("hello_view.blade.php", place.path)
+        self.assertPath("hello_view.blade.php")
 
     def test_view_var(self):
         self.fixture("""$view = 'hello|_view'""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual("hello_view.blade.php", place.path)
+        self.assertPath("hello_view.blade.php")
 
     def test_view_in_mailble(self):
         self.fixture("""view: 'ema|ils.test',""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual("emails/test.blade.php", place.path)
+        self.assertPath("emails/test.blade.php")
 
     def test_view_in_route_view(self):
         self.fixture("""Route::view('/welcome', 'pages.wel|come', ['name' => 'Taylor']);""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual("pages/welcome.blade.php", place.path)
+        self.assertPath("pages/welcome.blade.php")
 
     def test_view_in_config_livewire_php(self):
         self.fixture("""'layout' => 'layou|ts.app',""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual("layouts/app.blade.php", place.path)
+        self.assertPath("layouts/app.blade.php")
 
     def test_blade_include_and_includeIf(self):
         self.fixture("""@includeIf('view.na|me', ['status' => 'complete'])""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual("view/name.blade.php", place.path)
+        self.assertPath("view/name.blade.php")
 
     def test_blade_extends(self):
         self.fixture("""@extends('view.na|me')""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual("view/name.blade.php", place.path)
+        self.assertPath("view/name.blade.php")
 
     def test_blade_inclcudeUnless_and_inclcudeWhen(self):
         self.fixture("""@includeUnless($boolean, 'view|.name', ['status' => 'complete'])""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual("view/name.blade.php", place.path)
+        self.assertPath("view/name.blade.php")
 
     def test_blade_includeFirst(self):
         self.fixture("""@includeFirst(['custom.admin', 'ad|min'], ['status' => 'complete'])""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual("admin.blade.php", place.path)
+        self.assertPath("admin.blade.php")
 
     def test_blade_each(self):
         self.fixture("""@each('view.name', $jobs, 'job', 'view|.empty')""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual("view/empty.blade.php", place.path)
+        self.assertPath("view/empty.blade.php")
 
     def test_blade_comment(self):
         self.fixture("""'{{-- resources/views/comp|onents/layout --}}'""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('resources/views/components/layout.blade.php', place.path)
+        self.assertPath('resources/views/components/layout.blade.php')
 
     def test_full_blade_path(self):
         self.fixture("""'resources/views/comp|onents/layout.blade.php'""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('resources/views/components/layout.blade.php', place.path)
+        self.assertPath('resources/views/components/layout.blade.php')
 
 
     def test_staticFile(self):
         self.fixture("""'hello|.JS';""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual("hello.JS", place.path)
+        self.assertPath("hello.JS")
 
     def test_namespace58(self):
         self.fixture("""
         Route::namespace('58')->group(function () {
             Route::get('/', 'FiveEightC|ontroller@index');
         });""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
+        place = self.assertPath('58\\FiveEightController.php@index')
         self.assertEqual(True, place.is_controller)
-        self.assertEqual('58\\FiveEightController.php@index', place.path)
 
     def test_namespace52(self):
         self.fixture("""
         Route::group(['namespace' => '52'], function () {
             Route::get('/', 'FiveTw|oController@index');
         });""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
+        place = self.assertPath('52\\FiveTwoController.php@index')
         self.assertEqual(True, place.is_controller)
-        self.assertEqual('52\\FiveTwoController.php@index', place.path)
 
     def test_namespaceLumen(self):
         self.fixture("""
@@ -228,224 +137,120 @@ class TestFinder(unittest.ViewTestCase):
             Route::get('/', 'LumenCo|ntroller@index');
         });""")
 
-        selection = Selection(self.view)
-        place = get_place(selection)
-
+        place = self.assertPath('Lumen\\LumenController.php@index')
         self.assertEqual(True, place.is_controller)
-        self.assertEqual('Lumen\\LumenController.php@index', place.path)
 
     def test_view_namespace(self):
         self.fixture("""
         Route::get('/', function () {
             return view('Namespace::h|ello_view');
         });""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('hello_view.blade.php', place.path)
+        self.assertPath('hello_view.blade.php')
 
     def test_absolute_path(self):
         self.fixture("""
         Route::group(['namespace' => 'Abc'], function () {
             Route::get('/', '\\Absolute\\IndexCont|roller@index')->name('index');
         });""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
+        place = self.assertPath('\\Absolute\\IndexController.php@index')
         self.assertEqual(True, place.is_controller)
-        self.assertEqual('\\Absolute\\IndexController.php@index', place.path)
 
     def test_facade_config_get(self):
         self.fixture("""Config::get('app.ti|mezone');""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('config/app.php', place.path)
+        place = self.assertPath('config/app.php')
         self.assertEqual('([\'"]{1})timezone\\1\\s*=>', place.location)
 
     def test_facade_config_set(self):
         self.fixture("""Config::set(   'app.timez|one', 'UTC');""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('config/app.php', place.path)
+        place = self.assertPath('config/app.php')
         self.assertEqual('([\'"]{1})timezone\\1\\s*=>', place.location)
 
     def test_config_get_only_file(self):
         self.fixture("""config('a|pp');""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('config/app.php', place.path)
+        self.assertPath('config/app.php')
 
     def test_config_get_helper(self):
         self.fixture("""config('app.timez|one');""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('config/app.php', place.path)
+        place = self.assertPath('config/app.php')
         self.assertEqual('([\'"]{1})timezone\\1\\s*=>', place.location)
 
     def test_config_set_helper(self):
         self.fixture("""config(     ['app.timez|one' => 'UTC']);""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('config/app.php', place.path)
+        place = self.assertPath('config/app.php')
         self.assertEqual('([\'"]{1})timezone\\1\\s*=>', place.location)
 
     def test_env(self):
         self.fixture("""env(   'APP|_DEBUG', false);""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('.env', place.path)
+        place = self.assertPath('.env')
         self.assertEqual('APP_DEBUG', place.location)
 
     def test_lang_underscore(self):
         self.fixture("""__('messages.w|elcome');""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('lang/messages.php', place.path)
+        self.assertPath('lang/messages.php')
 
     def test_lang_blade_directive(self):
         self.fixture("""@lang('messages.we|lcome');""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('lang/messages.php', place.path)
+        self.assertPath('lang/messages.php')
 
     def test_lang_trans(self):
         self.fixture("""trans('messages.we|lcome');""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('lang/messages.php', place.path)
+        self.assertPath('lang/messages.php')
 
     def test_lang_trans_choice(self):
         self.fixture("""trans_choice('messages.a|pples', 10);""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('lang/messages.php', place.path)
+        self.assertPath('lang/messages.php')
 
     def test_lang_trans_package(self):
         self.fixture("""trans('package::messa|ges');""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('lang/vendor/package/messages.php', place.path)
+        self.assertPath('lang/vendor/package/messages.php')
 
     def test_relative_path_static_file(self):
         self.fixture("""'./../../hel|lo.css'""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('hello.css', place.path)
+        self.assertPath('hello.css')
 
     def test_package_view(self):
         self.fixture("""view('package::hell|o_view');""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('package/hello_view.blade.php', place.path)
+        self.assertPath('package/hello_view.blade.php')
 
     def test_view_first(self):
         self.fixture("""View::first(['custom|.admin', 'admin'], $data);""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('custom/admin.blade.php', place.path)
+        self.assertPath('custom/admin.blade.php')
 
     def test_view_resource_string(self):
         self.fixture("""'resources/views/pages/public/cha|rge'""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('resources/views/pages/public/charge.blade.php', place.path)
-
+        self.assertPath('resources/views/pages/public/charge.blade.php')
 
     def test_view_exists(self):
         self.fixture("""View::exists('emails.c|ustomer');""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('emails/customer.blade.php', place.path)
+        self.assertPath('emails/customer.blade.php')
 
     def test_app_path(self):
         self.fixture("""app_path('Us|er.php');""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('app/User.php', place.path)
+        self.assertPath('app/User.php')
 
     def test_config_path(self):
         self.fixture("""config_path('ap|p.php');""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('config/app.php', place.path)
+        self.assertPath('config/app.php')
 
     def test_database_path(self):
         self.fixture("""database_path('UserFacto|ry.php');""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('database/UserFactory.php', place.path)
+        self.assertPath('database/UserFactory.php')
 
     def test_public_path(self):
         self.fixture("""public_path('css/ap|p.css');""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('public/css/app.css', place.path)
+        self.assertPath('public/css/app.css')
 
     def test_resource_path(self):
         self.fixture("""resource_path('sass/ap|p.scss');""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('resources/sass/app.scss', place.path)
+        self.assertPath('resources/sass/app.scss')
 
     def test_storage_path(self):
         self.fixture("""storage_path('logs/lara|vel.log');""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('storage/logs/laravel.log', place.path)
+        self.assertPath('storage/logs/laravel.log')
 
     def test_double_brackets_path(self):
         self.fixture("""realpath(storage_path('logs/lar|avel.log'));""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('storage/logs/laravel.log', place.path)
+        self.assertPath('storage/logs/laravel.log')
 
     def test_v8_namespace_route(self):
         self.fixture("""Route::get('/', [L8\\EightContro|ller::class, 'index']);""")
@@ -458,22 +263,14 @@ class TestFinder(unittest.ViewTestCase):
 
     def test_v8_route(self):
         self.fixture("""Route::get('/', EightContro|ller::class);""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('EightController.php', place.path)
+        self.assertPath('EightController.php')
 
     def test_v8_group_namespae_abs_route(self):
         self.fixture("""
         Route::group(['namespace' => 'L8'], function () {
             Route::get('/', [\\EightControl|ler::class, 'index']);
         });""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual('\\EightController.php@index', place.path)
+        self.assertPath('\\EightController.php@index')
 
     def test_v8_group_namespae_route(self):
         self.fixture("""
@@ -488,43 +285,64 @@ class TestFinder(unittest.ViewTestCase):
 
     def test_inertiajs_function(self):
         self.fixture("""inertia("About/AboutCo|mponent");""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual("About/AboutComponent", place.path)
+        self.assertPath("About/AboutComponent")
 
     def test_inertiajs_render(self):
         self.fixture("""Inertia::render("About/AboutC|omponent");""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual("About/AboutComponent", place.path)
+        self.assertPath("About/AboutComponent")
 
     def test_inertiajs_route(self):
         self.fixture("""Route::inertia("/about", "About/AboutCom|ponent");""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual("About/AboutComponent", place.path)
+        self.assertPath("About/AboutComponent")
 
     def test_livewire_tag(self):
         self.fixture("""<livewire:nav.sho|w-post />""")
-
-        selection = Selection(self.view)
-        place = get_place(selection)
-
-        self.assertEqual("Nav/ShowPost.php", place.path)
+        self.assertPath("Nav/ShowPost.php")
 
     def test_livewire_blade_directive(self):
         self.fixture("""@livewire("nav.show|-post")""")
+        self.assertPath("Nav/ShowPost.php")
 
-        selection = Selection(self.view)
-        place = get_place(selection)
+    def test_multiline(self):
+        examples = {
+            'layouts/app.blade.php':
+            """layout(
+                'lay|outs.app'
+            )""",
+            'About/AboutComponent':
+            """inertia(
+                'About/AboutCo|mponent'
+            );""",
+            'hello_view.blade.php':
+            """view(
+                'hello|_view', ['name' => 'James']
+            );""",
+            'HelloController.php@index':
+            """Route::get(
+                '/', 'HelloControlle|r@index'
+            );""",
+            'config/app.php':
+            """Config::get(
+                'app.t|imezone'
+            );""",
+            '.env':
+            """env(
+                'APP_DEB|UG'
+                , false
+            );""",
+            'lang/messages.php':
+            """__(
+                'messages.|welcome'
+            );""",
+            'app/User.php':
+            """app_path(
+                'Use|r.php'
+            );"""
+        }
 
-        self.assertEqual("Nav/ShowPost.php", place.path)
+        for expected, content in examples.items():
+            self.fixture(content)
+            self.assertPath(expected, expected)
 
     @patch('LaravelGoto.lib.workspace.get_folders')
     @patch('LaravelGoto.lib.workspace.get_file_content')
@@ -541,3 +359,12 @@ class TestFinder(unittest.ViewTestCase):
         place = get_place(selection)
         self.assertEqual("Illuminate/Auth/Middleware/AuthenticateWithBasicAuth.php", place.path)
 
+
+    def assertPath(self, expected, msg=None):
+        selection = Selection(self.view)
+        place = get_place(selection)
+
+        self.assertIsNotNone(place, msg)
+        self.assertEqual(expected, place.path, msg)
+
+        return place;
