@@ -215,6 +215,22 @@ class TestFinder(unittest.ViewTestCase):
     def test_view_first(self):
         self.fixture("""View::first(['custom|.admin', 'admin'], $data);""")
         self.assertPath('custom/admin.blade.php')
+        self.fixture("""View::first(['custom.admin', 'ad|min'], $data);""")
+        self.assertPath('admin.blade.php')
+
+    def test_view_composer(self):
+        self.fixture("""View::composer(['pro|file', 'dashboard'], MultiComposer::class);""")
+        self.assertPath('profile.blade.php')
+
+        self.fixture("""View::composer(['profile', 'das|hboard'], MultiComposer::class);""")
+        self.assertPath('dashboard.blade.php')
+
+        self.fixture("""View::composer('prof|ile', ProfileComposer::class);""")
+        self.assertPath('profile.blade.php')
+
+    def test_view_creator(self):
+        self.fixture("""View::creator('prof|ile', ProfileComposer::class);""")
+        self.assertPath('profile.blade.php')
 
     def test_view_resource_string(self):
         self.fixture("""'resources/views/pages/public/cha|rge'""")

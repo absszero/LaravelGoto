@@ -136,3 +136,10 @@ Route::view('/', 'pages.public.index');
 @each('view.name', $jobs, 'job', 'view.empty')
 
 @extends('layouts.app')
+
+View::composer(
+    ['profile', 'dashboard'],
+    MultiComposer::class
+);
+
+View::composer('profile', ProfileComposer::class);

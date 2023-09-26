@@ -43,7 +43,8 @@ blade_patterns = [
     compile(r"""view\(\s*(['"])([^'"]*)\1"""),
     compile(r"""[lL]ayout\(\s*(['"])([^'"]*)\1"""),
     compile(r"""View::exists\(\s*(['"])([^'"]*)\1"""),
-    compile(r"""View::first[^'"]*(['"])([^'"]*)\1"""),
+    compile(r"""View::composer\(\s*(['"])([^'"]*)\1"""),
+    compile(r"""View::creator\(\s*(['"])([^'"]*)\1"""),
     compile(r"""\$view\s*=\s*(['"])([^'"]*)\1"""),
     compile(r"""view:\s*(['"])([^'"]*)\1"""),
     compile(r"""view\(\s*['"][^'"]*['"],\s*(['"])([^'"]*)\1"""),
@@ -56,7 +57,9 @@ blade_patterns = [
 
 multi_views_patterns = [
     compile(r"""@includeFirst\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""),
+    compile(r"""View::composer\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""),
     compile(r"""@each\(['"][^'"]+['"]\s*,[^,]+,[^,]+,[^)]+"""),
+    compile(r"""View::first[^'"]*(['"])([^'"]*)\1"""),
 ]
 
 middleware_patterns = [
@@ -282,7 +285,7 @@ def blade_place(path, line, lines, selected):
             return Place(path)
 
     for pattern in multi_views_patterns:
-        if pattern.search(line):
+        if pattern.search(line) or pattern.search(lines):
             path = transform_blade(path)
             return Place(path)
 
