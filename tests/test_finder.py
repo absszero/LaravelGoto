@@ -45,15 +45,17 @@ class TestFinder(unittest.ViewTestCase):
 
     def test_component(self):
         self.fixture("""<x-form.|input/>""")
-        self.assertPath("form/input.php")
+        self.assertPath("views/components/form/input.blade.php")
 
     def test_closing_tag_component(self):
-        self.fixture("""</x-al|ert>""")
-        self.assertPath("alert.php")
+        self.fixture("""</x-hello-al|ert>""")
+        place = self.assertPath("views/components/hello-alert.blade.php")
+        self.assertEqual(place.paths[0], 'views/components/hello-alert.blade.php')
+        self.assertEqual(place.paths[1], 'View/Components/HelloAlert.php')
 
     def test_component_with_namespace(self):
         self.fixture("""<x-namespace::|alert/>""")
-        self.assertPath("namespace/alert.php")
+        self.assertPath("namespace/alert.blade.php")
 
     def test_view(self):
         self.fixture("""

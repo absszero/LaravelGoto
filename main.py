@@ -53,8 +53,7 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         self.window = sublime.active_window()
         selection = Selection(self.view)
         place = get_place(selection)
-        self.search(place)
-        return
+        self.show_overlay(place)
 
     def is_visible(self):
         filename = self.view.file_name()
@@ -67,9 +66,20 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
                 )
             )
 
-    def search(self, place):
+    def on_path_select(self, idx):
+        if -1 is idx:
+            return
+        place.path  = place.paths[idx]
+        place.paths = []
+        self.show_overlay(place)
+
+    def show_overlay(self, place):
         if place is None:
             sublime.status_message('Laravel Goto: unidentified string.')
+            return
+
+        if place.paths:
+            self.window.show_quick_panel(place.paths, self.on_path_select, placeholder="Select a component file")
             return
 
         args = {
@@ -84,6 +94,6 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
             self.window.run_command("insert", {
                 "characters": place.path
             })
-        else:
-            self.window.run_command("show_overlay", args)
-        return
+            return
+
+        self.window.run_command("show_overlay", args)

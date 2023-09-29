@@ -237,22 +237,32 @@ def env_place(path, line, lines, selected):
 
 def component_place(path, line, lines, selected):
     matched = component_pattern.search(line)  or component_pattern.search(lines)
-    if matched:
-        path = matched.group(1).strip()
+    if matched is None:
+        return False
 
-        split = path.split(':')
-        vendor = ''
-        # vendor or namespace
-        if (3 == len(split)):
-            # vendor probably is lowercase
-            if (split[0] == split[0].lower()):
-                vendor = split[0] + '/'
+    path = matched.group(1).strip()
 
-        path = split[-1]
-        path = vendor + path.replace('.', '/')
-        path += '.php'
+    split = path.split(':')
+    vendor = 'View/Components/'
+    res_vendor = 'views/components/'
+    # vendor or namespace
+    if (3 == len(split)):
+        # vendor probably is lowercase
+        if (split[0] == split[0].lower()):
+            vendor = split[0] + '/'
+            res_vendor = split[0] + '/'
 
-        return Place(path)
+    sections = split[-1].split('.')
+    place = Place(res_vendor + '/'.join(sections) + '.blade.php')
+    place.paths.append(place.path)
+
+    for i, s in enumerate(sections):
+        sections[i] = s.capitalize();
+    sections[-1] = camel_case(sections[-1])
+    place.paths.append(vendor + '/'.join(sections) + '.php')
+
+    return place
+
 
 
 def transform_blade(path):
