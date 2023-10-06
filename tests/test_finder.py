@@ -5,6 +5,7 @@ from . import unittest
 
 from LaravelGoto.lib.selection import Selection
 from LaravelGoto.lib.finder import get_place
+from LaravelGoto.lib.place import Place
 
 class TestFinder(unittest.ViewTestCase):
     def test_controller_route(self):
@@ -362,11 +363,12 @@ class TestFinder(unittest.ViewTestCase):
             self.fixture(content)
             self.assertPath(expected, expected)
 
-    @patch('LaravelGoto.lib.workspace.get_folders')
-    @patch('LaravelGoto.lib.workspace.get_file_content')
-    def test_middleware(self, mock_get_file_content, mock_get_folders):
-        mock_get_file_content.return_value = self.get_kernel()
-        mock_get_folders.return_value = [self.get_test_dir()]
+    @patch('LaravelGoto.lib.finder.Middleware.all')
+    def test_middleware(self, mock_middleware):
+        mock_middleware.return_value = {
+            'auth': Place('App/Http/Middleware/Authenticate.php'),
+            'auth.basic': Place('Illuminate/Auth/Middleware/AuthenticateWithBasicAuth.php')
+        }
         self.fixture("""Route::middleware(['web:1234', 'auth|:abc']);""")
         selection = Selection(self.view)
         place = get_place(selection)

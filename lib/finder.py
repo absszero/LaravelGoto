@@ -2,8 +2,7 @@ import sublime
 from re import compile
 from .namespace import Namespace
 from .place import Place
-from .middleware import parse
-from . import workspace
+from .middleware import Middleware
 
 find_pattern = """(['"]{1})%s\\1\\s*=>"""
 
@@ -304,6 +303,7 @@ def middleware_place(path, line, lines, selected):
         compile(r"""[m|M]iddleware\(\s*\[?\s*(['"][^'"]+['"]\s*,?\s*)+"""),
         compile(r"""['"]middleware['"]\s*=>\s*\s*\[?\s*(['"][^'"]+['"]\s*,?\s*){1,}\]?"""),
     ]
+    middlewares = None
     for pattern in middleware_patterns:
         matched = pattern.search(line) or pattern.search(lines)
         if not matched:
@@ -311,15 +311,31 @@ def middleware_place(path, line, lines, selected):
         # remove middleware parameters
         alias = path.split(':')[0]
 
-        kernel_content = None
-        for folder in workspace.get_folders():
-            kernel_content = workspace.get_file_content(folder, 'app/Http/Kernel.php')
-            if kernel_content:
-                break
-        if not kernel_content:
-            return False
-
-        middlewares = parse(kernel_content)
+        if not middlewares:
+            middleware = Middleware()
+            middlewares = middleware.all()
         place = middlewares.get(alias)
         if place:
             return place
+
+# def command_place(path, line, lines, selected):
+#     patterns = [
+#         compile(r"""Artisan::call\(\s*['"]([^\s'"]+)"""),
+#         compile(r"""command\(\s*['"]([^\s'"]+)"""),
+#     ]
+
+#     for pattern in patterns:
+#         match = pattern.search(line) or pattern.search(lines);
+#         if not match:
+#             continue
+
+#         signature = match.group(1);
+#         const commands = await (new Console).all();
+#         let found = commands.get(signature);
+#         if (found) {
+#             return found;
+#         }
+#     }
+
+#     return place;
+# }
