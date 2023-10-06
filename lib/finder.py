@@ -5,67 +5,7 @@ from .place import Place
 from .middleware import parse
 from . import workspace
 
-config_patterns = [
-    compile(r"""Config::[^'"]*(['"])([^'"]*)\1"""),
-    compile(r"""config\([^'"]*(['"])([^'"]*)\1"""),
-]
-
-lang_patterns = [
-    compile(r"""__\([^'"]*(['"])([^'"]*)\1"""),
-    compile(r"""@lang\([^'"]*(['"])([^'"]*)\1"""),
-    compile(r"""trans\([^'"]*(['"])([^'"]*)\1"""),
-    compile(r"""trans_choice\([^'"]*(['"])([^'"]*)\1"""),
-]
-
-inertiajs_patterns = [
-    compile(r"""Route::inertia\s*\([^,]+,\s*['"]([^'"]+)"""),
-    compile(r"""Inertia::render\s*\(\s*['"]([^'"]+)"""),
-    compile(r"""inertia\s*\(\s*['"]([^'"]+)"""),
-]
-
-livewire_patterns = [
-    compile(r"""livewire:([^\s"'>]+)"""),
-    compile(r"""@livewire\s*\(\s*['"]([^'"]+)"""),
-]
-
-
-env_pattern = compile(r"""env\(\s*(['"])([^'"]*)\1""")
-
-path_helper_pattern = compile(r"""([\w^_]+)_path\(\s*(['"])([^'"]*)\2""")
-
 find_pattern = """(['"]{1})%s\\1\\s*=>"""
-
-class_controller_pattern = compile(r"""(.+)\.php\s*,\s*["']{1}(.+)""")
-
-component_pattern = compile(r"""<\/?x-([^\/\s>]*)""")
-
-blade_patterns = [
-    compile(r"""view\(\s*(['"])([^'"]*)\1"""),
-    compile(r"""[lL]ayout\(\s*(['"])([^'"]*)\1"""),
-    compile(r"""View::exists\(\s*(['"])([^'"]*)\1"""),
-    compile(r"""View::composer\(\s*(['"])([^'"]*)\1"""),
-    compile(r"""View::creator\(\s*(['"])([^'"]*)\1"""),
-    compile(r"""\$view\s*=\s*(['"])([^'"]*)\1"""),
-    compile(r"""view:\s*(['"])([^'"]*)\1"""),
-    compile(r"""view\(\s*['"][^'"]*['"],\s*(['"])([^'"]*)\1"""),
-    compile(r"""['"]layout['"]\s*=>\s*(['"])([^'"]*)\1"""),
-    compile(r"""@include(If\b)?\(\s*(['"])([^'"]*)\2"""),
-    compile(r"""@extends\(\s*(['"])([^'"]*)\1"""),
-    compile(r"""@include(When|Unless\b)?\([^'"]+(['"])([^'"]+)"""),
-    compile(r"""(resources\/views[^\s'"-]+)"""),
-]
-
-multi_views_patterns = [
-    compile(r"""@includeFirst\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""),
-    compile(r"""View::composer\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""),
-    compile(r"""@each\(['"][^'"]+['"]\s*,[^,]+,[^,]+,[^)]+"""),
-    compile(r"""View::first[^'"]*(['"])([^'"]*)\1"""),
-]
-
-middleware_patterns = [
-    compile(r"""[m|M]iddleware\(\s*\[?\s*(['"][^'"]+['"]\s*,?\s*)+"""),
-    compile(r"""['"]middleware['"]\s*=>\s*\s*\[?\s*(['"][^'"]+['"]\s*,?\s*){1,}\]?"""),
-]
 
 extensions = []
 
@@ -111,6 +51,7 @@ def get_place(selection):
 def set_controller_action(path, selected, blocks):
     ''' set the controller action '''
 
+    class_controller_pattern = compile(r"""(.+)\.php\s*,\s*["']{1}(.+)""")
     path = path.replace('@', '.php@')
     path = path.replace('::class', '.php')
     if selected.is_class:
@@ -158,6 +99,10 @@ def controller_place(path, line, lines, selected):
 
 
 def config_place(path, line, lines, selected):
+    config_patterns = [
+        compile(r"""Config::[^'"]*(['"])([^'"]*)\1"""),
+        compile(r"""config\([^'"]*(['"])([^'"]*)\1"""),
+    ]
     for pattern in config_patterns:
         matched = pattern.search(line) or pattern.search(lines)
         if (matched and path == matched.group(2)):
@@ -172,6 +117,11 @@ def config_place(path, line, lines, selected):
 
 
 def inertiajs_place(path, line, lines, selected):
+    inertiajs_patterns = [
+        compile(r"""Route::inertia\s*\([^,]+,\s*['"]([^'"]+)"""),
+        compile(r"""Inertia::render\s*\(\s*['"]([^'"]+)"""),
+        compile(r"""inertia\s*\(\s*['"]([^'"]+)"""),
+    ]
     for pattern in inertiajs_patterns:
         matched = pattern.search(line) or pattern.search(lines)
         if (matched and matched.group(1) in path):
@@ -181,6 +131,10 @@ def inertiajs_place(path, line, lines, selected):
 
 
 def livewire_place(path, line, lines, selected):
+    livewire_patterns = [
+        compile(r"""livewire:([^\s"'>]+)"""),
+        compile(r"""@livewire\s*\(\s*['"]([^'"]+)"""),
+    ]
     for pattern in livewire_patterns:
         matched = pattern.search(line) or pattern.search(lines)
         if matched:
@@ -197,6 +151,13 @@ def camel_case(snake_str):
 
 
 def lang_place(path, line, lines, selected):
+    lang_patterns = [
+        compile(r"""__\([^'"]*(['"])([^'"]*)\1"""),
+        compile(r"""@lang\([^'"]*(['"])([^'"]*)\1"""),
+        compile(r"""trans\([^'"]*(['"])([^'"]*)\1"""),
+        compile(r"""trans_choice\([^'"]*(['"])([^'"]*)\1"""),
+    ]
+
     for pattern in lang_patterns:
         matched = pattern.search(line) or pattern.search(lines)
         if (matched and path == matched.group(2)):
@@ -229,6 +190,7 @@ def static_file_place(path, line, lines, selected):
 
 
 def env_place(path, line, lines, selected):
+    env_pattern = compile(r"""env\(\s*(['"])([^'"]*)\1""")
     matched = env_pattern.search(line) or env_pattern.search(lines)
     find = (matched and path == matched.group(2))
     if find:
@@ -236,6 +198,7 @@ def env_place(path, line, lines, selected):
     return False
 
 def component_place(path, line, lines, selected):
+    component_pattern = compile(r"""<\/?x-([^\/\s>]*)""")
     matched = component_pattern.search(line)  or component_pattern.search(lines)
     if matched is None:
         return False
@@ -283,6 +246,21 @@ def transform_blade(path):
     return path
 
 def blade_place(path, line, lines, selected):
+    blade_patterns = [
+        compile(r"""view\(\s*(['"])([^'"]*)\1"""),
+        compile(r"""[lL]ayout\(\s*(['"])([^'"]*)\1"""),
+        compile(r"""View::exists\(\s*(['"])([^'"]*)\1"""),
+        compile(r"""View::composer\(\s*(['"])([^'"]*)\1"""),
+        compile(r"""View::creator\(\s*(['"])([^'"]*)\1"""),
+        compile(r"""\$view\s*=\s*(['"])([^'"]*)\1"""),
+        compile(r"""view:\s*(['"])([^'"]*)\1"""),
+        compile(r"""view\(\s*['"][^'"]*['"],\s*(['"])([^'"]*)\1"""),
+        compile(r"""['"]layout['"]\s*=>\s*(['"])([^'"]*)\1"""),
+        compile(r"""@include(If\b)?\(\s*(['"])([^'"]*)\2"""),
+        compile(r"""@extends\(\s*(['"])([^'"]*)\1"""),
+        compile(r"""@include(When|Unless\b)?\([^'"]+(['"])([^'"]+)"""),
+        compile(r"""(resources\/views[^\s'"-]+)"""),
+    ]
     for pattern in blade_patterns:
         matched = pattern.search(line) or pattern.search(lines)
         if matched is None:
@@ -294,6 +272,12 @@ def blade_place(path, line, lines, selected):
             path = transform_blade(path)
             return Place(path)
 
+    multi_views_patterns = [
+        compile(r"""@includeFirst\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""),
+        compile(r"""View::composer\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""),
+        compile(r"""@each\(['"][^'"]+['"]\s*,[^,]+,[^,]+,[^)]+"""),
+        compile(r"""View::first[^'"]*(['"])([^'"]*)\1"""),
+    ]
     for pattern in multi_views_patterns:
         if pattern.search(line) or pattern.search(lines):
             path = transform_blade(path)
@@ -303,6 +287,7 @@ def blade_place(path, line, lines, selected):
 
 
 def path_helper_place(path, line, lines, selected):
+    path_helper_pattern = compile(r"""([\w^_]+)_path\(\s*(['"])([^'"]*)\2""")
     matched = path_helper_pattern.search(line) or path_helper_pattern.search(lines)
     if (matched and path == matched.group(3)):
         prefix = matched.group(1) + '/'
@@ -315,6 +300,10 @@ def path_helper_place(path, line, lines, selected):
     return False
 
 def middleware_place(path, line, lines, selected):
+    middleware_patterns = [
+        compile(r"""[m|M]iddleware\(\s*\[?\s*(['"][^'"]+['"]\s*,?\s*)+"""),
+        compile(r"""['"]middleware['"]\s*=>\s*\s*\[?\s*(['"][^'"]+['"]\s*,?\s*){1,}\]?"""),
+    ]
     for pattern in middleware_patterns:
         matched = pattern.search(line) or pattern.search(lines)
         if not matched:
