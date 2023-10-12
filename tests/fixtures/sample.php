@@ -143,3 +143,9 @@ View::composer(
 );
 
 View::composer('profile', ProfileComposer::class);
+
+Artisan::call('app:say-hello');
+
+command('app:say-hello');
+
+command('app:say-goodbye');

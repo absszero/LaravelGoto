@@ -3,6 +3,8 @@ from re import compile
 from .namespace import Namespace
 from .place import Place
 from .middleware import Middleware
+from .console import Console
+
 
 find_pattern = """(['"]{1})%s\\1\\s*=>"""
 
@@ -38,6 +40,7 @@ def get_place(selection):
         blade_place,
         component_place,
         middleware_place,
+        command_place,
         controller_place,
     )
 
@@ -308,34 +311,36 @@ def middleware_place(path, line, lines, selected):
         matched = pattern.search(line) or pattern.search(lines)
         if not matched:
             continue
-        # remove middleware parameters
-        alias = path.split(':')[0]
 
         if not middlewares:
             middleware = Middleware()
             middlewares = middleware.all()
+
+        # remove middleware parameters
+        alias = path.split(':')[0]
         place = middlewares.get(alias)
         if place:
             return place
 
-# def command_place(path, line, lines, selected):
-#     patterns = [
-#         compile(r"""Artisan::call\(\s*['"]([^\s'"]+)"""),
-#         compile(r"""command\(\s*['"]([^\s'"]+)"""),
-#     ]
+def command_place(path, line, lines, selected):
+    patterns = [
+        compile(r"""Artisan::call\(\s*['"]([^\s'"]+)"""),
+        compile(r"""command\(\s*['"]([^\s'"]+)"""),
+    ]
 
-#     for pattern in patterns:
-#         match = pattern.search(line) or pattern.search(lines);
-#         if not match:
-#             continue
+    commands = None
+    for pattern in patterns:
+        match = pattern.search(line) or pattern.search(lines);
+        if not match:
+            continue
 
-#         signature = match.group(1);
-#         const commands = await (new Console).all();
-#         let found = commands.get(signature);
-#         if (found) {
-#             return found;
-#         }
-#     }
+        if not commands:
+            console = Console()
+            commands = console.all()
 
-#     return place;
-# }
+        signature = match.group(1)
+        place = commands.get(signature)
+        if place:
+            return place
+
+        return place

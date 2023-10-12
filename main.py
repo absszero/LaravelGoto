@@ -82,6 +82,11 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
             self.window.show_quick_panel(place.paths, self.on_path_select, placeholder="Select a component file")
             return
 
+        if place.uri:
+            self.window.open_file(place.uri)
+            return
+
+
         args = {
             "overlay": "goto",
             "show_files": True,

@@ -4,9 +4,13 @@ import sublime
 mTimes = {}
 contents = {}
 
-def get_file_content(folder, filepath):
-    fullpath = get_path(folder, filepath, True)
+def get_file_content(folder, filepath=None):
+    fullpath = folder
+    if filepath:
+        fullpath = get_path(folder, filepath, True)
     if not fullpath:
+        return
+    if not os.path.isfile(fullpath):
         return
 
     mTime = os.path.getmtime(fullpath)
@@ -20,6 +24,14 @@ def get_file_content(folder, filepath):
         mTimes[fullpath] = mTime
         contents[fullpath] = content
         return content
+
+def get_recursion_files(folder, ext='.php'):
+    files = []
+    for folder, subfolders, filenames in os.walk(folder):
+        for filename in filenames:
+            if filename.endswith(ext):
+                files.append(os.path.join(folder, filename));
+    return files
 
 def get_path(folder, filepath, recursion = False):
     top_dir = filepath.split('/')[0];

@@ -3,17 +3,28 @@ import sys
 import os
 
 from . import unittest
-from LaravelGoto.lib.workspace import get_path, get_file_content
+from LaravelGoto.lib import workspace
 
 
 class TestWorkspace(unittest.ViewTestCase):
     def test_get_file_content(self):
         folder = os.path.dirname(os.path.abspath(__file__));
-        content = get_file_content(folder, 'app/Http/Kernel.php')
+        content = workspace.get_file_content(folder, 'app/Http/Kernel.php')
         self.assertTrue(content.__contains__('class Kernel extends HttpKernel'))
+
+        content = workspace.get_file_content(__file__);
+        self.assertTrue(content.__contains__('TestWorkspace'))
 
     def test_get_path(self):
         folder = os.path.dirname(os.path.abspath(__file__));
-        fullpapth = get_path(folder, 'app/Http/Kernel.php', True)
+        fullpapth = workspace.get_path(folder, 'app/Http/Kernel.php', True)
         self.assertTrue(fullpapth.__contains__('app/Http/Kernel.php'))
+
+    def test_get_recursion_files(self):
+        folder = os.path.dirname(os.path.abspath(__file__)) + '/fixtures/app/Console/Commands';
+        files = workspace.get_recursion_files(folder)
+        self.assertTrue(files[0].endswith('SayHello.php'), files[0])
+        self.assertTrue(files[1].endswith('SayGoodbye.php'), files[1])
+        self.assertTrue(files[2].endswith('SendEmails.php'), files[2])
+
 

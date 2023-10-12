@@ -34,10 +34,3 @@ class ViewTestCase(TestCase):
 
     def get_test_dir(self):
         return path.dirname(path.abspath(__file__))
-
-    def get_http_kernel(self):
-        test_dir = self.get_test_dir()
-        fullpath = path.join(test_dir, 'fixtures/app/Http/Kernel.php')
-        with open(fullpath, mode = "r", encoding = "utf-8") as f:
-            return f.read()
-
