@@ -23,8 +23,9 @@ class TestWorkspace(unittest.ViewTestCase):
     def test_get_recursion_files(self):
         folder = os.path.dirname(os.path.abspath(__file__)) + '/fixtures/app/Console/Commands';
         files = workspace.get_recursion_files(folder)
-        self.assertTrue(files[0].endswith('SayHello.php'), files[0])
-        self.assertTrue(files[1].endswith('SayGoodbye.php'), files[1])
+        files.sort()
+        self.assertTrue(files[0].endswith('SayGoodbye.php'), files[0])
+        self.assertTrue(files[1].endswith('SayHello.php'), files[1])
         self.assertTrue(files[2].endswith('SendEmails.php'), files[2])
 
 
