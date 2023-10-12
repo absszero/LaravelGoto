@@ -11,6 +11,9 @@ class Console:
             return
         for folder in workspace.get_folders():
             fullpath = workspace.get_path(folder, 'app/Console/Kernel.php', True)
+            if not fullpath:
+                continue
+
             self.folder = os.path.dirname(fullpath)
             self.console_kernel = workspace.get_file_content(fullpath)
             if self.console_kernel:
