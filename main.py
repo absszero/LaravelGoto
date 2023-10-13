@@ -54,17 +54,29 @@ class GotoLocation(sublime_plugin.EventListener):
         place = get_place(selection)
 
         if place and place.path:
-            link = '<a href="#">' + place.path + '</a>'
+            content = self.build_link(place.path)
+
+            if place.paths:
+                content = '<br/>'.join(map(self.build_link, place.paths))
+
             view.show_popup(
-                link,
+                content,
                 flags=sublime.HIDE_ON_MOUSE_MOVE_AWAY,
                 location=point,
                 max_width=640,
                 on_navigate=self.on_navigate
             )
 
+    def build_link(self, path):
+        return '<a href="' + path + '">' + path + '</a>'
+
+
     def on_navigate(self, link):
         global place
+        if place.paths and link in place.paths:
+            place.path = link
+            place.paths = []
+
         goto_place(place)
 
 

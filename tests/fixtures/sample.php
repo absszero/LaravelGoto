@@ -115,7 +115,7 @@ return inertia('About/AboutComponent');
 
 <livewire:nav.show-post />
 
-$view = 'hello.world'
+$view = 'hello.world';
 
 layout('layouts.app')
 
