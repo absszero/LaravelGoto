@@ -63,7 +63,7 @@ class GotoLocation(sublime_plugin.EventListener):
                 on_navigate=self.on_navigate
             )
 
-    def on_navigate(path, link):
+    def on_navigate(self, link):
         global place
         goto_place(place)
 
