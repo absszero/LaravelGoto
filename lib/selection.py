@@ -4,11 +4,16 @@ import sublime
 class Selection(sublime.Region):
     delimiters = "\"'-<>{}"
 
-    def __init__(self, view):
+    def __init__(self, view, point=None):
         self.view = view
-        self.line = view.line(view.sel()[0].begin())
-        scopes = view.scope_name(view.sel()[0].begin())
+        self.region = view.sel()[0]
+        if point:
+            self.region = sublime.Region(point, point)
+        self.line = view.line(self.region)
+
+        scopes = view.scope_name(self.region.begin())
         self.is_class = 'support.class.php' in scopes
+
         selected = self.get_selection()
         super(Selection, self).__init__(selected.begin(), selected.end(), -1)
 
@@ -19,12 +24,10 @@ class Selection(sublime.Region):
         return self.view.substr(self.line)
 
     def get_selection(self):
-        selected = self.view.sel()[0]
-        start = selected.begin()
-        end = selected.end()
-
+        start = self.region.begin()
+        end = self.region.end()
         if start != end:
-            return selected
+            return self.region
 
         selected = self.view.extract_scope(start)
         if self.line.contains(selected):

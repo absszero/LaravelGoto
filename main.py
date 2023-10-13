@@ -25,6 +25,7 @@ place = None
 
 class GotoLocation(sublime_plugin.EventListener):
     def on_activated(self, view):
+        init_extensions()
         global place
         filepath = view.file_name()
         if (not place or not filepath):
@@ -42,18 +43,40 @@ class GotoLocation(sublime_plugin.EventListener):
         view.show(location)
         place = None
 
+    def on_hover(self, view, point, hover_zone):
+        if view.is_popup_visible():
+            return
+        if sublime.HOVER_TEXT != hover_zone:
+            return
+
+        global place
+        selection = Selection(view, point)
+        place = get_place(selection)
+
+        if place and place.path:
+            link = '<a href="#">' + place.path + '</a>'
+            view.show_popup(
+                link,
+                flags=sublime.HIDE_ON_MOUSE_MOVE_AWAY,
+                location=point,
+                max_width=640,
+                on_navigate=self.on_navigate
+            )
+
+    def on_navigate(path, link):
+        global place
+        goto_place(place)
+
 
 class LaravelGotoCommand(sublime_plugin.TextCommand):
     def __init__(self, view):
         super().__init__(view)
-        init_extensions()
 
     def run(self, edit):
         global place
-        self.window = sublime.active_window()
         selection = Selection(self.view)
         place = get_place(selection)
-        self.show_overlay(place)
+        goto_place(place)
 
     def is_visible(self):
         filename = self.view.file_name()
@@ -66,39 +89,43 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
                 )
             )
 
-    def on_path_select(self, idx):
-        if -1 is idx:
-            return
-        place.path  = place.paths[idx]
-        place.paths = []
-        self.show_overlay(place)
 
-    def show_overlay(self, place):
-        if place is None:
-            sublime.status_message('Laravel Goto: unidentified string.')
-            return
+def goto_place(place):
+    if place is None:
+        sublime.status_message('Laravel Goto: unidentified string.')
+        return
 
-        if place.paths:
-            self.window.show_quick_panel(place.paths, self.on_path_select, placeholder="Select a component file")
-            return
+    window = sublime.active_window()
 
-        if place.uri:
-            self.window.open_file(place.uri)
-            return
+    if place.paths:
+        window.show_quick_panel(place.paths, on_path_select, placeholder="Select a component file")
+        return
+
+    if place.uri:
+        window.open_file(place.uri)
+        return
 
 
-        args = {
-            "overlay": "goto",
-            "show_files": True,
-            "text": place.path
-        }
+    args = {
+        "overlay": "goto",
+        "show_files": True,
+        "text": place.path
+    }
 
-        if place.is_controller:
-            args["text"] = ''
-            self.window.run_command("show_overlay", args)
-            self.window.run_command("insert", {
-                "characters": place.path
-            })
-            return
+    if place.is_controller:
+        args["text"] = ''
+        window.run_command("show_overlay", args)
+        window.run_command("insert", {
+            "characters": place.path
+        })
+        return
 
-        self.window.run_command("show_overlay", args)
+    window.run_command("show_overlay", args)
+
+
+def on_path_select(idx):
+    if -1 is idx:
+        return
+    place.path  = place.paths[idx]
+    place.paths = []
+    goto_place(place)
