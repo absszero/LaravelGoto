@@ -3,35 +3,36 @@
         "caption": "Preferences",
         "mnemonic": "n",
         "id": "preferences",
-        "children":
-        [
+        "children": [
             {
                 "caption": "Package Settings",
                 "mnemonic": "P",
                 "id": "package-settings",
-                "children":
-                [
+                "children": [
                     {
                         "caption": "Laravel Goto",
-                        "children":
-                        [
+                        "children": [
                             {
                                 "caption": "Settings",
                                 "command": "edit_settings",
                                 "args": {
                                     "base_file": "${packages}/LaravelGoto/LaravelGoto.sublime-settings",
-                                    "default": "{}"
+                                    "user_file": "${packages}/User/LaravelGoto.sublime-settings",
+                                    "default": "// Settings in here override those in \"LaravelGoto/LaravelGoto.sublime-settings\"\n{\n\t$0\n}\n"
                                 }
                             },
-                            { "caption": "-" },
                             {
+                                "caption": "-"
+                            },
+                            {
+                                "caption": "Key Bindings",
                                 "command": "edit_settings",
                                 "args": {
                                     "base_file": "${packages}/LaravelGoto/Default.sublime-keymap",
-                                    "default": "{}"
-                                  },
-                                "caption": "Key Bindings"
-                              }
+                                    "user_file": "${packages}/User/Default (${platform}).sublime-keymap",
+                                    "default": "[\n\t$0\n]\n",
+                                },
+                            }
                         ]
                     }
                 ]
