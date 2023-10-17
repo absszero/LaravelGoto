@@ -57,6 +57,14 @@ Config::get('app.timezone');
 Config::set('app.timezone', 'UTC');
 ```
 
+### Go to Filesystem config
+
+Go to filesystem config file and highlight option.
+
+```php
+Storage::disk('local')->put('example.txt', 'Contents');
+```
+
 ### Go to Language
 
 Go to language files and highlight option.

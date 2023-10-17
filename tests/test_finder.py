@@ -182,6 +182,11 @@ class TestFinder(unittest.ViewTestCase):
         place = self.assertPath('config/app.php')
         self.assertEqual('([\'"]{1})timezone\\1\\s*=>', place.location)
 
+    def test_filesystem_config(self):
+        self.fixture("""Storage::disk('loc|al')->put('example.txt', 'Contents');""")
+        place = self.assertPath('config/filesystems.php')
+        self.assertEqual('([\'"]{1})local\\1\\s*=>', place.location)
+
     def test_env(self):
         self.fixture("""env(   'APP|_DEBUG', false);""")
         place = self.assertPath('.env')
