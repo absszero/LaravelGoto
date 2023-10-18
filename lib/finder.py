@@ -34,6 +34,7 @@ def get_place(selection):
         static_file_place,
         env_place,
         config_place,
+        filesystem_place,
         lang_place,
         blade_place,
         inertiajs_place,
@@ -114,6 +115,17 @@ def config_place(path, line, lines, selected):
             if (2 <= len(split)):
                 location = find_pattern % (split[1])
             return Place(path, location)
+
+    return False
+
+
+def filesystem_place(path, line, lines, selected):
+    pattern = compile(r"""Storage::disk\(\s*['"]([^'"]+)""");
+    matched = pattern.search(line) or pattern.search(lines)
+    if (matched and path == matched.group(1)):
+        path = 'config/filesystems.php'
+        location = "(['\"]{1})" + matched.group(1) + "\\1\\s*=>"
+        return Place(path, location)
 
     return False
 
