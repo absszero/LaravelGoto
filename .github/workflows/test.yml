@@ -28,7 +28,7 @@ jobs:
           coverage: true
           codecov-upload: true
 
- Lint:
+  Lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
