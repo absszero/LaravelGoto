@@ -1,8 +1,4 @@
 {
-    /**
-     * Please use User/Preferences.sublime-settings to apply your settings.
-     */
-
     // If the text ends with the folling extensions, goto the path directly.
     "static_extensions": [
         "js",
@@ -22,5 +18,7 @@
         "xml",
 
         "log"
-    ]
+    ],
+    // Show hover popup if available
+    "show_hover": true,
 }

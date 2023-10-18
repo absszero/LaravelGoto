@@ -1,22 +1,22 @@
 [
     {
-        "caption": "LaravelGoto: Goto Implementation",
+        "caption": "Laravel Goto: Goto Implementation",
         "command": "laravel_goto"
     },
     {
-        "caption": "LaravelGoto: Settings",
+        "caption": "Laravel Goto: Settings",
         "command": "edit_settings",
         "args": {
-            "base_file": "${packages}/LaravelGoto/LaravelGoto.sublime-settings",
+            "base_file": "${packages}/Laravel Goto/LaravelGoto.sublime-settings",
             "user_file": "${packages}/User/LaravelGoto.sublime-settings",
-            "default": "// Settings in here override those in \"LaravelGoto/LaravelGoto.sublime-settings\"\n\n{\n\t$0\n}\n",
+            "default": "// Settings in here override those in \"Laravel Goto/LaravelGoto.sublime-settings\"\n\n{\n\t$0\n}\n",
         },
     },
     {
-        "caption": "LaravelGoto: Key Bindings",
+        "caption": "Laravel Goto: Key Bindings",
         "command": "edit_settings",
         "args": {
-            "base_file": "${packages}/LaravelGoto/Default.sublime-keymap",
+            "base_file": "${packages}/Laravel Goto/Default.sublime-keymap",
             "user_file": "${packages}/User/Default (${platform}).sublime-keymap",
             "default": "[\n\t$0\n]\n",
         }

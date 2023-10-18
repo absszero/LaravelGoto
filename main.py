@@ -3,6 +3,7 @@ import sublime
 import sublime_plugin
 from re import compile
 from os.path import basename
+from typing import Optional
 
 if int(sublime.version()) >= 3114:
 
@@ -21,6 +22,7 @@ from .lib.selection import Selection
 from .lib.finder import get_place, init_extensions
 
 place = None
+currentSettings = None  # type:Optional[sublime.Settings]
 
 
 class GotoLocation(sublime_plugin.EventListener):
@@ -48,7 +50,8 @@ class GotoLocation(sublime_plugin.EventListener):
             return
         if sublime.HOVER_TEXT != hover_zone:
             return
-
+        if not currentSettings or not currentSettings.get('show_hover'):
+            return
         global place
         selection = Selection(view, point)
         place = get_place(selection)
@@ -69,7 +72,6 @@ class GotoLocation(sublime_plugin.EventListener):
 
     def build_link(self, path):
         return '<a href="' + path + '">' + path + '</a>'
-
 
     def on_navigate(self, link):
         global place
@@ -93,13 +95,13 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
     def is_visible(self):
         filename = self.view.file_name()
         return bool(filename and (
-                filename.endswith('.php') or
-                filename.endswith('.js') or
-                filename.endswith('.ts') or
-                filename.endswith('.jsx') or
-                filename.endswith('.vue')
-                )
-            )
+            filename.endswith('.php') or
+            filename.endswith('.js') or
+            filename.endswith('.ts') or
+            filename.endswith('.jsx') or
+            filename.endswith('.vue')
+        )
+        )
 
 
 def goto_place(place):
@@ -116,7 +118,6 @@ def goto_place(place):
     if place.uri:
         window.open_file(place.uri)
         return
-
 
     args = {
         "overlay": "goto",
@@ -138,6 +139,11 @@ def goto_place(place):
 def on_path_select(idx):
     if -1 is idx:
         return
-    place.path  = place.paths[idx]
+    place.path = place.paths[idx]
     place.paths = []
     goto_place(place)
+
+
+def plugin_loaded():
+    global currentSettings
+    currentSettings = sublime.load_settings('LaravelGoto.sublime-settings')
