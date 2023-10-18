@@ -32,11 +32,12 @@ class Selection(sublime.Region):
         selected = self.view.extract_scope(start)
         if self.line.contains(selected):
             if self.is_class:
-                selected = self.get_selected_by_delimiters(selected, ',[<', '>])')
+                selected = self.get_selected_by_delimiters(
+                    selected, ',[<', '>])')
             return selected
         return self.get_selected_by_delimiters(selected, self.delimiters)
 
-    def get_selected_by_delimiters(self, selected, start_delims, end_delims=None):
+    def get_selected_by_delimiters(self, selected, start_delims, end_delims=None):  # noqa: E501
         start = selected.begin()
         end = selected.end()
 
@@ -56,8 +57,8 @@ class Selection(sublime.Region):
     def get_line(self):
         return self.substr_line().strip()
 
-    def get_lines_after_delimiter(self, delimiter = '('):
-        lines = [];
+    def get_lines_after_delimiter(self, delimiter='('):
+        lines = []
         line_number, _ = self.view.rowcol(self.line.a)
         while line_number >= 0:
             point = self.view.text_point(line_number, 0)
@@ -65,7 +66,7 @@ class Selection(sublime.Region):
             text = self.view.substr(line).strip()
             lines.insert(0, text)
             if text.__contains__(delimiter):
-                return ''.join(lines);
+                return ''.join(lines)
 
             line_number = line_number - 1
 

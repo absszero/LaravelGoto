@@ -3,7 +3,7 @@ from re import compile
 
 patterns = [
     (compile(r"""(controller)\s*\(\s*['"]?([^'")]+)"""), False),
-    (compile(r"""resource\s*\(\s*['"][^'"]+['"]\s*,\s*(['"]?)([^,'"]+)"""), False),
+    (compile(r"""resource\s*\(\s*['"][^'"]+['"]\s*,\s*(['"]?)([^,'"]+)"""), False),  # noqa: E501
     (compile(r"""namespace\s*\(\s*(['"])\s*([^'"]+)\1"""), True),
     (compile(r"""['"]namespace['"]\s*=>\s*(['"])([^'"]+)\1"""), True),
 ]

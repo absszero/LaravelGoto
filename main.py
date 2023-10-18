@@ -1,7 +1,6 @@
 import sys
 import sublime
 import sublime_plugin
-from re import compile
 from os.path import basename
 # from typing import Optional
 
@@ -112,7 +111,11 @@ def goto_place(place):
     window = sublime.active_window()
 
     if place.paths:
-        window.show_quick_panel(place.paths, on_path_select, placeholder="Select a component file")
+        window.show_quick_panel(
+            place.paths,
+            on_path_select,
+            placeholder="Select a component file"
+            )
         return
 
     if place.uri:

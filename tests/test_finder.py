@@ -1,11 +1,10 @@
-import sublime
-
 from unittest.mock import patch
 from . import unittest
 
 from LaravelGoto.lib.selection import Selection
 from LaravelGoto.lib.finder import get_place
 from LaravelGoto.lib.place import Place
+
 
 class TestFinder(unittest.ViewTestCase):
     def test_controller_route(self):
@@ -27,7 +26,6 @@ class TestFinder(unittest.ViewTestCase):
         });""")
         place = self.assertPath("Resource\\HelloController.php")
         self.assertEqual(True, place.is_controller)
-
 
     def test_resource_route_action(self):
         self.fixture("""
@@ -51,7 +49,10 @@ class TestFinder(unittest.ViewTestCase):
     def test_closing_tag_component(self):
         self.fixture("""</x-hello-al|ert>""")
         place = self.assertPath("views/components/hello-alert.blade.php")
-        self.assertEqual(place.paths[0], 'views/components/hello-alert.blade.php')
+        self.assertEqual(
+            place.paths[0],
+            'views/components/hello-alert.blade.php'
+            )
         self.assertEqual(place.paths[1], 'View/Components/HelloAlert.php')
 
     def test_component_with_namespace(self):
@@ -78,7 +79,7 @@ class TestFinder(unittest.ViewTestCase):
         self.assertPath("emails/test.blade.php")
 
     def test_view_in_route_view(self):
-        self.fixture("""Route::view('/welcome', 'pages.wel|come', ['name' => 'Taylor']);""")
+        self.fixture("""Route::view('/', 'pages.wel|come');""")
         self.assertPath("pages/welcome.blade.php")
 
     def test_view_in_config_livewire_php(self):
@@ -94,11 +95,11 @@ class TestFinder(unittest.ViewTestCase):
         self.assertPath("view/name.blade.php")
 
     def test_blade_inclcudeUnless_and_inclcudeWhen(self):
-        self.fixture("""@includeUnless($boolean, 'view|.name', ['status' => 'complete'])""")
+        self.fixture("""@includeUnless($boolean, 'view|.name')""")
         self.assertPath("view/name.blade.php")
 
     def test_blade_includeFirst(self):
-        self.fixture("""@includeFirst(['custom.admin', 'ad|min'], ['status' => 'complete'])""")
+        self.fixture("""@includeFirst(['custom.admin', 'ad|min'])""")
         self.assertPath("admin.blade.php")
 
     def test_blade_each(self):
@@ -112,7 +113,6 @@ class TestFinder(unittest.ViewTestCase):
     def test_full_blade_path(self):
         self.fixture("""'resources/views/comp|onents/layout.blade.php'""")
         self.assertPath('resources/views/components/layout.blade.php')
-
 
     def test_staticFile(self):
         self.fixture("""'hello|.JS';""")
@@ -153,7 +153,7 @@ class TestFinder(unittest.ViewTestCase):
     def test_absolute_path(self):
         self.fixture("""
         Route::group(['namespace' => 'Abc'], function () {
-            Route::get('/', '\\Absolute\\IndexCont|roller@index')->name('index');
+            Route::get('/', '\\Absolute\\IndexCont|roller@index');
         });""")
         place = self.assertPath('\\Absolute\\IndexController.php@index')
         self.assertEqual(True, place.is_controller)
@@ -183,7 +183,7 @@ class TestFinder(unittest.ViewTestCase):
         self.assertEqual('([\'"]{1})timezone\\1\\s*=>', place.location)
 
     def test_filesystem_config(self):
-        self.fixture("""Storage::disk('loc|al')->put('example.txt', 'Contents');""")
+        self.fixture("""Storage::disk('loc|al')->put('a.txt', 'b');""")
         place = self.assertPath('config/filesystems.php')
         self.assertEqual('([\'"]{1})local\\1\\s*=>', place.location)
 
@@ -227,10 +227,10 @@ class TestFinder(unittest.ViewTestCase):
         self.assertPath('admin.blade.php')
 
     def test_view_composer(self):
-        self.fixture("""View::composer(['pro|file', 'dashboard'], MultiComposer::class);""")
+        self.fixture("View::composer(['pro|file', 'dashboard'], A::class);")
         self.assertPath('profile.blade.php')
 
-        self.fixture("""View::composer(['profile', 'das|hboard'], MultiComposer::class);""")
+        self.fixture("View::composer(['profile', 'das|hboard'], A::class);")
         self.assertPath('dashboard.blade.php')
 
         self.fixture("""View::composer('prof|ile', ProfileComposer::class);""")
@@ -277,7 +277,9 @@ class TestFinder(unittest.ViewTestCase):
         self.assertPath('storage/logs/laravel.log')
 
     def test_v8_namespace_route(self):
-        self.fixture("""Route::get('/', [L8\\EightContro|ller::class, 'index']);""")
+        self.fixture(
+            """Route::get('/', [L8\\EightContro|ller::class, 'index']);"""
+            )
 
         selection = Selection(self.view)
         place = get_place(selection)
@@ -372,7 +374,7 @@ class TestFinder(unittest.ViewTestCase):
     def test_middleware(self, mock_middleware):
         mock_middleware.return_value = {
             'auth': Place('App/Http/Middleware/Authenticate.php'),
-            'auth.basic': Place('Illuminate/Auth/Middleware/AuthenticateWithBasicAuth.php')
+            'auth.basic': Place('Illuminate/Auth/Middleware/BasicAuth.php')
         }
         self.fixture("""Route::middleware(['web:1234', 'auth|:abc']);""")
         selection = Selection(self.view)
@@ -382,8 +384,10 @@ class TestFinder(unittest.ViewTestCase):
         self.fixture("""Route::group(['middleware' => ['auth.|basic',]]);""")
         selection = Selection(self.view)
         place = get_place(selection)
-        self.assertEqual("Illuminate/Auth/Middleware/AuthenticateWithBasicAuth.php", place.path)
-
+        self.assertEqual(
+            "Illuminate/Auth/Middleware/BasicAuth.php",
+            place.path
+            )
 
     def assertPath(self, expected, msg=None):
         selection = Selection(self.view)
@@ -392,4 +396,4 @@ class TestFinder(unittest.ViewTestCase):
         self.assertIsNotNone(place, msg)
         self.assertEqual(expected, place.path, msg)
 
-        return place;
+        return place

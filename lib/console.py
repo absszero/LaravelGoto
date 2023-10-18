@@ -1,8 +1,8 @@
-import sublime
 import re
 from .place import Place
 from . import workspace
 import os
+
 
 class Console:
     def __init__(self, console_kernel=None):
@@ -10,7 +10,11 @@ class Console:
         if self.console_kernel:
             return
         for folder in workspace.get_folders():
-            fullpath = workspace.get_path(folder, 'app/Console/Kernel.php', True)
+            fullpath = workspace.get_path(
+                folder,
+                'app/Console/Kernel.php',
+                True
+                )
             if not fullpath:
                 continue
 
@@ -29,21 +33,25 @@ class Console:
         commands.update(self.collect_registered_cmds())
         return commands
 
-
     def get_command_signature(self, content):
-        match = re.search("""\$signature\s*=\s*['"]([^\s'"]+)""", content)
+        match = re.search(r"""\$signature\s*=\s*['"]([^\s'"]+)""", content)
         if match:
             return match.group(1)
         return ''
 
-
     def collect_files(self):
         files = []
-        match = re.search("""function commands\([^\)]*[^{]+([^}]+)""", self.console_kernel)
+        match = re.search(
+            r"""function commands\([^\)]*[^{]+([^}]+)""",
+            self.console_kernel
+            )
         if not match:
             return files
 
-        for match in re.findall("""\$this->load\(\s*__DIR__\.['"]([^'"]+)""", match.group(1)):
+        for match in re.findall(
+                r"""\$this->load\(\s*__DIR__\.['"]([^'"]+)""",
+                match.group(1)
+                ):
             if match.startswith('/'):
                 match = match[1:]
 
@@ -51,28 +59,30 @@ class Console:
             files += workspace.get_recursion_files(folder)
         return files
 
-
     def collect_file_cmds(self, files):
-        commands = {};
+        commands = {}
         for file in files:
             content = workspace.get_file_content(file)
             signature = self.get_command_signature(content)
             if signature:
                 commands[signature] = Place(os.path.basename(file), uri=file)
 
-        return commands;
-
+        return commands
 
     def collect_registered_cmds(self):
-        commands = {};
-        match = re.search("""\$commands\s*=\s*\[([^\]]+)""", self.console_kernel, re.M);
+        commands = {}
+        match = re.search(
+            r"""\$commands\s*=\s*\[([^\]]+)""",
+            self.console_kernel,
+            re.M
+            )
         if not match:
             return commands
 
-
-        classes = match.group(1).splitlines();
+        classes = match.group(1).splitlines()
         for class_name in classes:
-            filename = class_name.replace(',', '').replace('::class', '').replace('\\', '/').strip() + '.php';
+            filename = class_name.replace(',', '').replace('::class', '')
+            filename = filename.replace('\\', '/').strip() + '.php'
             if filename.startswith('/'):
                 filename = filename[1:]
 
@@ -85,11 +95,10 @@ class Console:
             for folder in workspace.get_folders():
                 uri = workspace.get_path(folder, filename, True)
                 if not uri:
-                    continue;
+                    continue
                 content = workspace.get_file_content(uri)
                 signature = self.get_command_signature(content)
                 if signature:
                     commands[signature] = Place(filename, uri=uri)
 
         return commands
-

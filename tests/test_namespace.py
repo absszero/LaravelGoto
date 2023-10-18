@@ -1,7 +1,3 @@
-import sublime
-import sys
-import os
-
 from . import unittest
 from LaravelGoto.lib.selection import Selection
 from LaravelGoto.lib.namespace import Namespace

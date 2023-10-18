@@ -120,7 +120,7 @@ def config_place(path, line, lines, selected):
 
 
 def filesystem_place(path, line, lines, selected):
-    pattern = compile(r"""Storage::disk\(\s*['"]([^'"]+)""");
+    pattern = compile(r"""Storage::disk\(\s*['"]([^'"]+)""")
     matched = pattern.search(line) or pattern.search(lines)
     if (matched and path == matched.group(1)):
         path = 'config/filesystems.php'
@@ -211,9 +211,10 @@ def env_place(path, line, lines, selected):
         return Place('.env', path)
     return False
 
+
 def component_place(path, line, lines, selected):
     component_pattern = compile(r"""<\/?x-([^\/\s>]*)""")
-    matched = component_pattern.search(line)  or component_pattern.search(lines)
+    matched = component_pattern.search(line) or component_pattern.search(lines)
     if matched is None:
         return False
 
@@ -234,12 +235,11 @@ def component_place(path, line, lines, selected):
     place.paths.append(place.path)
 
     for i, s in enumerate(sections):
-        sections[i] = s.capitalize();
+        sections[i] = s.capitalize()
     sections[-1] = camel_case(sections[-1])
     place.paths.append(vendor + '/'.join(sections) + '.php')
 
     return place
-
 
 
 def transform_blade(path):
@@ -258,6 +258,7 @@ def transform_blade(path):
 
     path += '.blade.php'
     return path
+
 
 def blade_place(path, line, lines, selected):
     blade_patterns = [
@@ -302,7 +303,8 @@ def blade_place(path, line, lines, selected):
 
 def path_helper_place(path, line, lines, selected):
     path_helper_pattern = compile(r"""([\w^_]+)_path\(\s*(['"])([^'"]*)\2""")
-    matched = path_helper_pattern.search(line) or path_helper_pattern.search(lines)
+    matched = path_helper_pattern.search(line) or\
+        path_helper_pattern.search(lines)
     if (matched and path == matched.group(3)):
         prefix = matched.group(1) + '/'
         if 'base/' == prefix:
@@ -313,10 +315,11 @@ def path_helper_place(path, line, lines, selected):
         return Place(prefix + path)
     return False
 
+
 def middleware_place(path, line, lines, selected):
     middleware_patterns = [
         compile(r"""[m|M]iddleware\(\s*\[?\s*(['"][^'"]+['"]\s*,?\s*)+"""),
-        compile(r"""['"]middleware['"]\s*=>\s*\s*\[?\s*(['"][^'"]+['"]\s*,?\s*){1,}\]?"""),
+        compile(r"""['"]middleware['"]\s*=>\s*\s*\[?\s*(['"][^'"]+['"]\s*,?\s*){1,}\]?"""),  # noqa: E501
     ]
     middlewares = None
     for pattern in middleware_patterns:
@@ -334,6 +337,7 @@ def middleware_place(path, line, lines, selected):
         if place:
             return place
 
+
 def command_place(path, line, lines, selected):
     patterns = [
         compile(r"""Artisan::call\(\s*['"]([^\s'"]+)"""),
@@ -342,7 +346,7 @@ def command_place(path, line, lines, selected):
 
     commands = None
     for pattern in patterns:
-        match = pattern.search(line) or pattern.search(lines);
+        match = pattern.search(line) or pattern.search(lines)
         if not match:
             continue
 

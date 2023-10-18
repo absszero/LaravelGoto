@@ -17,6 +17,8 @@ class SetupFixtureCommand(TextCommand):
             self.view.sel().add(cursor_placeholder.begin() - i)
             self.view.replace(
                 edit,
-                Region(cursor_placeholder.begin() - i, cursor_placeholder.end() - i),
+                Region(
+                    cursor_placeholder.begin() - i,
+                    cursor_placeholder.end() - i),
                 ''
-            )
+                )

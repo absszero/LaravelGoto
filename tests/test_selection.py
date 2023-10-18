@@ -1,7 +1,3 @@
-import sublime
-import sys
-import os
-
 from . import unittest
 from LaravelGoto.lib.selection import Selection
 
@@ -23,8 +19,10 @@ class TestSelection(unittest.ViewTestCase):
 
         selection = Selection(self.view)
 
-        self.assertEqual('resources/views/components/layout', selection.get_path())
-
+        self.assertEqual(
+            'resources/views/components/layout',
+            selection.get_path()
+            )
 
     def test_get_lines_after_delimiter(self):
         self.fixture("""
@@ -37,4 +35,3 @@ view(
         selection = Selection(self.view)
         lines = selection.get_lines_after_delimiter()
         self.assertEqual("view('hello_view',", lines)
-
