@@ -21,7 +21,7 @@ from .lib.selection import Selection
 from .lib.finder import get_place, init_extensions
 
 place = None
-currentSettings = None  # type:Optional[sublime.Settings]
+currentSettings = None
 
 
 class GotoLocation(sublime_plugin.EventListener):
