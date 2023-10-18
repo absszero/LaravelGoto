@@ -3,7 +3,7 @@ name: test
 on:
   push:
     branches:
-      - ma ster
+      - master
 
 env:
     UNITTESTING_TAG: master
