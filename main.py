@@ -3,7 +3,7 @@ import sublime
 import sublime_plugin
 from re import compile
 from os.path import basename
-from typing import Optional
+# from typing import Optional
 
 if int(sublime.version()) >= 3114:
 
