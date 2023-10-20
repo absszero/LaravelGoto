@@ -377,17 +377,21 @@ class TestFinder(unittest.ViewTestCase):
             'auth.basic': Place('Illuminate/Auth/Middleware/BasicAuth.php')
         }
         self.fixture("""Route::middleware(['web:1234', 'auth|:abc']);""")
-        selection = Selection(self.view)
-        place = get_place(selection)
-        self.assertEqual("App/Http/Middleware/Authenticate.php", place.path)
+        self.assertPath("App/Http/Middleware/Authenticate.php")
 
         self.fixture("""Route::group(['middleware' => ['auth.|basic',]]);""")
-        selection = Selection(self.view)
-        place = get_place(selection)
-        self.assertEqual(
-            "Illuminate/Auth/Middleware/BasicAuth.php",
-            place.path
-            )
+        self.assertPath("Illuminate/Auth/Middleware/BasicAuth.php")
+
+    @patch('LaravelGoto.lib.finder.Console.all')
+    def test_command(self, mock_console):
+        mock_console.return_value = {
+            'app:say-hello': Place('SayHello.php'),
+        }
+        self.fixture("""Artisan::call('app:say|-hello --args');""")
+        self.assertPath("SayHello.php")
+
+        self.fixture("""command('app:say|-hello --args');""")
+        self.assertPath("SayHello.php")
 
     def assertPath(self, expected, msg=None):
         selection = Selection(self.view)

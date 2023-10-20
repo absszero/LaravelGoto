@@ -1,6 +1,6 @@
 {
     // If the text ends with the folling extensions, goto the path directly.
-    "static_extensions": [
+    "default_static_extensions": [
         "js",
         "ts",
         "jsx",
@@ -21,4 +21,6 @@
     ],
     // Show hover popup if available
     "show_hover": true,
+    // The location of PHP
+    "php_bin": "php"
 }

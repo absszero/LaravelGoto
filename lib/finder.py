@@ -1,26 +1,13 @@
-import sublime
 from re import compile
 from .namespace import Namespace
 from .place import Place
 from .middleware import Middleware
 from .console import Console
+from .router import Router
+from .setting import Setting
 
 
 find_pattern = """(['"]{1})%s\\1\\s*=>"""
-
-extensions = []
-
-
-def init_extensions():
-    plugin_settings = sublime.load_settings("LaravelGoto.sublime-settings")
-    user_settings = sublime.load_settings("Preferences.sublime-settings")
-
-    # combine extensions
-    extensions = user_settings.get("static_extensions", []) +\
-        plugin_settings.get("static_extensions", [])
-    # make sure extensions are lower case
-    globals()['extensions'] = list(map(
-        lambda ext: ext.lower(), extensions))
 
 
 def get_place(selection):
@@ -42,6 +29,7 @@ def get_place(selection):
         component_place,
         middleware_place,
         command_place,
+        # route_place,
         controller_place,
     )
 
@@ -192,7 +180,7 @@ def lang_place(path, line, lines, selected):
 
 
 def static_file_place(path, line, lines, selected):
-    find = (path.split('.')[-1].lower() in extensions)
+    find = (path.split('.')[-1].lower() in Setting().exts())
     if find is False:
         return False
 
@@ -356,6 +344,29 @@ def command_place(path, line, lines, selected):
 
         signature = match.group(1)
         place = commands.get(signature)
+        if place:
+            return place
+
+        return place
+
+
+def route_place(path, line, lines, selected):
+    patterns = [
+        compile(r"""route\(\s*['"]([^'"]+)"""),
+        compile(r"""['"]route['"]\s*=>\s*(['"])([^'"]+)"""),
+    ]
+
+    routes = None
+    for pattern in patterns:
+        match = pattern.search(line) or pattern.search(lines)
+        if not match:
+            continue
+
+        if not routes:
+            router = Router()
+            routes = router.all()
+
+        place = routes.get(match.group(1))
         if place:
             return place
 

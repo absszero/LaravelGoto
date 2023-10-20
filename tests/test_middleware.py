@@ -13,7 +13,7 @@ class TestMiddleware(unittest.ViewTestCase):
 
         self.assertEqual(
             middlewares.get('auth').path,
-            'App/Http/Middleware/Authenticate.php'
+            'app/Http/Middleware/Authenticate.php'
             )
         self.assertEqual(
             middlewares.get('auth.basic').path,

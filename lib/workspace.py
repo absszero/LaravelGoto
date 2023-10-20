@@ -37,9 +37,18 @@ def get_recursion_files(folder, ext='.php'):
 
 
 def get_path(folder, filepath, recursion=False):
-    top_dir = filepath.split('/')[0]
+    top_dir = None
+    if '/' in filepath:
+        top_dir = filepath.split('/')[0]
 
-    for file in os.listdir(folder):
+    files = os.listdir(folder)
+    if not top_dir and filepath in files:
+        fullpath = os.path.join(folder, filepath)
+        if os.path.isfile(fullpath):
+            return fullpath
+        return None
+
+    for file in files:
         if os.path.isdir(folder + '/' + file) is False:
             continue
 
@@ -58,3 +67,16 @@ def get_path(folder, filepath, recursion=False):
 
 def get_folders():
     return sublime.active_window().folders()
+
+
+def class_2_file(class_name):
+    class_name = class_name
+    filename = class_name.replace(',', '').replace('::class', '')
+    filename = filename.replace('\\', '/').strip() + '.php'
+    if filename.startswith('/'):
+        filename = filename[1:]
+
+    if filename.startswith('App/'):
+        filename = filename.replace('App/', 'app/', 1)
+
+    return filename

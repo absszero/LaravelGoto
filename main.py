@@ -2,7 +2,6 @@ import sys
 import sublime
 import sublime_plugin
 from os.path import basename
-# from typing import Optional
 
 if int(sublime.version()) >= 3114:
 
@@ -18,15 +17,14 @@ if int(sublime.version()) >= 3114:
     prefix = None
 
 from .lib.selection import Selection
-from .lib.finder import get_place, init_extensions
+from .lib.finder import get_place
+from .lib.setting import Setting
 
 place = None
-currentSettings = None
 
 
 class GotoLocation(sublime_plugin.EventListener):
     def on_activated(self, view):
-        init_extensions()
         global place
         filepath = view.file_name()
         if (not place or not filepath):
@@ -49,7 +47,7 @@ class GotoLocation(sublime_plugin.EventListener):
             return
         if sublime.HOVER_TEXT != hover_zone:
             return
-        if not currentSettings or not currentSettings.get('show_hover'):
+        if not Setting().get('show_hover'):
             return
         global place
         selection = Selection(view, point)
@@ -145,8 +143,3 @@ def on_path_select(idx):
     place.path = place.paths[idx]
     place.paths = []
     goto_place(place)
-
-
-def plugin_loaded():
-    global currentSettings
-    currentSettings = sublime.load_settings('LaravelGoto.sublime-settings')

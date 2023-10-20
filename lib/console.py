@@ -81,13 +81,7 @@ class Console:
 
         classes = match.group(1).splitlines()
         for class_name in classes:
-            filename = class_name.replace(',', '').replace('::class', '')
-            filename = filename.replace('\\', '/').strip() + '.php'
-            if filename.startswith('/'):
-                filename = filename[1:]
-
-            if filename.startswith('App/'):
-                filename = filename.replace('App/', 'app/', 1)
+            filename = workspace.class_2_file(class_name)
 
             if filename == '.php':
                 continue

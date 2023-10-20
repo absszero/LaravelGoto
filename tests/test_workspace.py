@@ -20,6 +20,12 @@ class TestWorkspace(unittest.ViewTestCase):
         fullpapth = workspace.get_path(folder, 'app/Http/Kernel.php', True)
         self.assertTrue(fullpapth.__contains__('app/Http/Kernel.php'))
 
+        fullpapth = workspace.get_path(folder, 'unittest.py', True)
+        self.assertTrue(fullpapth.__contains__('unittest.py'))
+
+        fullpapth = workspace.get_path(folder, 'sample.php', True)
+        self.assertTrue(fullpapth.__contains__('sample.php'))
+
     def test_get_recursion_files(self):
         folder = os.path.dirname(os.path.abspath(__file__)) +\
             '/fixtures/app/Console/Commands'
@@ -28,3 +34,7 @@ class TestWorkspace(unittest.ViewTestCase):
         self.assertTrue(files[0].endswith('SayGoodbye.php'), files[0])
         self.assertTrue(files[1].endswith('SayHello.php'), files[1])
         self.assertTrue(files[2].endswith('SendEmails.php'), files[2])
+
+    def test_class_2_file(self):
+        filename = workspace.class_2_file("\\App\\NS\\SayGoodbye::class,")
+        self.assertEqual(filename, 'app/NS/SayGoodbye.php')

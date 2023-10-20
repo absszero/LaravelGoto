@@ -36,10 +36,7 @@ class Middleware:
             classname = match[1].replace('::class', '').strip()
             if classnames.get(classname):
                 classname = classnames.get(classname)
-            classname = classname.replace('\\', '/') + '.php'
-
-            if classname.startswith('/'):
-                classname = classname[1:]
+            classname = workspace.class_2_file(classname)
 
             middlewares[match[0]] = Place(classname)
 
