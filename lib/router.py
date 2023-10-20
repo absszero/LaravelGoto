@@ -4,26 +4,31 @@ import subprocess
 import json
 from .setting import Setting
 
+routes = {}
+
 
 class Router:
     def __init__(self):
         for folder in workspace.get_folders():
-            self.artisan = workspace.get_path(
-                folder,
-                'artisan',
-                True
-                )
-            if self.artisan:
+            self.artisan = workspace.get_path(folder, 'artisan')
+            self.dir = workspace.get_folder_path(folder, 'routes')
+            if self.dir:
                 return
 
-    def all(self):
-        routes = {}
-        if not self.artisan:
-            return routes
+    def update(self, filepath=None):
+        '''
+        update routes if routes folder's files were changed
+        '''
+        if not self.artisan or not self.dir:
+            return
+
+        if not workspace.is_changed(self.dir, filepath):
+            return
+        workspace.set_unchange(self.dir)
 
         php = Setting().get('php_bin')
         if not php:
-            return routes
+            return
 
         args = [
             php,
@@ -36,13 +41,13 @@ class Router:
         try:
             output = subprocess.check_output(args, stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError:
-            return routes
+            return
 
         output = output.decode('utf-8')
         try:
             route_rows = json.loads(output)
         except ValueError:
-            return routes
+            return
 
         for route_row in route_rows:
             if 'Closure' == route_row['action']:
@@ -55,4 +60,6 @@ class Router:
                     location=action
                     )
 
+    def all(self):
+        self.update()
         return routes

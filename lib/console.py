@@ -10,11 +10,7 @@ class Console:
         if self.console_kernel:
             return
         for folder in workspace.get_folders():
-            fullpath = workspace.get_path(
-                folder,
-                'app/Console/Kernel.php',
-                True
-                )
+            fullpath = workspace.get_path(folder, 'app/Console/Kernel.php')
             if not fullpath:
                 continue
 
@@ -40,6 +36,9 @@ class Console:
         return ''
 
     def collect_files(self):
+        '''
+        collect command files from $this->load(__DIR__)
+        '''
         files = []
         match = re.search(
             r"""function commands\([^\)]*[^{]+([^}]+)""",
@@ -70,6 +69,11 @@ class Console:
         return commands
 
     def collect_registered_cmds(self):
+        '''
+        collect commands from $command = [
+
+        ]
+        '''
         commands = {}
         match = re.search(
             r"""\$commands\s*=\s*\[([^\]]+)""",

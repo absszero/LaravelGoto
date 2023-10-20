@@ -43,6 +43,9 @@ class Middleware:
         return middlewares
 
     def collect_classnames(self, content):
+        '''
+        collect class aliases
+        '''
         classnames = {}
         pattern = re.compile(r"use\s+([^\s]+)\s+as+\s+([^;]+)")
         for match in pattern.findall(content):

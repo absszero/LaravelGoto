@@ -44,6 +44,10 @@ Route::resource('photo', 'HelloController', ['only' => [
 ]]);
 ```
 
+### Go to Controller from route helper
+
+![](route.gif)
+
 ### Go to Middleware
 
 ![](middleware.gif)

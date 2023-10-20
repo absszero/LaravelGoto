@@ -29,7 +29,7 @@ def get_place(selection):
         component_place,
         middleware_place,
         command_place,
-        # route_place,
+        route_place,
         controller_place,
     )
 

@@ -19,6 +19,7 @@ if int(sublime.version()) >= 3114:
 from .lib.selection import Selection
 from .lib.finder import get_place
 from .lib.setting import Setting
+from .lib.router import Router
 
 place = None
 
@@ -41,6 +42,9 @@ class GotoLocation(sublime_plugin.EventListener):
         view.sel().add(location)
         view.show(location)
         place = None
+
+    def on_post_save_async(self, view):
+        Router().update(view.file_name())
 
     def on_hover(self, view, point, hover_zone):
         if view.is_popup_visible():
