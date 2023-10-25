@@ -3,11 +3,15 @@ from . import workspace
 import subprocess
 import json
 from .setting import Setting
+from .logging import debug, exception
 
 routes = {}
 
 
 class Router:
+    artisan = None
+    dir = None
+
     def __init__(self):
         for folder in workspace.get_folders():
             self.artisan = workspace.get_path(folder, 'artisan')
@@ -19,10 +23,14 @@ class Router:
         '''
         update routes if routes folder's files were changed
         '''
+        debug('artisan', self.artisan)
+        debug('routes folder', self.dir)
         if not self.artisan or not self.dir:
             return
 
-        if not workspace.is_changed(self.dir, filepath):
+        is_routes_changed = workspace.is_changed(self.dir, filepath)
+        debug('routes changed', is_routes_changed)
+        if not is_routes_changed:
             return
         workspace.set_unchange(self.dir)
 
@@ -37,16 +45,22 @@ class Router:
             '--json',
             '--columns=name,action'
         ]
+        debug('args', args)
 
         try:
             output = subprocess.check_output(args, stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError:
+        except subprocess.CalledProcessError as e:
+            exception('check_output', e)
+            return
+        except FileNotFoundError as e:
+            exception('check_output', e)
             return
 
         output = output.decode('utf-8')
         try:
             route_rows = json.loads(output)
-        except ValueError:
+        except ValueError as e:
+            exception('json.loads', e)
             return
 
         for route_row in route_rows:
