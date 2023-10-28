@@ -3,7 +3,7 @@ from . import workspace
 import subprocess
 import json
 from .setting import Setting
-from .logging import debug, exception
+from .logging import log, exception
 
 routes = {}
 
@@ -23,13 +23,13 @@ class Router:
         '''
         update routes if routes folder's files were changed
         '''
-        debug('artisan', self.artisan)
-        debug('routes folder', self.dir)
+        log('artisan', self.artisan)
+        log('routes folder', self.dir)
         if not self.artisan or not self.dir:
             return
 
         is_routes_changed = workspace.is_changed(self.dir, filepath)
-        debug('routes changed', is_routes_changed)
+        log('routes changed', is_routes_changed)
         if not is_routes_changed:
             return
         workspace.set_unchange(self.dir)
@@ -45,7 +45,7 @@ class Router:
             '--json',
             '--columns=name,action'
         ]
-        debug('args', args)
+        log('args', args)
 
         try:
             output = subprocess.check_output(args, stderr=subprocess.STDOUT)

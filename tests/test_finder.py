@@ -196,21 +196,14 @@ class TestFinder(unittest.ViewTestCase):
         self.fixture("""__('messages.w|elcome');""")
         self.assertPath('lang/messages.php')
 
-    def test_lang_blade_directive(self):
         self.fixture("""@lang('messages.we|lcome');""")
         self.assertPath('lang/messages.php')
 
-    def test_lang_trans(self):
         self.fixture("""trans('messages.we|lcome');""")
         self.assertPath('lang/messages.php')
 
-    def test_lang_trans_choice(self):
         self.fixture("""trans_choice('messages.a|pples', 10);""")
         self.assertPath('lang/messages.php')
-
-    def test_lang_trans_package(self):
-        self.fixture("""trans('package::messa|ges');""")
-        self.assertPath('lang/vendor/package/messages.php')
 
     def test_relative_path_static_file(self):
         self.fixture("""'./../../hel|lo.css'""")

@@ -1,8 +1,21 @@
-class Place:
+import json
 
+
+class Place:
     def __init__(self, path, location=None, uri=None):
         self.path = path
         self.location = location
         self.is_controller = False
-        self.paths = []
         self.uri = uri
+        self.paths = []
+        self.uris = []
+
+    def __str__(self):
+        return json.dumps({
+            "path": self.path,
+            "location": self.location,
+            "is_controller": self.is_controller,
+            "uri": self.uri,
+            "paths": self.paths,
+            "uris": self.uris
+        }, sort_keys=True, indent=2)

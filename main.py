@@ -62,6 +62,9 @@ class GotoLocation(sublime_plugin.EventListener):
 
             if place.paths:
                 content = '<br/>'.join(map(self.build_link, place.paths))
+            if place.uris:
+                content += '<br/><br/>' +\
+                    self.build_link('Open all files above', 'A!!')
 
             view.show_popup(
                 content,
@@ -71,11 +74,18 @@ class GotoLocation(sublime_plugin.EventListener):
                 on_navigate=self.on_navigate
             )
 
-    def build_link(self, path):
-        return '<a href="' + path + '">' + path + '</a>'
+    def build_link(self, path, href=None):
+        if not href:
+            href = path
+
+        return '<a href="' + href + '">' + path + '</a>'
 
     def on_navigate(self, link):
         global place
+
+        if link == 'A!!' and place.uris:
+            open_file_layouts(place.uris)
+            return
         if place.paths and link in place.paths:
             place.path = link
             place.paths = []
@@ -113,10 +123,11 @@ def goto_place(place):
     window = sublime.active_window()
 
     if place.paths:
+        if place.uris:
+            place.paths.append('Open all files above')
         window.show_quick_panel(
             place.paths,
-            on_path_select,
-            placeholder="Select a component file"
+            on_path_select
             )
         return
 
@@ -144,6 +155,35 @@ def goto_place(place):
 def on_path_select(idx):
     if -1 is idx:
         return
+
+    if place.uris and place.paths[idx] == place.paths[-1]:
+        open_file_layouts(place.uris)
+        return
+
     place.path = place.paths[idx]
     place.paths = []
     goto_place(place)
+
+
+def open_file_layouts(files=[]):
+    '''open files in multi-columns layouts'''
+    width = 1 / len(files)
+    cols = [0.0]
+    cells = []
+    for (idx, file) in enumerate(files):
+        cols.append(width*idx+width)
+        cells.append([idx, 0, idx+1, 1])
+
+    active_window = sublime.active_window()
+    active_window.run_command('new_window')
+    new_window = sublime.active_window()
+    new_window.set_layout({
+        "cols": cols,
+        "rows": [0.0, 1.0],
+        "cells": cells
+    })
+    for (idx, file) in enumerate(files):
+        new_window.open_file(file)
+        new_window.set_view_index(new_window.active_view(), idx, 0)
+
+    return

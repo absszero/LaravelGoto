@@ -4,6 +4,7 @@ from .place import Place
 from .middleware import Middleware
 from .console import Console
 from .router import Router
+from .language import Language
 from .setting import Setting
 
 
@@ -160,21 +161,16 @@ def lang_place(path, line, lines, selected):
         compile(r"""trans_choice\([^'"]*(['"])([^'"]*)\1"""),
     ]
 
+    language = None
     for pattern in lang_patterns:
         matched = pattern.search(line) or pattern.search(lines)
-        if (matched and path == matched.group(2)):
-            split = path.split(':')
-            vendor = ''
-            # it's package trans
-            if (3 == len(split)):
-                vendor = '/vendor/' + split[0]
-            keys = split[-1].split('.')
-            path = 'lang' + vendor + '/' + keys[0] + '.php'
+        if (not matched or path != matched.group(2)):
+            continue
 
-            location = None
-            if (2 <= len(keys)):
-                location = find_pattern % (keys[1])
-            return Place(path, location)
+        if not language:
+            language = Language()
+        place = language.get_place(path)
+        return place
 
     return False
 

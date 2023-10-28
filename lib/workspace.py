@@ -6,6 +6,13 @@ contents = {}
 changes = {}
 
 
+def is_file(base, filename=None):
+    fullpath = base
+    if filename:
+        fullpath = os.path.join([base, filename])
+    return os.path.isfile(fullpath)
+
+
 def is_changed(folder_path, file_path=None):
     '''
     is the folder's files were changed
@@ -85,15 +92,31 @@ def get_folder_path(base, folder_name, recursion=True):
     '''
     get real path by folder name
     '''
-    files = os.listdir(base)
-    if folder_name in files:
-        return os.path.join(base, folder_name)
+
+    star = None
+    folders = folder_name.split('/')
+    if '*' == folders[-1]:
+        star = folders.pop()
+    folder_path = '/'.join(folders)
+
+    full_folder_path = os.path.join(base, folder_path)
+    if os.path.isdir(full_folder_path):
+        if not star:
+            return full_folder_path
+
+        folders = []
+        for file in os.listdir(full_folder_path):
+            folder = os.path.join(full_folder_path, file)
+            if os.path.isdir(folder):
+                folders.append(folder)
+
+        return folders
 
     if not recursion:
         return
 
-    for file in files:
-        folder = os.path.join(base + '/' + file)
+    for file in os.listdir(base):
+        folder = os.path.join(base, file)
         if not os.path.isdir(folder):
             continue
 

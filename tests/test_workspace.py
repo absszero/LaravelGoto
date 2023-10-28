@@ -42,9 +42,19 @@ class TestWorkspace(unittest.ViewTestCase):
         path = workspace.get_folder_path(base, 'fixtures')
         self.assertTrue(path.endswith('fixtures'), path)
 
+        folders = workspace.get_folder_path(base, 'resources/lang/*')
+        self.assertEqual(len(folders), 2)
+
+        path = workspace.get_folder_path(base, 'fixtures/config')
+        self.assertTrue(path.endswith('config'), path)
+
         path = workspace.get_folder_path(base, 'config')
         self.assertTrue(path.endswith('config'), path)
 
+        path = workspace.get_folder_path(base, 'app/Http')
+        self.assertTrue(path.endswith('Http'), path)
+
+        # # over 2 layer directories
         path = workspace.get_folder_path(base, 'Http')
         self.assertFalse(path)
 
