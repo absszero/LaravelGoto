@@ -1,7 +1,10 @@
-from .place import Place
-from . import workspace
+import os
 import subprocess
 import json
+import sublime
+
+from .place import Place
+from . import workspace
 from .setting import Setting
 from .logging import log, exception
 
@@ -28,7 +31,7 @@ class Router:
         if not self.artisan or not self.dir:
             return
 
-        is_routes_changed = workspace.is_changed(self.dir, filepath)
+        is_routes_changed = self.is_changed(filepath)
         log('routes changed', is_routes_changed)
         if not is_routes_changed:
             return
@@ -48,7 +51,13 @@ class Router:
         log('args', args)
 
         try:
-            output = subprocess.check_output(args, stderr=subprocess.STDOUT)
+            output = subprocess.check_output(
+                args,
+                cwd='/',
+                stderr=subprocess.STDOUT,
+                shell=os.name == 'nt'
+                )
+
         except subprocess.CalledProcessError as e:
             exception('check_output', e)
             return
@@ -73,6 +82,9 @@ class Router:
                     workspace.class_2_file(path),
                     location=action
                     )
+
+    def is_changed(self, filepath=None):
+        return workspace.is_changed(self.dir, filepath)
 
     def all(self):
         self.update()
