@@ -19,7 +19,7 @@ class TestLanguage(unittest.ViewTestCase):
             ])
         self.assertEqual(len(place.uris), 2)
 
-        ## vendor
+        # vendor
         place = language.get_place('pkg::blog.title')
 
         self.assertEqual(place.path, 'lang/vendor/pkg/blog.php')

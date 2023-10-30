@@ -1,7 +1,6 @@
 import os
 import subprocess
 import json
-import sublime
 
 from .place import Place
 from . import workspace
