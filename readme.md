@@ -177,7 +177,7 @@ Default supported static file extensions:
 
 ## Usage
 
-- Select a text, `Right-Click` to open content menu, Press `Laravel Goto` or use `Alt + ;`.
+- Select a text, `Right-Click` to open content menu, Press `Laravel Goto` or use <kbd>Alt</kbd> + <kbd>;</kbd>.
 
 
 ## Extend static file extensions

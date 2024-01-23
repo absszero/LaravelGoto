@@ -5,7 +5,7 @@ import json
 from .place import Place
 from . import workspace
 from .setting import Setting
-from .logging import log, exception
+from .logging import info, exception
 
 routes = {}
 
@@ -25,13 +25,13 @@ class Router:
         '''
         update routes if routes folder's files were changed
         '''
-        log('artisan', self.artisan)
-        log('routes folder', self.dir)
+        info('artisan', self.artisan)
+        info('routes folder', self.dir)
         if not self.artisan or not self.dir:
             return
 
         is_routes_changed = self.is_changed(filepath)
-        log('routes changed', is_routes_changed)
+        info('routes changed', is_routes_changed)
         if not is_routes_changed:
             return
         workspace.set_unchange(self.dir)
@@ -44,10 +44,8 @@ class Router:
             php,
             self.artisan,
             'route:list',
-            '--json',
-            '--columns=name,action'
+            '--json'
         ]
-        log('args', args)
 
         try:
             output = subprocess.check_output(
@@ -58,10 +56,10 @@ class Router:
                 )
 
         except subprocess.CalledProcessError as e:
-            exception('check_output', e)
+            exception('route:list failed', e)
             return
         except FileNotFoundError as e:
-            exception('check_output', e)
+            exception('file not found', e)
             return
 
         output = output.decode('utf-8')

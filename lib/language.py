@@ -1,6 +1,6 @@
 import os
 from . import workspace
-from .logging import log
+from .logging import info
 from .place import Place
 
 
@@ -23,8 +23,8 @@ class Language:
                 self.langs = []
                 for dir in dirs:
                     self.langs.append(os.path.basename(dir))
-                log('lang base', self.base)
-                log('langs', self.langs)
+                info('lang base', self.base)
+                info('langs', self.langs)
                 return
 
     def get_place(self, path):

@@ -60,7 +60,7 @@ class GotoLocation(sublime_plugin.EventListener):
                 content = '<br/>'.join(map(self.build_link, place.paths))
             if place.uris:
                 content += '<br/><br/>' +\
-                    self.build_link('Open all files above', 'A!!')
+                    self.build_link('Open all files above in new window', 'A!!')
 
             view.show_popup(
                 content,
@@ -120,7 +120,7 @@ def goto_place(place):
 
     if place.paths:
         if place.uris:
-            place.paths.append('Open all files above')
+            place.paths.append('Open all files above in new window')
         window.show_quick_panel(
             place.paths,
             on_path_select
