@@ -10,6 +10,8 @@ env:
 
 jobs:
   Lint:
+    strategy:
+      fail-fast: true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
