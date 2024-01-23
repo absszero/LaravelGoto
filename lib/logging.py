@@ -1,5 +1,4 @@
 from .setting import Setting
-import traceback
 import logging
 
 
@@ -35,10 +34,3 @@ def exception(caption, ex: Exception):
     if is_debug():
         logger = get_logger()
         logger.exception(caption)
-
-    # ex_traceback = ex.__traceback__
-    # error(caption, ''.join(traceback.format_exception(
-    #     ex.__class__,
-    #     ex,
-    #     ex_traceback
-    #     )))
