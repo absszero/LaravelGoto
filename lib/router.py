@@ -34,7 +34,7 @@ class Router:
         info('routes changed', is_routes_changed)
         if not is_routes_changed:
             return
-        workspace.set_unchange(self.dir)
+        workspace.set_unchanged(self.dir)
 
         php = Setting().get('php_bin')
         if not php:

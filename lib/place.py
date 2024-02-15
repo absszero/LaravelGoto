@@ -9,6 +9,7 @@ class Place:
         self.uri = uri
         self.paths = []
         self.uris = []
+        self.locations = {}
 
     def __str__(self):
         return json.dumps({
@@ -17,5 +18,6 @@ class Place:
             "is_controller": self.is_controller,
             "uri": self.uri,
             "paths": self.paths,
-            "uris": self.uris
+            "uris": self.uris,
+            "locations": self.locations
         }, sort_keys=True, indent=2)
