@@ -40,7 +40,7 @@ def is_changed(folder_path, file_path=None):
     return False
 
 
-def set_unchange(folder_path):
+def set_unchanged(folder_path):
     '''
     set the folder's files is changed
     '''

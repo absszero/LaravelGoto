@@ -32,12 +32,18 @@ class GotoLocation(sublime_plugin.EventListener):
             place = None
             return
         if (basename(filepath) != basename(place.path)):
-            place = None
-            return
+            found = False
+            for path in place.paths:
+                if filepath.endswith(path):
+                    found = True
+                    break
+            if not found:
+                place = None
+                return
         if (not isinstance(place.location, str)):
             place = None
             return
-        spot_location(view, place.location)
+        spot_location(view, place, filepath)
 
     def on_post_save_async(self, view):
         Router().update(view.file_name())
@@ -187,14 +193,20 @@ def open_file_layouts(files=[]):
     return
 
 
-def spot_location(view, location):
+def spot_location(view, place, filepath):
     ''' spot place location on view '''
-
-    if not location:
+    if not place.location:
         return
-    location = view.find(place.location, 0)
+
+    location = place.location
+    filename = basename(filepath)
+    # print(filename)
+    if filename in place.locations:
+        location = place.locations[filename]
+
+    found = view.find(location, 0)
     # fix .env not showing selected if no scrolling happened
     view.set_viewport_position((0, 1))
     view.sel().clear()
-    view.sel().add(location)
-    view.show(location)
+    view.sel().add(found)
+    view.show(found)

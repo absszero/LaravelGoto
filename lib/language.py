@@ -17,15 +17,21 @@ class Language:
         self.langs = []
 
         for folder in workspace.get_folders():
-            dirs = workspace.get_folder_path(folder, 'resources/lang/*')
-            if dirs:
-                self.base = os.path.dirname(dirs[0])
-                self.langs = []
-                for dir in dirs:
-                    self.langs.append(os.path.basename(dir))
-                info('lang base', self.base)
-                info('langs', self.langs)
-                return
+            dir = workspace.get_folder_path(folder, 'lang')
+            if not dir:
+                continue
+
+            self.base = dir
+            self.langs = {}
+            dirs = os.listdir(dir)
+            for dir in dirs:
+                if os.path.isdir(os.path.join(self.base, dir)):
+                    self.langs[dir] = True
+                elif dir.endswith('.json'):
+                    self.langs[dir] = False
+            info('lang base', self.base)
+            info('langs', self.langs)
+            return
 
     def get_place(self, path):
         split = path.split(':')
@@ -38,12 +44,18 @@ class Language:
 
         uris = []
         paths = []
-        for lang in self.langs:
-            lang_path = self.LANG_FILENAME % {
-                'vendor': vendor,
-                'lang': lang,
-                'file': keys[0],
-            }
+        locations = {}
+        for lang, is_dir in self.langs.items():
+            lang_path = lang
+            if is_dir:
+                lang_path = self.LANG_FILENAME % {
+                    'vendor': vendor,
+                    'lang': lang,
+                    'file': keys[0],
+                }
+            else:
+                jsonKey = '\\.'.join(keys)
+                locations[lang] = jsonKey
             paths.append('lang/' + lang_path)
 
             uri = os.path.join(self.base, lang_path)
@@ -58,5 +70,6 @@ class Language:
         place.paths = paths
         place.paths.sort()
         place.uris = uris
+        place.locations = locations
 
         return place

@@ -14,14 +14,14 @@ class TestWorkspace(unittest.ViewTestCase):
 
     def test_get_path(self):
         folder = os.path.dirname(os.path.abspath(__file__))
-        fullpapth = workspace.get_path(folder, 'app/Http/Kernel.php')
-        self.assertTrue(fullpapth.__contains__('app/Http/Kernel.php'))
+        fullpath = workspace.get_path(folder, 'app/Http/Kernel.php')
+        self.assertTrue(fullpath.__contains__('app/Http/Kernel.php'))
 
-        fullpapth = workspace.get_path(folder, 'unittest.py')
-        self.assertTrue(fullpapth.__contains__('unittest.py'))
+        fullpath = workspace.get_path(folder, 'unittest.py')
+        self.assertTrue(fullpath.__contains__('unittest.py'))
 
-        fullpapth = workspace.get_path(folder, 'sample.php')
-        self.assertTrue(fullpapth.__contains__('sample.php'))
+        fullpath = workspace.get_path(folder, 'sample.php')
+        self.assertTrue(fullpath.__contains__('sample.php'))
 
     def test_get_recursion_files(self):
         folder = os.path.dirname(os.path.abspath(__file__)) +\
@@ -63,6 +63,6 @@ class TestWorkspace(unittest.ViewTestCase):
         self.assertTrue(workspace.is_changed(base))
         self.assertTrue(workspace.is_changed(base, __file__))
         self.assertFalse(workspace.is_changed(base, '/aaa/bbb'))
-        workspace.set_unchange(base)
+        workspace.set_unchanged(base)
         self.assertFalse(workspace.is_changed(base), 'post')
         self.assertFalse(workspace.is_changed(base, __file__))
