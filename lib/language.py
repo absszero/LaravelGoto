@@ -14,7 +14,7 @@ class Language:
 
     def __init__(self):
         self.base = None
-        self.langs = []
+        self.langs = {}
 
         for folder in workspace.get_folders():
             dir = workspace.get_folder_path(folder, 'lang')
