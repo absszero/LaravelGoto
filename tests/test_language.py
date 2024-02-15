@@ -1,3 +1,4 @@
+import os
 from . import unittest
 from unittest.mock import patch
 from LaravelGoto.lib.language import Language
@@ -6,7 +7,9 @@ from LaravelGoto.lib.language import Language
 class TestLanguage(unittest.ViewTestCase):
     @patch('LaravelGoto.lib.workspace.get_folders')
     def test_get_place(self, mock_get_folders):
-        mock_get_folders.return_value = [self.get_test_dir()]
+        mock_get_folders.return_value = [
+            os.path.join(self.get_test_dir(), 'fixtures')
+        ]
 
         language = Language()
         place = language.get_place('blog.title')
