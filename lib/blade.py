@@ -3,21 +3,21 @@ from .place import Place
 
 
 class Blade:
-    def get_place(self, path, line, lines):
+    def get_place(self, path, line, lines=''):
 
         blade_patterns = [
             compile(r"""view\(\s*(['"])([^'"]*)\1"""),
-            compile(r"""[lL]ayout\(\s*(['"])([^'"]*)\1"""),
-            compile(r"""View::exists\(\s*(['"])([^'"]*)\1"""),
-            compile(r"""View::composer\(\s*(['"])([^'"]*)\1"""),
-            compile(r"""View::creator\(\s*(['"])([^'"]*)\1"""),
             compile(r"""\$view\s*=\s*(['"])([^'"]*)\1"""),
             compile(r"""view:\s*(['"])([^'"]*)\1"""),
             compile(r"""view\(\s*['"][^'"]*['"],\s*(['"])([^'"]*)\1"""),
+            compile(r"""[lL]ayout\(\s*(['"])([^'"]*)\1"""),
             compile(r"""['"]layout['"]\s*=>\s*(['"])([^'"]*)\1"""),
             compile(r"""@include(If\b)?\(\s*(['"])([^'"]*)\2"""),
             compile(r"""@extends\(\s*(['"])([^'"]*)\1"""),
             compile(r"""@include(When|Unless\b)?\([^'"]+(['"])([^'"]+)"""),
+            compile(r"""View::exists\(\s*(['"])([^'"]*)\1"""),
+            compile(r"""View::composer\(\s*(['"])([^'"]*)\1"""),
+            compile(r"""View::creator\(\s*(['"])([^'"]*)\1"""),
             compile(r"""(resources\/views[^\s'"-]+)"""),
         ]
         for pattern in blade_patterns:
@@ -32,8 +32,12 @@ class Blade:
                 return Place(path)
 
         multi_views_patterns = [
-            compile(r"""@includeFirst\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""),
-            compile(r"""View::composer\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""),
+            compile(
+                r"""@includeFirst\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""
+            ),
+            compile(
+                r"""View::composer\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""
+            ),
             compile(r"""@each\(['"][^'"]+['"]\s*,[^,]+,[^,]+,[^)]+"""),
             compile(r"""View::first[^'"]*(['"])([^'"]*)\1"""),
         ]
