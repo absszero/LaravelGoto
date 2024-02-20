@@ -20,6 +20,15 @@ class TestBlade(unittest.ViewTestCase):
         place = self.blade.get_place('emails.test', "view: 'emails.test',")
         self.assertEqual("emails/test.blade.php", place.path)
 
+        place = self.blade.get_place('emails.test', "text: 'emails.test',")
+        self.assertEqual("emails/test.blade.php", place.path)
+
+        place = self.blade.get_place('emails.test', "html: 'emails.test',")
+        self.assertEqual("emails/test.blade.php", place.path)
+
+        place = self.blade.get_place('emails.test', "markdown: 'emails.test',")
+        self.assertEqual("emails/test.blade.php", place.path)
+
     def test_view_in_route_view(self):
         place = self.blade.get_place(
             'pages.welcome',
