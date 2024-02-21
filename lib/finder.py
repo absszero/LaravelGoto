@@ -25,13 +25,13 @@ def get_place(selection):
         config_place,
         filesystem_place,
         lang_place,
-        blade_place,
         inertiajs_place,
         livewire_place,
         component_place,
         middleware_place,
         command_place,
         route_place,
+        blade_place,
         controller_place,
     )
 

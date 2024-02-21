@@ -6,7 +6,7 @@ class Blade:
     def get_place(self, path, line, lines=''):
 
         blade_patterns = [
-            compile(r"""view\(\s*(['"])([^'"]*)\1"""),
+            compile(r"""[\bview\b|\bmarkdown\b]\(\s*(['"])([^'"]*)\1"""),
             compile(r"""\$view\s*=\s*(['"])([^'"]*)\1"""),
             compile(r"""[\bview\b|\btext\b|\bhtml\b|\bmarkdown\b]\s*:\s*(['"])([^'"]*)\1"""),  # noqa: E501
             compile(r"""view\(\s*['"][^'"]*['"],\s*(['"])([^'"]*)\1"""),
@@ -38,6 +38,7 @@ class Blade:
             compile(
                 r"""View::composer\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""
             ),
+            compile(r"""view\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""),
             compile(r"""@each\(['"][^'"]+['"]\s*,[^,]+,[^,]+,[^)]+"""),
             compile(r"""View::first[^'"]*(['"])([^'"]*)\1"""),
         ]

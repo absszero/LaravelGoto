@@ -12,6 +12,27 @@ class TestBlade(unittest.ViewTestCase):
         )
         self.assertEqual("hello_view.blade.php", place.path)
 
+        # namespace
+        place = self.blade.get_place(
+            'Namespace::hello_view',
+            "return view('Namespace::hello_view');"
+        )
+        self.assertEqual('hello_view.blade.php', place.path)
+
+        # package
+        place = self.blade.get_place(
+            'package::hello_view',
+            "view('package::hello_view');"
+        )
+        self.assertEqual('package/hello_view.blade.php', place.path)
+
+        # notification markdown view
+        place = self.blade.get_place(
+            'hello_view',
+            "markdown('hello_view');"
+        )
+        self.assertEqual('hello_view.blade.php', place.path)
+
     def test_view_var(self):
         place = self.blade.get_place('hello_view', "$view = 'hello_view'")
         self.assertEqual("hello_view.blade.php", place.path)
@@ -139,6 +160,19 @@ class TestBlade(unittest.ViewTestCase):
         )
         self.assertEqual("admin.blade.php", place.path)
 
+    def test_notification_multi_view(self):
+        place = self.blade.get_place(
+            'emails.name.html',
+            "view(['emails.name.html', 'emails.name.plain']);"
+        )
+        self.assertEqual("emails/name/html.blade.php", place.path)
+
+        place = self.blade.get_place(
+            'emails.name.plain',
+            "view(['emails.name.html', 'emails.name.plain']);"
+        )
+        self.assertEqual("emails/name/plain.blade.php", place.path)
+
     def test_view_multi_composer(self):
         place = self.blade.get_place(
             'profile',
@@ -183,19 +217,6 @@ class TestBlade(unittest.ViewTestCase):
             )
         self.assertEqual('admin.blade.php', place.path)
 
-    def test_view_namespace(self):
-        place = self.blade.get_place(
-            'Namespace::hello_view',
-            "return view('Namespace::hello_view');"
-        )
-        self.assertEqual('hello_view.blade.php', place.path)
-
-    def test_package_view(self):
-        place = self.blade.get_place(
-            'package::hello_view',
-            "view('package::hello_view');"
-        )
-        self.assertEqual('package/hello_view.blade.php', place.path)
 
     def test_multiline(self):
         place = self.blade.get_place(
