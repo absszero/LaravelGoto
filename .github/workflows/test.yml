@@ -1,10 +1,9 @@
 name: test
 
 on:
-  - pull_request
-  - branches:
-    - master
-
+  pull_request:
+  push:
+    branches: master
 
 jobs:
   Unittesting:
