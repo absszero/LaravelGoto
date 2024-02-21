@@ -37,7 +37,7 @@ class Selection(sublime.Region):
             return selected
         return self.get_selected_by_delimiters(selected, self.delimiters)
 
-    def get_selected_by_delimiters(self, selected, start_delims, end_delims=None):  # noqa: E501
+    def get_selected_by_delimiters(self, selected, start_delims, end_delims=None):
         start = selected.begin()
         end = selected.end()
 

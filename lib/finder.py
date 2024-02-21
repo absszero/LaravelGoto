@@ -251,7 +251,7 @@ def path_helper_place(path, line, lines, selected):
 def middleware_place(path, line, lines, selected):
     middleware_patterns = [
         compile(r"""[m|M]iddleware\(\s*\[?\s*(['"][^'"]+['"]\s*,?\s*)+"""),
-        compile(r"""['"]middleware['"]\s*=>\s*\s*\[?\s*(['"][^'"]+['"]\s*,?\s*){1,}\]?"""),  # noqa: E501
+        compile(r"""['"]middleware['"]\s*=>\s*\s*\[?\s*(['"][^'"]+['"]\s*,?\s*){1,}\]?"""),
     ]
     middlewares = None
     for pattern in middleware_patterns:

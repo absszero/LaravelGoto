@@ -8,7 +8,7 @@ class Blade:
         blade_patterns = [
             compile(r"""[\bview\b|\bmarkdown\b]\(\s*(['"])([^'"]*)\1"""),
             compile(r"""\$view\s*=\s*(['"])([^'"]*)\1"""),
-            compile(r"""[\bview\b|\btext\b|\bhtml\b|\bmarkdown\b]\s*:\s*(['"])([^'"]*)\1"""),  # noqa: E501
+            compile(r"""[\bview\b|\btext\b|\bhtml\b|\bmarkdown\b]\s*:\s*(['"])([^'"]*)\1"""),
             compile(r"""view\(\s*['"][^'"]*['"],\s*(['"])([^'"]*)\1"""),
             compile(r"""[lL]ayout\(\s*(['"])([^'"]*)\1"""),
             compile(r"""['"]layout['"]\s*=>\s*(['"])([^'"]*)\1"""),

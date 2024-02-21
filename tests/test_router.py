@@ -25,7 +25,7 @@ class TestRouter(unittest.ViewTestCase):
         m_get_path.return_value = 'artisan'
         m_is_changed.return_value = True
         m_set_unchanged.return_value = None
-        m_check_output.return_value = bytes('[{"name":"admin.index","action":"App\\\\Http\\\\Controllers\\\\AdminController@index","middleware":[]},{"name":null,"action":"Closure","middleware":[]},{"name":null,"action":"Closure","middleware":[]}]', 'utf-8')  # noqa: E501
+        m_check_output.return_value = bytes('[{"name":"admin.index","action":"App\\\\Http\\\\Controllers\\\\AdminController@index","middleware":[]},{"name":null,"action":"Closure","middleware":[]},{"name":null,"action":"Closure","middleware":[]}]', 'utf-8')
 
         router = Router()
         router.update()

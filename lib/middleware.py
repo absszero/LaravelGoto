@@ -23,7 +23,7 @@ class Middleware:
 
         # Before Laravel 10, middlewareAliases was called routeMiddleware.
         # They work the exact same way.
-        aliasPattern = r"""(\$\bmiddlewareAliases\b|\$\brouteMiddleware\b)\s*=\s*\[([^;]+)"""  # noqa: E501
+        aliasPattern = r"""(\$\bmiddlewareAliases\b|\$\brouteMiddleware\b)\s*=\s*\[([^;]+)"""
 
         match = re.search(aliasPattern, self.http_kernel, re.M)
         if match is None:
