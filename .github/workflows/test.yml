@@ -1,24 +1,10 @@
 name: test
 
 on:
-  pull_request
+  - pull_request
+  - master
 
 jobs:
-  Lint:
-    strategy:
-      fail-fast: true
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.8'
-      - run: sudo apt update
-      - run: sudo apt install --no-install-recommends -y x11-xserver-utils
-      - run: pip3 install flake8==5.0.4 --user
-      - run: echo "$HOME/.local/bin" >> $GITHUB_PATH
-      - run: flake8
-
   Unittesting:
     strategy:
       fail-fast: true

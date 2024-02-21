@@ -1,6 +1,7 @@
 # Laravel Goto
 
-[![Github Action](https://github.com/absszero/LaravelGoto/workflows/test/badge.svg)](https://github.com/absszero/LaravelGoto/actions)
+[![Package Control Downloads](https://img.shields.io/packagecontrol/dt/Laravel%20Goto?style=for-the-badge)](https://packagecontrol.io/packages/Laravel%20Goto)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/absszero/LaravelGoto/test.yml?style=for-the-badge)
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/absszero)
 

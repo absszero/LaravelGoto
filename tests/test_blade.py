@@ -217,7 +217,6 @@ class TestBlade(unittest.ViewTestCase):
             )
         self.assertEqual('admin.blade.php', place.path)
 
-
     def test_multiline(self):
         place = self.blade.get_place(
             'hello_view',
