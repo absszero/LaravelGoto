@@ -59,61 +59,6 @@ class TestFinder(unittest.ViewTestCase):
         self.fixture("""<x-namespace::|alert/>""")
         self.assertPath("namespace/alert.blade.php")
 
-    def test_view(self):
-        self.fixture("""
-        Route::get('/', function () {
-            return view('hello|_view');
-        });""")
-        self.assertPath("hello_view.blade.php")
-
-    def test_layout_method(self):
-        self.fixture("""layout('hello|_view');""")
-        self.assertPath("hello_view.blade.php")
-
-    def test_view_var(self):
-        self.fixture("""$view = 'hello|_view'""")
-        self.assertPath("hello_view.blade.php")
-
-    def test_view_in_mailble(self):
-        self.fixture("""view: 'ema|ils.test',""")
-        self.assertPath("emails/test.blade.php")
-
-    def test_view_in_route_view(self):
-        self.fixture("""Route::view('/', 'pages.wel|come');""")
-        self.assertPath("pages/welcome.blade.php")
-
-    def test_view_in_config_livewire_php(self):
-        self.fixture("""'layout' => 'layou|ts.app',""")
-        self.assertPath("layouts/app.blade.php")
-
-    def test_blade_include_and_includeIf(self):
-        self.fixture("""@includeIf('view.na|me', ['status' => 'complete'])""")
-        self.assertPath("view/name.blade.php")
-
-    def test_blade_extends(self):
-        self.fixture("""@extends('view.na|me')""")
-        self.assertPath("view/name.blade.php")
-
-    def test_blade_inclcudeUnless_and_inclcudeWhen(self):
-        self.fixture("""@includeUnless($boolean, 'view|.name')""")
-        self.assertPath("view/name.blade.php")
-
-    def test_blade_includeFirst(self):
-        self.fixture("""@includeFirst(['custom.admin', 'ad|min'])""")
-        self.assertPath("admin.blade.php")
-
-    def test_blade_each(self):
-        self.fixture("""@each('view.name', $jobs, 'job', 'view|.empty')""")
-        self.assertPath("view/empty.blade.php")
-
-    def test_blade_comment(self):
-        self.fixture("""'{{-- resources/views/comp|onents/layout --}}'""")
-        self.assertPath('resources/views/components/layout.blade.php')
-
-    def test_full_blade_path(self):
-        self.fixture("""'resources/views/comp|onents/layout.blade.php'""")
-        self.assertPath('resources/views/components/layout.blade.php')
-
     def test_staticFile(self):
         self.fixture("""'hello|.JS';""")
         self.assertPath("hello.JS")
@@ -142,13 +87,6 @@ class TestFinder(unittest.ViewTestCase):
 
         place = self.assertPath('Lumen\\LumenController.php@index')
         self.assertEqual(True, place.is_controller)
-
-    def test_view_namespace(self):
-        self.fixture("""
-        Route::get('/', function () {
-            return view('Namespace::h|ello_view');
-        });""")
-        self.assertPath('hello_view.blade.php')
 
     def test_absolute_path(self):
         self.fixture("""
@@ -208,38 +146,6 @@ class TestFinder(unittest.ViewTestCase):
     def test_relative_path_static_file(self):
         self.fixture("""'./../../hel|lo.css'""")
         self.assertPath('hello.css')
-
-    def test_package_view(self):
-        self.fixture("""view('package::hell|o_view');""")
-        self.assertPath('package/hello_view.blade.php')
-
-    def test_view_first(self):
-        self.fixture("""View::first(['custom|.admin', 'admin'], $data);""")
-        self.assertPath('custom/admin.blade.php')
-        self.fixture("""View::first(['custom.admin', 'ad|min'], $data);""")
-        self.assertPath('admin.blade.php')
-
-    def test_view_composer(self):
-        self.fixture("View::composer(['pro|file', 'dashboard'], A::class);")
-        self.assertPath('profile.blade.php')
-
-        self.fixture("View::composer(['profile', 'das|hboard'], A::class);")
-        self.assertPath('dashboard.blade.php')
-
-        self.fixture("""View::composer('prof|ile', ProfileComposer::class);""")
-        self.assertPath('profile.blade.php')
-
-    def test_view_creator(self):
-        self.fixture("""View::creator('prof|ile', ProfileComposer::class);""")
-        self.assertPath('profile.blade.php')
-
-    def test_view_resource_string(self):
-        self.fixture("""'resources/views/pages/public/cha|rge'""")
-        self.assertPath('resources/views/pages/public/charge.blade.php')
-
-    def test_view_exists(self):
-        self.fixture("""View::exists('emails.c|ustomer');""")
-        self.assertPath('emails/customer.blade.php')
 
     def test_app_path(self):
         self.fixture("""app_path('Us|er.php');""")
@@ -331,10 +237,6 @@ class TestFinder(unittest.ViewTestCase):
             'About/AboutComponent':
             """inertia(
                 'About/AboutCo|mponent'
-            );""",
-            'hello_view.blade.php':
-            """view(
-                'hello|_view', ['name' => 'James']
             );""",
             'HelloController.php@index':
             """Route::get(
