@@ -3,24 +3,37 @@ from .place import Place
 
 
 class Blade:
+    blade_patterns = [
+        compile(r"""\b(?:view|markdown)\b\(\s*(['"])([^'"]*)\1"""),
+        compile(r"""\$view\s*=\s*(['"])([^'"]*)\1"""),
+        compile(r"""\b(?:view|text|html|markdown)\b\s*:\s*(['"])([^'"]*)\1"""),
+        compile(r"""view\(\s*['"][^'"]*['"],\s*(['"])([^'"]*)\1"""),
+        compile(r"""[lL]ayout\(\s*(['"])([^'"]*)\1"""),
+        compile(r"""['"]layout['"]\s*=>\s*(['"])([^'"]*)\1"""),
+        compile(r"""@include(If\b)?\(\s*(['"])([^'"]*)\2"""),
+        compile(r"""@extends\(\s*(['"])([^'"]*)\1"""),
+        compile(r"""@include(When|Unless\b)?\([^'"]+(['"])([^'"]+)"""),
+        compile(r"""View::exists\(\s*(['"])([^'"]*)\1"""),
+        compile(r"""View::composer\(\s*(['"])([^'"]*)\1"""),
+        compile(r"""View::creator\(\s*(['"])([^'"]*)\1"""),
+        compile(r"""(resources\/views[^\s'"-]+)"""),
+    ]
+
+    multi_views_patterns = [
+        compile(
+            r"""@includeFirst\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""
+        ),
+        compile(
+            r"""View::composer\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""
+        ),
+        compile(r"""view\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""),
+        compile(r"""@each\(['"][^'"]+['"]\s*,[^,]+,[^,]+,[^)]+"""),
+        compile(r"""View::first[^'"]*(['"])([^'"]*)\1"""),
+    ]
+
     def get_place(self, path, line, lines=''):
 
-        blade_patterns = [
-            compile(r"""[\bview\b|\bmarkdown\b]\(\s*(['"])([^'"]*)\1"""),
-            compile(r"""\$view\s*=\s*(['"])([^'"]*)\1"""),
-            compile(r"""[\bview\b|\btext\b|\bhtml\b|\bmarkdown\b]\s*:\s*(['"])([^'"]*)\1"""),
-            compile(r"""view\(\s*['"][^'"]*['"],\s*(['"])([^'"]*)\1"""),
-            compile(r"""[lL]ayout\(\s*(['"])([^'"]*)\1"""),
-            compile(r"""['"]layout['"]\s*=>\s*(['"])([^'"]*)\1"""),
-            compile(r"""@include(If\b)?\(\s*(['"])([^'"]*)\2"""),
-            compile(r"""@extends\(\s*(['"])([^'"]*)\1"""),
-            compile(r"""@include(When|Unless\b)?\([^'"]+(['"])([^'"]+)"""),
-            compile(r"""View::exists\(\s*(['"])([^'"]*)\1"""),
-            compile(r"""View::composer\(\s*(['"])([^'"]*)\1"""),
-            compile(r"""View::creator\(\s*(['"])([^'"]*)\1"""),
-            compile(r"""(resources\/views[^\s'"-]+)"""),
-        ]
-        for pattern in blade_patterns:
+        for pattern in self.blade_patterns:
             matched = pattern.search(line) or pattern.search(lines)
             if matched is None:
                 continue
@@ -31,18 +44,7 @@ class Blade:
                 path = self.transform_blade(path)
                 return Place(path)
 
-        multi_views_patterns = [
-            compile(
-                r"""@includeFirst\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""
-            ),
-            compile(
-                r"""View::composer\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""
-            ),
-            compile(r"""view\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""),
-            compile(r"""@each\(['"][^'"]+['"]\s*,[^,]+,[^,]+,[^)]+"""),
-            compile(r"""View::first[^'"]*(['"])([^'"]*)\1"""),
-        ]
-        for pattern in multi_views_patterns:
+        for pattern in self.multi_views_patterns:
             if pattern.search(line) or pattern.search(lines):
                 path = self.transform_blade(path)
                 return Place(path)
