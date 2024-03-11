@@ -33,6 +33,7 @@ def get_place(selection):
         route_place,
         blade_place,
         controller_place,
+        namespace_place,
     )
 
     for fn in places:
@@ -315,3 +316,14 @@ def route_place(path, line, lines, selected):
             return place
 
         return place
+
+
+def namespace_place(path, line, lines, selected):
+    pattern = compile(r"""([A-Z][\w]+[\\])+[A-Z][\w]+""")
+
+    matched = pattern.search(line)
+    if not matched:
+        return False
+
+    place = Place(path + '.php')
+    return place
