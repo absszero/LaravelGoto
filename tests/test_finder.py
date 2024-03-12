@@ -288,6 +288,10 @@ class TestFinder(unittest.ViewTestCase):
         self.fixture("""command('app:say|-hello --args');""")
         self.assertPath("SayHello.php")
 
+    def test_namespace_class(self):
+        self.fixture("""return $this->hasMany('App\\Mod|els\\Score');""")
+        self.assertPath("App\\Models\\Score.php")
+
     def assertPath(self, expected, msg=None):
         selection = Selection(self.view)
         place = get_place(selection)
