@@ -17,7 +17,7 @@ class Language:
         self.langs = {}
 
         for folder in workspace.get_folders():
-            dir = workspace.get_folder_path(folder, 'lang')
+            dir = self.get_lang_dir(folder)
             if not dir:
                 continue
 
@@ -32,6 +32,16 @@ class Language:
             info('lang base', self.base)
             info('langs', self.langs)
             return
+
+    def get_lang_dir(self, base):
+        dir = workspace.get_folder_path(base, 'resources/lang')
+        if dir:
+            return dir
+        ''' For Laravel after 9.x '''
+        dir = workspace.get_folder_path(base, 'lang/en')
+        if dir:
+            return os.path.dirname(dir)
+        return
 
     def get_place(self, path):
         split = path.split(':')
