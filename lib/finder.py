@@ -6,10 +6,8 @@ from .console import Console
 from .router import Router
 from .language import Language
 from .blade import Blade
+from .config import Config
 from .setting import Setting
-
-
-find_pattern = """(['"]{1})%s\\1\\s*=>"""
 
 
 def get_place(selection):
@@ -93,21 +91,9 @@ def controller_place(path, line, lines, selected):
 
 
 def config_place(path, line, lines, selected):
-    config_patterns = [
-        compile(r"""Config::[^'"]*(['"])([^'"]*)\1"""),
-        compile(r"""config\([^'"]*(['"])([^'"]*)\1"""),
-    ]
-    for pattern in config_patterns:
-        matched = pattern.search(line) or pattern.search(lines)
-        if (matched and path == matched.group(2)):
-            split = path.split('.')
-            path = 'config/' + split[0] + '.php'
-            location = None
-            if (2 <= len(split)):
-                location = find_pattern % (split[1])
-            return Place(path, location)
-
-    return False
+    config = Config()
+    place = config.get_place(path, line, lines)
+    return place
 
 
 def filesystem_place(path, line, lines, selected):

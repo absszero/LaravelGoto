@@ -37,6 +37,10 @@ config('app');
 
 config('app.timezone');
 
+config("app.{$var}.timezone");
+
+config("app.$var.timezone");
+
 config(     ['app.timezone' => 'UTC']);
 
 env(   'APP_DEBUG', false);

@@ -1,4 +1,5 @@
 import sublime
+from re import sub
 
 
 class Selection(sublime.Region):
@@ -73,4 +74,12 @@ class Selection(sublime.Region):
         return ''
 
     def get_path(self):
-        return self.substr().strip(self.delimiters + ' ')
+        path = self.substr().strip(self.delimiters + ' ')
+        # remove the rest of string after {
+        path = sub('{.*', '', path)
+        # remove the rest of string after $
+        path = sub('\\$.*', '', path)
+        # remove dot at the end
+        path = path.rstrip('.')
+
+        return path
