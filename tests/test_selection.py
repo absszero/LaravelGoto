@@ -3,6 +3,29 @@ from LaravelGoto.lib.selection import Selection
 
 
 class TestSelection(unittest.ViewTestCase):
+    def test_var(self):
+        self.fixture("""
+            'ap|p.{$var}.timezone'
+            """)
+
+        selection = Selection(self.view)
+        self.assertEqual('app', selection.get_path())
+
+        self.fixture("""
+            "ap|p.$var.timezone"
+            """)
+
+        # cursor on a php $var
+        selection = Selection(self.view)
+        self.assertEqual('app', selection.get_path())
+
+        self.fixture("""
+            "app.$v|ar.timezone"
+            """)
+
+        selection = Selection(self.view)
+        self.assertEqual('', selection.get_path())
+
     def test_hello_world(self):
         self.fixture("""
             'hello_|world'
