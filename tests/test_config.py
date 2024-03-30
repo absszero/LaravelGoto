@@ -2,7 +2,7 @@ from . import unittest
 from LaravelGoto.lib.config import Config
 
 
-class TestBlade(unittest.ViewTestCase):
+class TestConfig(unittest.ViewTestCase):
     config = Config()
 
     def test_php_var(self):
