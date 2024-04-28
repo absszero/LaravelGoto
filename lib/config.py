@@ -17,6 +17,9 @@ class Config:
             if matched is None:
                 continue
 
+            if not matched.group(2).startswith(path):
+                continue
+
             split = path.split('.')
             path = 'config/' + split[0] + '.php'
             location = None

@@ -155,3 +155,7 @@ command('app:say-hello');
 command('app:say-goodbye');
 
 Storage::disk('local')->put('example.txt', 'Contents');
+
+Foo::get(config('app.tz'))
+
+$this->hasMany('App\Models\Score');

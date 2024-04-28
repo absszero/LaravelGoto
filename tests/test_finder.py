@@ -177,7 +177,7 @@ class TestFinder(unittest.ViewTestCase):
 
     def test_v8_namespace_route(self):
         self.fixture(
-            """Route::get('/', [L8\\EightContro|ller::class, 'index']);"""
+            """Route::get('/', [L8\\EightController::class, 'in|dex']);"""
             )
 
         selection = Selection(self.view)
@@ -193,14 +193,14 @@ class TestFinder(unittest.ViewTestCase):
     def test_v8_group_namespae_abs_route(self):
         self.fixture("""
         Route::group(['namespace' => 'L8'], function () {
-            Route::get('/', [\\EightControl|ler::class, 'index']);
+            Route::get('/', [\\EightController::class, 'ind|ex']);
         });""")
         self.assertPath('\\EightController.php@index')
 
     def test_v8_group_namespae_route(self):
         self.fixture("""
         Route::group(['namespace' => 'L8'], function () {
-            Route::get('/', [EightCon|troller::class, 'index']);
+            Route::get('/', [EightController::class, 'ind|ex']);
         });""")
 
         selection = Selection(self.view)
@@ -287,10 +287,6 @@ class TestFinder(unittest.ViewTestCase):
 
         self.fixture("""command('app:say|-hello --args');""")
         self.assertPath("SayHello.php")
-
-    def test_namespace_class(self):
-        self.fixture("""return $this->hasMany('App\\Mod|els\\Score');""")
-        self.assertPath("App\\Models\\Score.php")
 
     def assertPath(self, expected, msg=None):
         selection = Selection(self.view)

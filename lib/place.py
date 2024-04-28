@@ -10,9 +10,11 @@ class Place:
         self.paths = []
         self.uris = []
         self.locations = {}
+        self.source = None
 
     def __str__(self):
         return json.dumps({
+            "source": self.source,
             "path": self.path,
             "location": self.location,
             "is_controller": self.is_controller,

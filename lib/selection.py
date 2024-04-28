@@ -3,7 +3,7 @@ from re import sub
 
 
 class Selection(sublime.Region):
-    delimiters = "\"'-<>{}"
+    delimiters = """<("'[,)> """
 
     def __init__(self, view, point=None):
         self.view = view
@@ -25,22 +25,14 @@ class Selection(sublime.Region):
         return self.view.substr(self.line)
 
     def get_selection(self):
-        start = self.region.begin()
-        end = self.region.end()
-        if start != end:
+        if self.region.begin() != self.region.end():
             return self.region
 
-        selected = self.view.extract_scope(start)
-        if self.line.contains(selected):
-            if self.is_class:
-                selected = self.get_selected_by_delimiters(
-                    selected, ',[<', '>])')
-            return selected
-        return self.get_selected_by_delimiters(selected, self.delimiters)
+        return self.get_selected_by_delimiters(self.delimiters)
 
-    def get_selected_by_delimiters(self, selected, start_delims, end_delims=None):
-        start = selected.begin()
-        end = selected.end()
+    def get_selected_by_delimiters(self, start_delims, end_delims=None):
+        start = self.region.begin()
+        end = self.region.end()
 
         if (end_delims is None):
             end_delims = start_delims
