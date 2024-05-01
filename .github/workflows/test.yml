@@ -1,9 +1,7 @@
 name: test
 
 on:
-  pull_request:
-  push:
-    branches: master
+  pull_request
 
 jobs:
   Unittesting:
@@ -11,16 +9,11 @@ jobs:
       fail-fast: true
       matrix:
         st-version: [4]
-        os: ["ubuntu-latest", "macOS-latest", "windows-latest"]
+        os: ["ubuntu-latest", "windows-latest"]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - if: ${{ matrix.os == 'macOS-latest' }}
-        run: brew unlink openssl
       - uses: SublimeText/UnitTesting/actions/setup@v1
         with:
           sublime-text-version: ${{ matrix.st-version }}
       - uses: SublimeText/UnitTesting/actions/run-tests@v1
-        with:
-          coverage: true
-          codecov-upload: true

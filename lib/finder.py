@@ -7,6 +7,7 @@ from .router import Router
 from .language import Language
 from .blade import Blade
 from .config import Config
+from .classname import ClassName
 from .setting import Setting
 
 
@@ -31,25 +32,23 @@ def get_place(selection):
         route_place,
         blade_place,
         controller_place,
-        namespace_place,
+        class_name_place,
     )
 
     for fn in places:
         place = fn(path, line, lines, selection)
         if place:
+            place.source = fn.__name__
             return place
 
 
-def set_controller_action(path, selected, blocks):
+def set_controller_action(path, action, blocks):
     ''' set the controller action '''
 
-    class_controller_pattern = compile(r"""(.+)\.php\s*,\s*["']{1}(.+)""")
     path = path.replace('@', '.php@')
     path = path.replace('::class', '.php')
-    if selected.is_class:
-        matched = class_controller_pattern.search(path)
-        if matched:
-            path = matched.group(1) + '.php@' + matched.group(2)
+    if action:
+        path = path + '@' + action
 
     elif len(blocks) and blocks[0]['is_namespace'] is False:
         """resource or controller route"""
@@ -75,12 +74,19 @@ def set_controller_namespace(path, selected, ns):
 def controller_place(path, line, lines, selected):
     namespace = Namespace(selected.view)
     blocks = namespace.get_blocks(selected)
-    is_controller = "Controller" in path or selected.is_class
+    is_controller = "Controller" in lines or selected.is_class
 
     if is_controller is False and 0 == len(blocks):
         return False
 
-    path = set_controller_action(path, selected, blocks)
+    action = None
+    pattern = compile(r"""\[\s*(.*::class)\s*,\s*["']([^"']+)""")
+    matched = pattern.search(line) or pattern.search(lines)
+    if (matched and path == matched.group(2)):
+        path = matched.group(1)
+        action = matched.group(2)
+
+    path = set_controller_action(path, action, blocks)
 
     ns = namespace.find(blocks)
     path = set_controller_namespace(path, selected, ns)
@@ -304,12 +310,7 @@ def route_place(path, line, lines, selected):
         return place
 
 
-def namespace_place(path, line, lines, selected):
-    pattern = compile(r"""([A-Z][\w]+[\\])+[A-Z][\w]+""")
-
-    matched = pattern.search(line)
-    if not matched:
-        return False
-
-    place = Place(path + '.php')
+def class_name_place(path, line, lines, selected):
+    class_name = ClassName()
+    place = class_name.get_place(path, line, lines)
     return place

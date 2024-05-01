@@ -49,6 +49,13 @@ class TestConfig(unittest.ViewTestCase):
             )
         self.assertEqual('config/app.php', place.path)
 
+    def test_not_in_path(self):
+        place = self.config.get_place(
+            'Foo',
+            """Foo::get(config(     ['app' => 'UTC']);)"""
+            )
+        self.assertFalse(place)
+
     def test_multiline(self):
         place = self.config.get_place(
             'app.timezone',

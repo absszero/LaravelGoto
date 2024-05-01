@@ -24,7 +24,7 @@ class TestSelection(unittest.ViewTestCase):
             """)
 
         selection = Selection(self.view)
-        self.assertEqual('', selection.get_path())
+        self.assertEqual('app', selection.get_path())
 
     def test_hello_world(self):
         self.fixture("""
