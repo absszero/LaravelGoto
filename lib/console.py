@@ -48,7 +48,7 @@ class Console:
             return files
 
         for match in re.findall(
-                r"""\$this->load\(\s*__DIR__\.['"]([^'"]+)""",
+                r"""\$this->load\(\s*__DIR__\s*\.\s*['"]([^'"]+)""",
                 match.group(1)
                 ):
             if match.startswith('/'):
