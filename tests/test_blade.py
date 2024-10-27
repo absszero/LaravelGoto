@@ -271,4 +271,3 @@ class TestBlade(unittest.ViewTestCase):
         )
         self.assertEqual('dashboard.blade.php', place.path)
         self.assertEqual("""fragment\\(\\s*['"]user-list['"]\\s*\\)""", place.location)
-
