@@ -58,7 +58,7 @@ class Selection(sublime.Region):
             line = self.view.full_line(point)
             text = self.view.substr(line).strip()
             lines.insert(0, text)
-            if text.__contains__(delimiter):
+            if text.__contains__(delimiter) and not text.startswith('->'):
                 return ''.join(lines)
 
             line_number = line_number - 1

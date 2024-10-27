@@ -31,6 +31,18 @@ class Blade:
         compile(r"""View::first[^'"]*(['"])([^'"]*)\1"""),
     ]
 
+    fragment_patterns = [
+        compile(r"""->fragment\(\s*['"]([^'"]+)"""),
+        compile(r"""->fragmentIf\(\s*.*,\s*['"]([^'"]+)""")
+    ]
+
+    multi_fragments_patterns = [
+        compile(r"""->fragments\(\s*\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\s*\]"""),
+        compile(r"""->fragmentsIf\(\s*.*,\s*\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\s*\]""")
+    ]
+
+    location_pattern = """fragment\\(\\s*['"]%s['"]\\s*\\)"""
+
     def get_place(self, path, line, lines=''):
 
         for pattern in self.blade_patterns:
@@ -48,6 +60,36 @@ class Blade:
             if pattern.search(line) or pattern.search(lines):
                 path = self.transform_blade(path)
                 return Place(path)
+
+        for frg_pattern in self.fragment_patterns:
+            frg_matched = frg_pattern.search(lines) or frg_pattern.search(line)
+            if frg_matched is None:
+                continue
+
+            for pattern in self.blade_patterns:
+                matched = pattern.search(line) or pattern.search(lines)
+                if matched is None:
+                    continue
+
+                file = matched.groups()[-1].strip()
+                file = self.transform_blade(file)
+                location = self.location_pattern % path
+                return Place(file, location)
+
+        for frg_pattern in self.multi_fragments_patterns:
+            frg_matched = frg_pattern.search(lines) or frg_pattern.search(line)
+            if frg_matched is None:
+                continue
+
+            for pattern in self.blade_patterns:
+                matched = pattern.search(line) or pattern.search(lines)
+                if matched is None:
+                    continue
+
+                file = matched.groups()[-1].strip()
+                file = self.transform_blade(file)
+                location = self.location_pattern % path
+                return Place(file, location)
 
         return False
 

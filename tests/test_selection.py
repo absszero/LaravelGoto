@@ -58,3 +58,15 @@ view(
         selection = Selection(self.view)
         lines = selection.get_lines_after_delimiter()
         self.assertEqual("view('hello_view',", lines)
+
+    def test_get_lines_after_delimiter_with_arrow(self):
+        self.fixture("""
+view('dashboard', ['users' => $users])
+    ->fragments(
+        ['user-|list', 'comment-list']
+);
+        """)
+
+        selection = Selection(self.view)
+        lines = selection.get_lines_after_delimiter()
+        self.assertEqual("view('dashboard', ['users' => $users])->fragments(['user-list', 'comment-list']", lines)

@@ -226,3 +226,48 @@ class TestBlade(unittest.ViewTestCase):
             );"""
         )
         self.assertEqual('hello_view.blade.php', place.path)
+
+    def test_fragment(self):
+        place = self.blade.get_place(
+            'user-list',
+            "view('dashboard', ['users' => $users])->fragment('user-list');",
+        )
+        self.assertEqual('dashboard.blade.php', place.path)
+        self.assertEqual("""fragment\\(\\s*['"]user-list['"]\\s*\\)""", place.location)
+
+    def test_fragmentIf(self):
+        place = self.blade.get_place(
+            'user-list',
+            "view('dashboard', ['users' => $users])->fragmentIf($request->hasHeader('HX-Request'), 'user-list');",
+        )
+        self.assertEqual('dashboard.blade.php', place.path)
+        self.assertEqual("""fragment\\(\\s*['"]user-list['"]\\s*\\)""", place.location)
+
+    def test_fragments(self):
+        place = self.blade.get_place(
+            'user-list',
+            "view('dashboard', ['users' => $users])->fragments(['user-list', 'comment-list']);",
+        )
+        self.assertEqual('dashboard.blade.php', place.path)
+        self.assertEqual("""fragment\\(\\s*['"]user-list['"]\\s*\\)""", place.location)
+
+    def test_fragmentsIf(self):
+        place = self.blade.get_place(
+            'user-list',
+            "view('dashboard', ['users' => $users])->fragmentsIf($request->hasHeader('HX-Request'), ['user-list', 'comment-list']);",
+        )
+        self.assertEqual('dashboard.blade.php', place.path)
+        self.assertEqual("""fragment\\(\\s*['"]user-list['"]\\s*\\)""", place.location)
+
+    def test_multi_lines_fragmentsIf(self):
+        place = self.blade.get_place(
+            'user-list',
+            "->fragmentsIf($request->hasHeader('HX-Request'), ['user-list', 'comment-list']);",
+            """view('dashboard', ['users' => $users])
+            ->fragmentsIf(
+                $request->hasHeader('HX-Request'),
+                ['user-list', 'comment-list']
+            );"""
+        )
+        self.assertEqual('dashboard.blade.php', place.path)
+        self.assertEqual("""fragment\\(\\s*['"]user-list['"]\\s*\\)""", place.location)
