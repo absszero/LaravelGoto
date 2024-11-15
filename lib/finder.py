@@ -6,6 +6,7 @@ from .console import Console
 from .router import Router
 from .language import Language
 from .blade import Blade
+from .attribute import Attribute
 from .config import Config
 from .classname import ClassName
 from .setting import Setting
@@ -30,6 +31,7 @@ def get_place(selection):
         middleware_place,
         command_place,
         route_place,
+        attribute_place,
         blade_place,
         controller_place,
         class_name_place,
@@ -217,6 +219,12 @@ def component_place(path, line, lines, selected):
     sections[-1] = camel_case(sections[-1])
     place.paths.append(vendor + '/'.join(sections) + '.php')
 
+    return place
+
+
+def attribute_place(path, line, lines, selected):
+    attribute = Attribute()
+    place = attribute.get_place(path, line, lines)
     return place
 
 

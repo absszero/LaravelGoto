@@ -55,6 +55,10 @@ class TestFinder(unittest.ViewTestCase):
             )
         self.assertEqual(place.paths[1], 'View/Components/HelloAlert.php')
 
+    def test_contextual_attributes(self):
+        self.fixture("""#[Config('app.time|zone')]""")
+        self.assertPath("config/app.php")
+
     def test_component_with_namespace(self):
         self.fixture("""<x-namespace::|alert/>""")
         self.assertPath("namespace/alert.blade.php")
