@@ -6,11 +6,11 @@ class Inertia:
 
     inertia_patterns = [
         compile(r"""Route::inertia\s*\([^,]+,\s*['"]([^'"]+)"""),
-        compile(r"""Route::inertia\s*\([^,]+,\s*component:\s*['"]([^'"]+)"""),
+        compile(r"""Route::inertia\s*\([^,]+,\s*component\s*:\s*['"]([^'"]+)"""),
         compile(r"""Inertia::render\s*\(\s*['"]([^'"]+)"""),
         compile(r"""Inertia::render\s*\(\s*component\s*:\s*['"]([^'"]+)"""),
         compile(r"""inertia\s*\(\s*['"]([^'"]+)"""),
-        compile(r"""inertia\s*\(\s*component:\s*['"]([^'"]+)"""),
+        compile(r"""inertia\s*\(\s*component\s*:\s*['"]([^'"]+)"""),
     ]
 
     def get_place(self, path, line, lines=''):
