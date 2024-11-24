@@ -216,14 +216,6 @@ class TestFinder(unittest.ViewTestCase):
         self.fixture("""inertia("About/AboutCo|mponent");""")
         self.assertPath("About/AboutComponent")
 
-    def test_inertiajs_render(self):
-        self.fixture("""Inertia::render("About/AboutC|omponent");""")
-        self.assertPath("About/AboutComponent")
-
-    def test_inertiajs_route(self):
-        self.fixture("""Route::inertia("/about", "About/AboutCom|ponent");""")
-        self.assertPath("About/AboutComponent")
-
     def test_livewire_tag(self):
         self.fixture("""<livewire:nav.sho|w-post />""")
         self.assertPath("Nav/ShowPost.php")

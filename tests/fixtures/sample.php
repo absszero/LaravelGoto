@@ -111,6 +111,8 @@ Route::group(['namespace' => 'Resource'], function () {
 
 Route::inertia('/about', 'About/AboutComponent');
 
+Route::inertia('/about', component: 'About/AboutComponent');
+
 return Inertia::render('About/AboutComponent');
 
 return inertia('About/AboutComponent');
@@ -121,7 +123,7 @@ return inertia('About/AboutComponent');
 
 $view = 'hello.world';
 
-layout('layouts.app')
+layout('layouts.app');
 
 '{{-- resources/views/components/layout --}}'
 

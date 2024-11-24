@@ -8,6 +8,7 @@ from .language import Language
 from .blade import Blade
 from .attribute import Attribute
 from .config import Config
+from .inertia import Inertia
 from .classname import ClassName
 from .setting import Setting
 
@@ -25,7 +26,7 @@ def get_place(selection):
         config_place,
         filesystem_place,
         lang_place,
-        inertiajs_place,
+        inertia_place,
         livewire_place,
         component_place,
         middleware_place,
@@ -115,18 +116,10 @@ def filesystem_place(path, line, lines, selected):
     return False
 
 
-def inertiajs_place(path, line, lines, selected):
-    inertiajs_patterns = [
-        compile(r"""Route::inertia\s*\([^,]+,\s*['"]([^'"]+)"""),
-        compile(r"""Inertia::render\s*\(\s*['"]([^'"]+)"""),
-        compile(r"""inertia\s*\(\s*['"]([^'"]+)"""),
-    ]
-    for pattern in inertiajs_patterns:
-        matched = pattern.search(line) or pattern.search(lines)
-        if (matched and matched.group(1) in path):
-            return Place(matched.group(1))
-
-    return False
+def inertia_place(path, line, lines, selected):
+    inertia = Inertia()
+    place = inertia.get_place(path, line, lines)
+    return place
 
 
 def livewire_place(path, line, lines, selected):
