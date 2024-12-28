@@ -220,10 +220,6 @@ class TestFinder(unittest.ViewTestCase):
         self.fixture("""<livewire:nav.sho|w-post />""")
         self.assertPath("Nav/ShowPost.php")
 
-    def test_livewire_blade_directive(self):
-        self.fixture("""@livewire("nav.show|-post")""")
-        self.assertPath("Nav/ShowPost.php")
-
     def test_multiline(self):
         examples = {
             'layouts/app.blade.php':

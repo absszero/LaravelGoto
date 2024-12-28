@@ -125,7 +125,9 @@ $view = 'hello.world';
 
 layout('layouts.app');
 
-'{{-- resources/views/components/layout --}}'
+'{{-- resources/views/components/layout --}}';
+
+'{{-- "Livewire/Admin/Elevator/Elevator" --}}';
 
 view: 'emails.test',
 
