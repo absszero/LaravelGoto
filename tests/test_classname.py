@@ -11,3 +11,10 @@ class TestClassName(unittest.ViewTestCase):
             """return $this->hasMany('App\\Mod|els\\Score');"""
             )
         self.assertEqual('App\\Models\\Score.php', place.path)
+
+    def test_backslash(self):
+        place = self.classname.get_place(
+            'Livewire/Admin/Elevator/Elevator',
+            """Livewire/Admin/Elevator/Elevator"""
+            )
+        self.assertEqual('Livewire/Admin/Elevator/Elevator.php', place.path)

@@ -9,6 +9,7 @@ from .blade import Blade
 from .attribute import Attribute
 from .config import Config
 from .inertia import Inertia
+from .livewire import Livewire
 from .classname import ClassName
 from .setting import Setting
 
@@ -123,23 +124,9 @@ def inertia_place(path, line, lines, selected):
 
 
 def livewire_place(path, line, lines, selected):
-    livewire_patterns = [
-        compile(r"""livewire:([^\s"'>]+)"""),
-        compile(r"""@livewire\s*\(\s*['"]([^'"]+)"""),
-    ]
-    for pattern in livewire_patterns:
-        matched = pattern.search(line) or pattern.search(lines)
-        if matched:
-            path = camel_case(matched.group(1))
-            path = path.replace('.', '/') + '.php'
-            return Place(path)
-
-    return False
-
-
-def camel_case(snake_str):
-    components = snake_str.split('-')
-    return components[0].title() + ''.join(x.title() for x in components[1:])
+    livewire = Livewire()
+    place = livewire.get_place(path, line, lines)
+    return place
 
 
 def lang_place(path, line, lines, selected):
@@ -213,6 +200,11 @@ def component_place(path, line, lines, selected):
     place.paths.append(vendor + '/'.join(sections) + '.php')
 
     return place
+
+
+def camel_case(snake_str):
+    components = snake_str.split('-')
+    return components[0].title() + ''.join(x.title() for x in components[1:])
 
 
 def attribute_place(path, line, lines, selected):

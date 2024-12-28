@@ -3,11 +3,15 @@ from .place import Place
 
 
 class ClassName:
-    pattern = compile(r"""([A-Z][\w]+[\\])+[A-Z][\w]+""")
+    patterns = [
+        compile(r"""([A-Z][\w]+[/\\])+[A-Z][\w]+""")
+    ]
 
     def get_place(self, path, line, lines=''):
-        matched = self.pattern.search(line)
-        if not matched:
-            return False
+        for pattern in self.patterns:
 
-        return Place(path + '.php')
+            matched = pattern.search(line) or pattern.search(lines)
+            if matched:
+                return Place(path + '.php')
+
+        return False
