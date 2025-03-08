@@ -24,6 +24,53 @@ from .lib.router import Router
 place = None
 
 
+class LaravelGotoCommand(sublime_plugin.TextCommand):
+    def __init__(self, view):
+        super().__init__(view)
+
+    def run(self, edit):
+        global place
+        selection = Selection(self.view)
+        place = get_place(selection)
+        goto_place(place)
+
+    def is_visible(self):
+        filename = self.view.file_name()
+        return bool(filename and (
+            filename.endswith('.php') or
+            filename.endswith('.js') or
+            filename.endswith('.ts') or
+            filename.endswith('.jsx') or
+            filename.endswith('.vue')
+        )
+        )
+
+
+class GotoControllerCommand(sublime_plugin.WindowCommand):
+    uris = []
+
+    def run(self):
+        router = Router()
+        self.uris = router.uris()
+        items = []
+        for uri in self.uris:
+            item = sublime.QuickPanelItem(uri.label, uri.description, uri.detail)
+            items.append(item)
+
+        self.window.show_quick_panel(
+            items,
+            self.on_done,
+            sublime.MONOSPACE_FONT
+        )
+
+    def on_done(self, index):
+        if index == -1:
+            return  # User cancelled the selection
+
+        uri = self.uris[index]
+        goto_place(uri.place)
+
+
 class GotoLocation(sublime_plugin.EventListener):
     def on_load(self, view):
         global place
@@ -96,28 +143,6 @@ class GotoLocation(sublime_plugin.EventListener):
             place.paths = []
 
         goto_place(place)
-
-
-class LaravelGotoCommand(sublime_plugin.TextCommand):
-    def __init__(self, view):
-        super().__init__(view)
-
-    def run(self, edit):
-        global place
-        selection = Selection(self.view)
-        place = get_place(selection)
-        goto_place(place)
-
-    def is_visible(self):
-        filename = self.view.file_name()
-        return bool(filename and (
-            filename.endswith('.php') or
-            filename.endswith('.js') or
-            filename.endswith('.ts') or
-            filename.endswith('.jsx') or
-            filename.endswith('.vue')
-        )
-        )
 
 
 def goto_place(place):

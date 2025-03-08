@@ -4,6 +4,10 @@
         "command": "laravel_goto"
     },
     {
+        "caption": "Laravel Goto: Go to Controller via Uris",
+        "command": "goto_controller"
+    },
+    {
         "caption": "Laravel Goto: Settings",
         "command": "edit_settings",
         "args": {
