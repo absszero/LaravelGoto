@@ -39,7 +39,6 @@ class Attribute:
             if groups[0] in self.files:
                 path = self.files.get(groups[0])
                 location = self.location_pattern % (groups[1])
-                print(path, location)
                 return Place(path, location)
 
         return False

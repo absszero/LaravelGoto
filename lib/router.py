@@ -6,13 +6,15 @@ from .place import Place
 from . import workspace
 from .setting import Setting
 from .logging import info, exception
-
-routes = {}
+from .route_item import RouteItem
 
 
 class Router:
     artisan = None
     dir = None
+
+    named_routes = {}
+    uri_routes = []
 
     def __init__(self):
         for folder in workspace.get_folders():
@@ -65,24 +67,40 @@ class Router:
         output = output.decode('utf-8')
         try:
             route_rows = json.loads(output)
+
         except ValueError as e:
             exception('json.loads', e)
             return
 
-        for route_row in route_rows:
-            if 'Closure' == route_row['action']:
+        self.named_routes.clear()
+        self.uri_routes.clear()
+
+        for route in route_rows:
+            if 'Closure' == route['action']:
                 continue
 
-            path, action = route_row['action'].split('@')
-            if action:
-                routes[route_row['name']] = Place(
-                    workspace.class_2_file(path),
-                    location=action
-                    )
+            path = route['action']
+            action = '__invoke'
+            if '@' in route['action']:
+                path, action = route['action'].split('@')
+
+            place = Place(
+                workspace.class_2_file(path) + '@' + action,
+            )
+            place.is_controller = True
+
+            self.named_routes[route['name']] = place
+            self.uri_routes.append(RouteItem(route, place))
+
+        return True
 
     def is_changed(self, filepath=None):
         return workspace.is_changed(self.dir, filepath)
 
     def all(self):
         self.update()
-        return routes
+        return self.named_routes
+
+    def uris(self):
+        self.update()
+        return self.uri_routes

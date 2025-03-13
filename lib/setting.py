@@ -9,8 +9,7 @@ class Setting:
     def __init__(self):
         global settings, extensions
         if not settings:
-            settings = sublime.load_settings(
-                'LaravelGoto.sublime-settings')
+            settings = sublime.load_settings('LaravelGoto.sublime-settings')
 
             extensions = settings.get('default_static_extensions')
             exts = settings.get('static_extensions')
