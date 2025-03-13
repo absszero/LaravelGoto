@@ -42,7 +42,7 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
             filename.endswith('.ts') or
             filename.endswith('.jsx') or
             filename.endswith('.vue')
-        )
+            )
         )
 
 
@@ -54,7 +54,7 @@ class GotoControllerCommand(sublime_plugin.WindowCommand):
         self.uris = router.uris()
         items = []
         for uri in self.uris:
-            item = sublime.QuickPanelItem(uri.label, uri.description, uri.detail)
+            item = sublime.QuickPanelItem(uri.label, uri.detail)
             items.append(item)
 
         self.window.show_quick_panel(

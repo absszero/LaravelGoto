@@ -16,9 +16,9 @@
                                 "caption": "Settings",
                                 "command": "edit_settings",
                                 "args": {
-                                    "base_file": "${packages}/Laravel Goto/LaravelGoto.sublime-settings",
+                                    "base_file": "${packages}/LaravelGoto/Default.sublime-settings",
                                     "user_file": "${packages}/User/LaravelGoto.sublime-settings",
-                                    "default": "// Settings in here override those in \"Laravel Goto/LaravelGoto.sublime-settings\"\n{\n\t$0\n}\n"
+                                    "default": "// Settings in here override those in \"LaravelGoto/LaravelGoto.sublime-settings\"\n{\n\t$0\n}\n"
                                 }
                             },
                             {
@@ -28,7 +28,7 @@
                                 "caption": "Key Bindings",
                                 "command": "edit_settings",
                                 "args": {
-                                    "base_file": "${packages}/Laravel Goto/Default.sublime-keymap",
+                                    "base_file": "${packages}/LaravelGoto/Default.sublime-keymap",
                                     "user_file": "${packages}/User/Default (${platform}).sublime-keymap",
                                     "default": "[\n\t$0\n]\n",
                                 },

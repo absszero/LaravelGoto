@@ -181,7 +181,21 @@ Default supported static file extensions:
 - Select a text, `Right-Click` to open content menu, Press `Laravel Goto` or use <kbd>Alt</kbd> + <kbd>;</kbd>.
 
 
-## Extend static file extensions
+## Settings
+
+### PHP bin
+
+```json
+"php_bin": "c:\\php\\php.exe"
+```
+
+### Show hover popup if available
+
+```json
+"show_hover": true
+```
+
+### Extend static file extensions
 
 You can add other file extensions throught `Preferences > Package Settings > LaravelGoto > Settings`, and add this option `static_extensions`
 
@@ -190,4 +204,3 @@ You can add other file extensions throught `Preferences > Package Settings > Lar
     "your_extension_here"
 ]
 ```
-

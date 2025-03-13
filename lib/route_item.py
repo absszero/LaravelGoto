@@ -1,8 +1,9 @@
 class RouteItem:
 
-
     def __init__(self, route, place):
-        self.label = route['uri']
-        self.description = route['method']
+        if 'GET|HEAD' == route['method']:
+            route['method'] = 'GET'
+
+        self.label = route['method'] + ' ' + route['uri']
         self.detail = route['action']
         self.place = place
