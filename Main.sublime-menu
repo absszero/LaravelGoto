@@ -16,7 +16,7 @@
                                 "caption": "Settings",
                                 "command": "edit_settings",
                                 "args": {
-                                    "base_file": "${packages}/LaravelGoto/Default.sublime-settings",
+                                    "base_file": "${packages}/LaravelGoto/LaravelGoto.sublime-settings",
                                     "user_file": "${packages}/User/LaravelGoto.sublime-settings",
                                     "default": "// Settings in here override those in \"LaravelGoto/LaravelGoto.sublime-settings\"\n{\n\t$0\n}\n"
                                 }
