@@ -7,7 +7,7 @@
 
 Goto various Laravel files
 
-![example](example.gif)
+![example]gifs/(example.gif)
 
 ## Features
 
@@ -49,15 +49,15 @@ Route::resource('photo', 'HelloController', ['only' => [
 
 Go to the controller via the "Laravel Goto: Go to Controller via Uris" command.
 
-![](go-to-controller.gif)
+![](gifs/controller.gif)
 
 ### Go to Controller from route helper
 
-![](route.gif)
+![](gifs/route.gif)
 
 ### Go to Middleware
 
-![](middleware.gif)
+![](gifs/middleware.gif)
 
 ### Go to Config
 
@@ -80,7 +80,7 @@ Storage::disk('local')->put('example.txt', 'Contents');
 
 Go to single language file or open all and highlight option.
 
-![](language.gif)
+![](gifs/language.gif)
 
 ### Go to .env
 
@@ -90,7 +90,7 @@ env('APP_DEBUG', false);
 
 ### Go to Command
 
-![](command.gif)
+![](gifs/command.gif)
 
 
 ### Go to Inertia.js
