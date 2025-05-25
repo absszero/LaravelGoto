@@ -26,7 +26,7 @@ class Middleware:
         aliasPattern = r"""(\$\bmiddlewareAliases\b|\$\brouteMiddleware\b)\s*=\s*\[([^;]+)"""
 
         match = re.search(aliasPattern, self.http_kernel, re.M)
-        if match == None:
+        if match is None:
             return middlewares
 
         classnames = self.collect_classnames(self.http_kernel)

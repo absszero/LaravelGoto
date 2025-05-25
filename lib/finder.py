@@ -54,7 +54,7 @@ def set_controller_action(path, action, blocks):
     if action:
         path = path + '@' + action
 
-    elif len(blocks) and blocks[0]['is_namespace'] == False:
+    elif len(blocks) and blocks[0]['is_namespace'] is False:
         """resource or controller route"""
         new_path = blocks[0]['namespace']
         if new_path != path:
@@ -80,7 +80,7 @@ def controller_place(path, line, lines, selected):
     blocks = namespace.get_blocks(selected)
     is_controller = "Controller" in lines or selected.is_class
 
-    if is_controller == False and 0 == len(blocks):
+    if is_controller is False and 0 == len(blocks):
         return False
 
     action = None
@@ -153,7 +153,7 @@ def lang_place(path, line, lines, selected):
 
 def static_file_place(path, line, lines, selected):
     find = (path.split('.')[-1].lower() in Setting().exts())
-    if find == False:
+    if find is False:
         return False
 
     # remove dot symbols
@@ -175,7 +175,7 @@ def env_place(path, line, lines, selected):
 def component_place(path, line, lines, selected):
     component_pattern = compile(r"""<\/?x-([^\/\s>]*)""")
     matched = component_pattern.search(line) or component_pattern.search(lines)
-    if matched == None:
+    if matched is None:
         return False
 
     path = matched.group(1).strip()

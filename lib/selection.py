@@ -34,7 +34,7 @@ class Selection(sublime.Region):
         start = self.region.begin()
         end = self.region.end()
 
-        if (end_delims == None):
+        if (end_delims is None):
             end_delims = start_delims
         while start > self.line.a:
             if self.view.substr(start - 1) in start_delims:
