@@ -9,8 +9,6 @@ routes = {}
 
 class Language:
     find_pattern = """(['"]{1})%s\\1\\s*=>"""
-    FILENAME = 'lang/%(vendor)s%(file)s.php'
-    LANG_FILENAME = '%(vendor)s%(lang)s/%(file)s.php'
 
     def __init__(self):
         self.base = None
@@ -23,7 +21,9 @@ class Language:
 
             self.base = dir
             self.langs = {}
-            dirs = os.listdir(dir)
+
+            with os.scandir(dir) as entries:
+                dirs = [entry.name for entry in entries]
             for dir in dirs:
                 if os.path.isdir(os.path.join(self.base, dir)):
                     self.langs[dir] = True
@@ -50,7 +50,7 @@ class Language:
         if (3 == len(split)):
             vendor = 'vendor/' + split[0] + '/'
         keys = split[-1].split('.')
-        path = self.FILENAME % {'vendor': vendor, 'file': keys[0]}
+        path = f"lang/{vendor}{keys[0]}.php"
 
         uris = []
         paths = []
@@ -58,11 +58,7 @@ class Language:
         for lang, is_dir in self.langs.items():
             lang_path = lang
             if is_dir:
-                lang_path = self.LANG_FILENAME % {
-                    'vendor': vendor,
-                    'lang': lang,
-                    'file': keys[0],
-                }
+                lang_path = f"{vendor}{lang}/{keys[0]}.php"
             else:
                 jsonKey = '\\.'.join(keys)
                 locations[lang] = jsonKey

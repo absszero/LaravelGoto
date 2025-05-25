@@ -15,19 +15,19 @@ def is_debug():
 def info(caption, *args):
     if is_debug():
         logger = get_logger()
-        logger.info(str(caption) + ':' + str(*args))
+        logger.info(f"{caption}: {args}")
 
 
 def error(caption, *args):
     if is_debug():
         logger = get_logger()
-        logger.error(str(caption) + ':' + str(*args))
+        logger.error(f"{caption}: {args}")
 
 
 def warn(caption, *args):
     if is_debug():
         logger = get_logger()
-        logger.warning(str(caption) + ':' + str(*args))
+        logger.warning(f"{caption}: {args}")
 
 
 def exception(caption, ex: Exception):

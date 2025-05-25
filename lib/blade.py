@@ -47,7 +47,7 @@ class Blade:
 
         for pattern in self.blade_patterns:
             matched = pattern.search(line) or pattern.search(lines)
-            if matched is None:
+            if matched == None:
                 continue
 
             groups = matched.groups()
@@ -63,12 +63,12 @@ class Blade:
 
         for frg_pattern in self.fragment_patterns:
             frg_matched = frg_pattern.search(lines) or frg_pattern.search(line)
-            if frg_matched is None:
+            if frg_matched == None:
                 continue
 
             for pattern in self.blade_patterns:
                 matched = pattern.search(line) or pattern.search(lines)
-                if matched is None:
+                if matched == None:
                     continue
 
                 file = matched.groups()[-1].strip()
@@ -78,12 +78,12 @@ class Blade:
 
         for frg_pattern in self.multi_fragments_patterns:
             frg_matched = frg_pattern.search(lines) or frg_pattern.search(line)
-            if frg_matched is None:
+            if frg_matched == None:
                 continue
 
             for pattern in self.blade_patterns:
                 matched = pattern.search(line) or pattern.search(lines)
-                if matched is None:
+                if matched == None:
                     continue
 
                 file = matched.groups()[-1].strip()

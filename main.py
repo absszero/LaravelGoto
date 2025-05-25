@@ -146,7 +146,7 @@ class GotoLocation(sublime_plugin.EventListener):
 
 
 def goto_place(place):
-    if place is None:
+    if place == None:
         sublime.status_message('Laravel Goto: unidentified string.')
         return
 
@@ -183,7 +183,7 @@ def goto_place(place):
 
 
 def on_path_select(idx):
-    if -1 is idx:
+    if -1 == idx:
         return
 
     if place.uris and place.paths[idx] == place.paths[-1]:

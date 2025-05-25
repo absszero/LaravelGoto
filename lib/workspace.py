@@ -1,3 +1,4 @@
+from pathlib import Path
 import os
 import sublime
 
@@ -28,11 +29,12 @@ def is_changed(folder_path, file_path=None):
 
     if folder_path not in changes:
         return True
-    files = os.listdir(folder_path)
+    with os.scandir(folder_path) as entries:
+        files = [entry for entry in entries if entry.is_file() or entry.is_dir()]
     if changes[folder_path] != len(files):
         return True
-    for file in files:
-        fullpath = os.path.join(folder_path, file)
+    for entry in files:
+        fullpath = entry.path
         mTime = os.path.getmtime(fullpath)
         if mTimes.get(fullpath) != mTime:
             return True
@@ -45,7 +47,8 @@ def set_unchanged(folder_path):
     set the folder's files is changed
     '''
 
-    files = os.listdir(folder_path)
+    with os.scandir(folder_path) as entries:
+        files = [entry.name for entry in entries if entry.is_file() or entry.is_dir()]
     changes[folder_path] = len(files)
 
     for file in files:
@@ -81,10 +84,10 @@ def get_recursion_files(folder, ext='.php'):
     get all files including sub-dirs with the extension
     '''
     files = []
-    for folder, subfolders, filenames in os.walk(folder):
-        for filename in filenames:
-            if filename.endswith(ext):
-                files.append(os.path.join(folder, filename))
+    p = Path(folder)
+    for file in p.rglob(f'*{ext}'):
+        if file.is_file():
+            files.append(str(file))
     return files
 
 
@@ -105,24 +108,25 @@ def get_folder_path(base, folder_name, recursion=True):
             return full_folder_path
 
         folders = []
-        for file in os.listdir(full_folder_path):
-            folder = os.path.join(full_folder_path, file)
-            if os.path.isdir(folder):
-                folders.append(folder)
+        with os.scandir(full_folder_path) as entries:
+            for entry in entries:
+                if entry.is_dir():
+                    folders.append(entry.path)
 
         return folders
 
     if not recursion:
         return
 
-    for file in os.listdir(base):
-        folder = os.path.join(base, file)
-        if not os.path.isdir(folder):
-            continue
+    with os.scandir(base) as entries:
+        for entry in entries:
+            if not entry.is_dir():
+                continue
 
-        fullpath = get_folder_path(folder, folder_name, False)
-        if fullpath:
-            return fullpath
+            folder = entry.path
+            fullpath = get_folder_path(folder, folder_name, False)
+            if fullpath:
+                return fullpath
 
 
 def get_path(base, file_path, recursion=True):
@@ -133,7 +137,8 @@ def get_path(base, file_path, recursion=True):
     if '/' in file_path:
         top_dir = file_path.split('/')[0]
 
-    files = os.listdir(base)
+    with os.scandir(base) as entries:
+        files = [entry.name for entry in entries]
     if not top_dir and file_path in files:
         fullpath = os.path.join(base, file_path)
         if os.path.isfile(fullpath):
@@ -165,7 +170,6 @@ def class_2_file(class_name):
     '''
     convert PHP class name to filename
     '''
-    class_name = class_name
     filename = class_name.replace(',', '').replace('::class', '')
     filename = filename.replace('\\', '/').strip() + '.php'
     if filename.startswith('/'):

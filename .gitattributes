@@ -1,5 +1,5 @@
 .gitattributes export-ignore
-*.gif export-ignore
+gifs/*.gif export-ignore
 .github/ export-ignore
 tests/ export-ignore
 unittesting.json export-ignore

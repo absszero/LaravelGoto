@@ -14,7 +14,7 @@ class Config:
 
         for pattern in self.config_patterns:
             matched = pattern.search(line) or pattern.search(lines)
-            if matched is None:
+            if matched == None:
                 continue
 
             if not matched.group(2).startswith(path):

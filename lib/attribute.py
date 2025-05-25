@@ -20,7 +20,7 @@ class Attribute:
     def get_place(self, path, line, lines=''):
         for pattern in self.patterns:
             matched = pattern.search(line) or pattern.search(lines)
-            if matched is None:
+            if matched == None:
                 continue
 
             groups = matched.groups()
