@@ -58,9 +58,10 @@ class GotoControllerCommand(sublime_plugin.WindowCommand):
             items.append(item)
 
         self.window.show_quick_panel(
-            items,
-            self.on_done,
-            sublime.MONOSPACE_FONT
+            items=items,
+            on_select=self.on_done,
+            flags=sublime.MONOSPACE_FONT,
+            placeholder='Select a route'
         )
 
     def on_done(self, index):
