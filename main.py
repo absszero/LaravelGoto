@@ -97,11 +97,11 @@ class GotoLocation(sublime_plugin.EventListener):
         Router().update(view.file_name())
 
     def on_hover(self, view, point, hover_zone):
-        if view.is_popup_visible():
-            return
+        if not hasattr(self, "phantom_set"):
+            self.phantom_set = sublime.PhantomSet(view, "laravel_goto_phantom")
+
         if sublime.HOVER_TEXT != hover_zone:
-            return
-        if not Setting().get('show_hover'):
+            self.phantom_set.update([])
             return
         global place
         selection = Selection(view, point)
@@ -119,13 +119,14 @@ class GotoLocation(sublime_plugin.EventListener):
                         'A!!'
                     )
 
-            view.show_popup(
-                content,
-                flags=sublime.HIDE_ON_MOUSE_MOVE_AWAY,
-                location=point,
-                max_width=640,
-                on_navigate=self.on_navigate
-            )
+            self.phantom_set.update([
+                sublime.Phantom(
+                    sublime.Region(point, point),
+                    content,
+                    sublime.PhantomLayout.BELOW,
+                    on_navigate=self.on_navigate
+                )
+            ])
 
     def build_link(self, path, href=None):
         if not href:
@@ -136,6 +137,7 @@ class GotoLocation(sublime_plugin.EventListener):
     def on_navigate(self, link):
         global place
 
+        self.phantom_set.update([])
         if link == 'A!!' and place.uris:
             open_file_layouts(place.uris)
             return
