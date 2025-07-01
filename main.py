@@ -18,7 +18,6 @@ if int(sublime.version()) >= 3114:
 
 from .lib.selection import Selection
 from .lib.finder import get_place
-from .lib.setting import Setting
 from .lib.router import Router
 
 place = None
@@ -58,9 +57,10 @@ class GotoControllerCommand(sublime_plugin.WindowCommand):
             items.append(item)
 
         self.window.show_quick_panel(
-            items,
-            self.on_done,
-            sublime.MONOSPACE_FONT
+            items=items,
+            on_select=self.on_done,
+            flags=sublime.MONOSPACE_FONT,
+            placeholder='Select a route'
         )
 
     def on_done(self, index):
@@ -72,6 +72,8 @@ class GotoControllerCommand(sublime_plugin.WindowCommand):
 
 
 class GotoLocation(sublime_plugin.EventListener):
+    phantom_point = None
+
     def on_load(self, view):
         global place
         filepath = view.file_name()
@@ -96,12 +98,11 @@ class GotoLocation(sublime_plugin.EventListener):
         Router().update(view.file_name())
 
     def on_hover(self, view, point, hover_zone):
-        if view.is_popup_visible():
+        if sublime.HoverZone.TEXT != hover_zone:
+            if point != self.phantom_point:
+                self.phantom_set = sublime.PhantomSet(view, "lg_phantom")
             return
-        if sublime.HOVER_TEXT != hover_zone:
-            return
-        if not Setting().get('show_hover'):
-            return
+
         global place
         selection = Selection(view, point)
         place = get_place(selection)
@@ -118,13 +119,16 @@ class GotoLocation(sublime_plugin.EventListener):
                         'A!!'
                     )
 
-            view.show_popup(
-                content,
-                flags=sublime.HIDE_ON_MOUSE_MOVE_AWAY,
-                location=point,
-                max_width=640,
-                on_navigate=self.on_navigate
-            )
+            self.phantom_point = point
+            self.phantom_set = sublime.PhantomSet(view, "lg_phantom")
+            self.phantom_set.update([
+                sublime.Phantom(
+                    sublime.Region(point, point),
+                    content,
+                    sublime.PhantomLayout.BELOW,
+                    on_navigate=self.on_navigate
+                )
+            ])
 
     def build_link(self, path, href=None):
         if not href:
@@ -135,6 +139,7 @@ class GotoLocation(sublime_plugin.EventListener):
     def on_navigate(self, link):
         global place
 
+        self.phantom_set.update([])
         if link == 'A!!' and place.uris:
             open_file_layouts(place.uris)
             return
