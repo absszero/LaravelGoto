@@ -18,7 +18,6 @@ if int(sublime.version()) >= 3114:
 
 from .lib.selection import Selection
 from .lib.finder import get_place
-from .lib.setting import Setting
 from .lib.router import Router
 
 place = None
@@ -73,6 +72,7 @@ class GotoControllerCommand(sublime_plugin.WindowCommand):
 
 
 class GotoLocation(sublime_plugin.EventListener):
+    phantom_point = None
     def on_load(self, view):
         global place
         filepath = view.file_name()
@@ -97,12 +97,11 @@ class GotoLocation(sublime_plugin.EventListener):
         Router().update(view.file_name())
 
     def on_hover(self, view, point, hover_zone):
-        if not hasattr(self, "phantom_set"):
-            self.phantom_set = sublime.PhantomSet(view, "laravel_goto_phantom")
-
-        if sublime.HOVER_TEXT != hover_zone:
-            self.phantom_set.update([])
+        if sublime.HoverZone.TEXT != hover_zone:
+            if point != self.phantom_point:
+                self.phantom_set = sublime.PhantomSet(view, "lg_phantom")
             return
+
         global place
         selection = Selection(view, point)
         place = get_place(selection)
@@ -119,6 +118,8 @@ class GotoLocation(sublime_plugin.EventListener):
                         'A!!'
                     )
 
+            self.phantom_point = point
+            self.phantom_set = sublime.PhantomSet(view, "lg_phantom")
             self.phantom_set.update([
                 sublime.Phantom(
                     sublime.Region(point, point),
