@@ -73,6 +73,7 @@ class GotoControllerCommand(sublime_plugin.WindowCommand):
 
 class GotoLocation(sublime_plugin.EventListener):
     phantom_point = None
+
     def on_load(self, view):
         global place
         filepath = view.file_name()
