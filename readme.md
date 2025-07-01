@@ -195,12 +195,6 @@ Default supported static file extensions:
 "php_bin": "c:\\php\\php.exe"
 ```
 
-### Show hover popup if available
-
-```json
-"show_hover": true
-```
-
 ### Extend static file extensions
 
 You can add other file extensions throught `Preferences > Package Settings > LaravelGoto > Settings`, and add this option `static_extensions`

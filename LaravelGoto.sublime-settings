@@ -19,8 +19,6 @@
 
         "log"
     ],
-    // Show hover popup if available
-    "show_hover": true,
     // The location of PHP execute command
     "php_bin": "php"
 }
