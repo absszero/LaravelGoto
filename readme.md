@@ -7,7 +7,7 @@
 
 Goto various Laravel files
 
-![example]gifs/(example.gif)
+![example](gifs/example.gif)
 
 ## Features
 
