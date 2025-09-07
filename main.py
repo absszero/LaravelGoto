@@ -1,6 +1,7 @@
 import sys
 import sublime
 import sublime_plugin
+from .lib.setting import Setting
 from os.path import basename
 
 if int(sublime.version()) >= 3114:
@@ -31,7 +32,8 @@ class LaravelGotoCommand(sublime_plugin.TextCommand):
         global place
         selection = Selection(self.view)
         place = get_place(selection)
-        goto_place(place)
+        if place:
+            goto_place(place)
 
     def is_visible(self):
         filename = self.view.file_name()
@@ -72,6 +74,7 @@ class GotoControllerCommand(sublime_plugin.WindowCommand):
 
 
 class GotoLocation(sublime_plugin.EventListener):
+    phantom_set = None
     phantom_point = None
 
     def on_load(self, view):
@@ -98,10 +101,12 @@ class GotoLocation(sublime_plugin.EventListener):
         Router().update(view.file_name())
 
     def on_hover(self, view, point, hover_zone):
+        if not Setting().get('show_hover'):
+            return
+
         if sublime.HoverZone.TEXT != hover_zone:
             if point != self.phantom_point:
-                self.phantom_set = sublime.PhantomSet(view, "lg_phantom")
-            return
+                self.clean_phantom()
 
         global place
         selection = Selection(view, point)
@@ -119,7 +124,6 @@ class GotoLocation(sublime_plugin.EventListener):
                         'A!!'
                     )
 
-            self.phantom_point = point
             self.phantom_set = sublime.PhantomSet(view, "lg_phantom")
             self.phantom_set.update([
                 sublime.Phantom(
@@ -130,6 +134,18 @@ class GotoLocation(sublime_plugin.EventListener):
                 )
             ])
 
+    def on_query_context(self, view, key, operator, operand, match_all):
+        if key == "laravel_goto.clean_phantom":
+            self.clean_phantom()
+        return None
+
+    def on_selection_modified(self, view):
+        self.clean_phantom()
+
+    def clean_phantom(self):
+        if self.phantom_set:
+            self.phantom_set.update([])
+
     def build_link(self, path, href=None):
         if not href:
             href = path
@@ -139,7 +155,7 @@ class GotoLocation(sublime_plugin.EventListener):
     def on_navigate(self, link):
         global place
 
-        self.phantom_set.update([])
+        self.clean_phantom()
         if link == 'A!!' and place.uris:
             open_file_layouts(place.uris)
             return
@@ -230,7 +246,6 @@ def spot_location(view, place, filepath):
 
     location = place.location
     filename = basename(filepath)
-    # print(filename)
     if filename in place.locations:
         location = place.locations[filename]
 

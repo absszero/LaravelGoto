@@ -19,6 +19,8 @@ def get_place(selection):
     lines = selection.get_lines_after_delimiter()
 
     path = selection.get_path()
+    if len(path) == 0:
+        return
 
     places = (
         path_helper_place,

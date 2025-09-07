@@ -3,7 +3,7 @@ from re import sub
 
 
 class Selection(sublime.Region):
-    delimiters = """<("'[,)> """
+    delimiters = """;<("'[,)> """
 
     def __init__(self, view, point=None):
         self.view = view
