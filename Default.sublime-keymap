@@ -1,3 +1,15 @@
 [
-    { "keys": ["alt+;"], "command": "laravel_goto" }
+    {
+        "keys": ["alt+;"],
+        "command": "laravel_goto"
+    },
+    {
+        "keys": ["escape"],
+        "command": "laravel_goto.clean_phantom",
+        "context": [
+            {
+                "key": "laravel_goto.clean_phantom"
+            }
+        ]
+    }
 ]
