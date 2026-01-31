@@ -27,6 +27,37 @@ class TestConfig(unittest.ViewTestCase):
             )
         self.assertEqual('config/app.php', place.path)
 
+    def test_config_with_types(self):
+        place = self.config.get_place(
+            'config-key',
+            """Config::string('config-key');"""
+            )
+        self.assertEqual('config/config-key.php', place.path)
+
+        place = self.config.get_place(
+            'config-key',
+            """Config::integer('config-key');"""
+            )
+        self.assertEqual('config/config-key.php', place.path)
+
+        place = self.config.get_place(
+            'config-key',
+            """Config::float('config-key');"""
+            )
+        self.assertEqual('config/config-key.php', place.path)
+
+        place = self.config.get_place(
+            'config-key',
+            """Config::boolean('config-key');"""
+            )
+        self.assertEqual('config/config-key.php', place.path)
+
+        place = self.config.get_place(
+            'config-key',
+            """Config::array('config-key');"""
+            )
+        self.assertEqual('config/config-key.php', place.path)
+
     def test_config_get_only_file(self):
         place = self.config.get_place(
             'app',

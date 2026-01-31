@@ -12,6 +12,7 @@ from .inertia import Inertia
 from .livewire import Livewire
 from .classname import ClassName
 from .setting import Setting
+from .logging import Logging
 
 
 def get_place(selection):
@@ -27,6 +28,7 @@ def get_place(selection):
         static_file_place,
         env_place,
         config_place,
+        logging_place,
         filesystem_place,
         lang_place,
         inertia_place,
@@ -126,6 +128,9 @@ def inertia_place(path, line, lines, selected):
 
 
 def livewire_place(path, line, lines, selected):
+    if not selected.is_blade_file():
+        return False
+
     livewire = Livewire()
     place = livewire.get_place(path, line, lines)
     return place
@@ -174,6 +179,12 @@ def env_place(path, line, lines, selected):
     return False
 
 
+def logging_place(path, line, lines, selected):
+    logging = Logging()
+    place = logging.get_place(path, line, lines)
+    return place
+
+
 def component_place(path, line, lines, selected):
     component_pattern = compile(r"""<\/?x-([^\/\s>]*)""")
     matched = component_pattern.search(line) or component_pattern.search(lines)
@@ -216,6 +227,9 @@ def attribute_place(path, line, lines, selected):
 
 
 def blade_place(path, line, lines, selected):
+    if not selected.is_blade_file():
+        return False
+
     blade = Blade()
     place = blade.get_place(path, line, lines)
     return place

@@ -81,6 +81,12 @@ class TestBlade(unittest.ViewTestCase):
             )
         self.assertEqual("view/name.blade.php", place.path)
 
+        place = self.blade.get_place(
+            'view.name',
+            "@includeIsolated('view.name', ['status' => 'complete'])"
+            )
+        self.assertEqual("view/name.blade.php", place.path)
+
     def test_blade_extends(self):
         place = self.blade.get_place('view.name', "@extends('view.name')")
         self.assertEqual("view/name.blade.php", place.path)

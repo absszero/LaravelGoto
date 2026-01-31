@@ -1,6 +1,6 @@
 import os
 from . import workspace
-from .logging import info
+from .log_manager import info
 from .place import Place
 
 
