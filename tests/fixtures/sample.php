@@ -163,3 +163,5 @@ Storage::disk('local')->put('example.txt', 'Contents');
 Foo::get(config('app.tz'))
 
 $this->hasMany('App\Models\Score');
+
+Log::stack(['slack', 'single'])

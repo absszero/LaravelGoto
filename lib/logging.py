@@ -1,36 +1,33 @@
-from .setting import Setting
-import logging
+from re import compile
+from .place import Place
 
 
-def get_logger():
-    logger = logging.getLogger('LaravelGoto')
-    logger.setLevel(logging.INFO)
-    return logger
+class Logging:
+    patterns = [
+        compile(r"""Log::channel[^'"]*['"]([^'"]*)"""),
+    ]
 
+    multi_channel_patterns = [
+        compile(r"""Log::stack\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""),
+    ]
 
-def is_debug():
-    return Setting().get('debug')
+    find_pattern = """(['"]{1})%s\\1\\s*=>"""
 
+    def get_place(self, path, line, lines=''):
 
-def info(caption, *args):
-    if is_debug():
-        logger = get_logger()
-        logger.info(f"{caption}: {args}")
+        for pattern in self.patterns:
+            matched = pattern.search(line) or pattern.search(lines)
+            if matched is None:
+                continue
 
+            groups = matched.groups()
+            if path == groups[-1]:
+                location = self.find_pattern % (groups[-1])
+                return Place('config/logging.php', location)
 
-def error(caption, *args):
-    if is_debug():
-        logger = get_logger()
-        logger.error(f"{caption}: {args}")
+        for pattern in self.multi_channel_patterns:
+            if pattern.search(line) or pattern.search(lines):
+                location = self.find_pattern % (path)
+                return Place('config/logging.php', location)
 
-
-def warn(caption, *args):
-    if is_debug():
-        logger = get_logger()
-        logger.warning(f"{caption}: {args}")
-
-
-def exception(caption, ex: Exception):
-    if is_debug():
-        logger = get_logger()
-        logger.exception(caption)
+        return False

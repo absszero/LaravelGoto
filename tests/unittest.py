@@ -28,8 +28,9 @@ class ViewTestCase(TestCase):
         if self.view:
             self.view.close()
 
-    def fixture(self, text):
+    def fixture(self, text, filename='test.php'):
         self.view.run_command('setup_fixture', {'text': '<?php ' + text})
+        self.view.retarget(filename)
 
     def get_test_dir(self):
         return path.dirname(path.abspath(__file__))

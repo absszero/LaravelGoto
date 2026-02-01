@@ -10,7 +10,7 @@ class Blade:
         compile(r"""view\(\s*['"][^'"]*['"],\s*(['"])([^'"]*)\1"""),
         compile(r"""[lL]ayout\(\s*(['"])([^'"]*)\1"""),
         compile(r"""['"]layout['"]\s*=>\s*(['"])([^'"]*)\1"""),
-        compile(r"""@include(If\b)?\(\s*(['"])([^'"]*)\2"""),
+        compile(r"""@include(If|Isolated\b)?\(\s*(['"])([^'"]*)\2"""),
         compile(r"""@extends\(\s*(['"])([^'"]*)\1"""),
         compile(r"""@include(When|Unless\b)?\([^'"]+(['"])([^'"]+)"""),
         compile(r"""View::exists\(\s*(['"])([^'"]*)\1"""),

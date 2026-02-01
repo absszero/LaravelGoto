@@ -18,6 +18,10 @@ class Selection(sublime.Region):
         selected = self.get_selection()
         super(Selection, self).__init__(selected.begin(), selected.end(), -1)
 
+    def is_blade_file(self):
+        filename = self.view.file_name()
+        return bool(filename and filename.endswith('.blade.php'))
+
     def substr(self):
         return self.view.substr(self)
 

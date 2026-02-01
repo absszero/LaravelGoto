@@ -217,15 +217,21 @@ class TestFinder(unittest.ViewTestCase):
         self.assertPath("About/AboutComponent")
 
     def test_livewire_tag(self):
-        self.fixture("""<livewire:nav.sho|w-post />""")
+        self.fixture("""<livewire:nav.sho|w-post />""", filename='test.blade.php')
         self.assertPath("Nav/ShowPost.php")
+
+    def test_logging(self):
+        self.fixture("""Log::channel('sl|ack');""")
+        self.assertPath("config/logging.php")
+
+    def test_multiline_blade(self):
+        self.fixture("""layout(
+            'lay|outs.app'
+        )""", 'test.blade.php')
+        self.assertPath('layouts/app.blade.php')
 
     def test_multiline(self):
         examples = {
-            'layouts/app.blade.php':
-            """layout(
-                'lay|outs.app'
-            )""",
             'About/AboutComponent':
             """inertia(
                 'About/AboutCo|mponent'
@@ -255,7 +261,7 @@ class TestFinder(unittest.ViewTestCase):
 
         for expected, content in examples.items():
             self.fixture(content)
-            self.assertPath(expected, expected)
+            self.assertPath(expected)
 
     @patch('LaravelGoto.lib.finder.Middleware.all')
     def test_middleware(self, mock_middleware):

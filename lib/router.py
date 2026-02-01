@@ -5,7 +5,7 @@ import json
 from .place import Place
 from . import workspace
 from .setting import Setting
-from .logging import info, exception
+from .log_manager import info, exception
 from .route_item import RouteItem
 
 

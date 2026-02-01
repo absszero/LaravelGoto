@@ -3,6 +3,12 @@ from LaravelGoto.lib.selection import Selection
 
 
 class TestSelection(unittest.ViewTestCase):
+    def test_is_blade_file(self):
+        self.fixture("""hello'""", filename='test.blade.php')
+
+        selection = Selection(self.view)
+        self.assertTrue(selection.is_blade_file())
+
     def test_var(self):
         self.fixture("""
             'ap|p.{$var}.timezone'
