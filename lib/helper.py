@@ -16,7 +16,6 @@ class Helper:
 
             return Place(prefix + path)
 
-
         pattern = compile(r"""to_action\(\s*\[([^,]+),\s*(['"])([^'"]*)\2""")
         matched = pattern.search(line) or\
             pattern.search(lines)

@@ -155,7 +155,6 @@ class TestFinder(unittest.ViewTestCase):
         self.fixture("""app_path('Us|er.php');""")
         self.assertPath('app/User.php')
 
-
     def test_v8_namespace_route(self):
         self.fixture(
             """Route::get('/', [L8\\EightController::class, 'in|dex']);"""
