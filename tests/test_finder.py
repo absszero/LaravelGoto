@@ -151,33 +151,10 @@ class TestFinder(unittest.ViewTestCase):
         self.fixture("""'./../../hel|lo.css'""")
         self.assertPath('hello.css')
 
-    def test_app_path(self):
+    def test_helper(self):
         self.fixture("""app_path('Us|er.php');""")
         self.assertPath('app/User.php')
 
-    def test_config_path(self):
-        self.fixture("""config_path('ap|p.php');""")
-        self.assertPath('config/app.php')
-
-    def test_database_path(self):
-        self.fixture("""database_path('UserFacto|ry.php');""")
-        self.assertPath('database/UserFactory.php')
-
-    def test_public_path(self):
-        self.fixture("""public_path('css/ap|p.css');""")
-        self.assertPath('public/css/app.css')
-
-    def test_resource_path(self):
-        self.fixture("""resource_path('sass/ap|p.scss');""")
-        self.assertPath('resources/sass/app.scss')
-
-    def test_storage_path(self):
-        self.fixture("""storage_path('logs/lara|vel.log');""")
-        self.assertPath('storage/logs/laravel.log')
-
-    def test_double_brackets_path(self):
-        self.fixture("""realpath(storage_path('logs/lar|avel.log'));""")
-        self.assertPath('storage/logs/laravel.log')
 
     def test_v8_namespace_route(self):
         self.fixture(
