@@ -12,6 +12,7 @@ from .route_item import RouteItem
 class Router:
     artisan = None
     dir = None
+    updating = False
 
     named_routes = {}
     uri_routes = []
@@ -29,13 +30,18 @@ class Router:
         '''
         info('artisan', self.artisan)
         info('routes folder', self.dir)
+        info('is updating', self.updating)
         if not self.artisan or not self.dir:
+            return
+
+        if self.updating:
             return
 
         is_routes_changed = self.is_changed(filepath)
         info('routes changed', is_routes_changed)
         if not is_routes_changed:
             return
+        self.updating = True
         workspace.set_unchanged(self.dir)
 
         php = Setting().get('php_bin')
@@ -63,6 +69,8 @@ class Router:
         except FileNotFoundError as e:
             exception('file not found', e)
             return
+        finally:
+            self.updating = False
 
         output = output.decode('utf-8')
         try:
@@ -71,6 +79,8 @@ class Router:
         except ValueError as e:
             exception('json.loads', e)
             return
+        finally:
+            self.updating = False
 
         self.named_routes.clear()
         self.uri_routes.clear()
@@ -92,6 +102,7 @@ class Router:
             self.named_routes[route['name']] = place
             self.uri_routes.append(RouteItem(route, place))
 
+        self.updating = False
         return True
 
     def is_changed(self, filepath=None):

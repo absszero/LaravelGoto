@@ -13,6 +13,7 @@ from .livewire import Livewire
 from .classname import ClassName
 from .setting import Setting
 from .logging import Logging
+from .helper import Helper
 
 
 def get_place(selection):
@@ -236,18 +237,9 @@ def blade_place(path, line, lines, selected):
 
 
 def path_helper_place(path, line, lines, selected):
-    path_helper_pattern = compile(r"""([\w^_]+)_path\(\s*(['"])([^'"]*)\2""")
-    matched = path_helper_pattern.search(line) or\
-        path_helper_pattern.search(lines)
-    if (matched and path == matched.group(3)):
-        prefix = matched.group(1) + '/'
-        if 'base/' == prefix:
-            prefix = ''
-        elif 'resource/' == prefix:
-            prefix = 'resources/'
-
-        return Place(prefix + path)
-    return False
+    helper = Helper()
+    place = helper.get_place(path, line, lines)
+    return place
 
 
 def middleware_place(path, line, lines, selected):
