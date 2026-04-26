@@ -79,13 +79,13 @@ def get_file_content(base, file_path=None):
         return content
 
 
-def get_recursion_files(folder, ext='.php'):
+def get_recursion_files(folder, suffix='*.php'):
     '''
     get all files including sub-dirs with the extension
     '''
     files = []
     p = Path(folder)
-    for file in p.rglob(f'*{ext}'):
+    for file in p.rglob(f'{suffix}'):
         if file.is_file():
             files.append(str(file))
     return files

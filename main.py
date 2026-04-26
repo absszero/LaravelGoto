@@ -20,6 +20,7 @@ if int(sublime.version()) >= 3114:
 from .lib.selection import Selection
 from .lib.finder import get_place
 from .lib.router import Router
+from .lib.log_file import LogFile
 
 place = None
 
@@ -71,6 +72,66 @@ class GotoControllerCommand(sublime_plugin.WindowCommand):
 
         uri = self.uris[index]
         goto_place(uri.place)
+
+
+class GotoLogCommand(sublime_plugin.WindowCommand):
+    _channels = {}
+    _log_files = []
+
+    def run(self):
+        log_file = LogFile()
+        self._channels = log_file.channels()
+        if not self._channels:
+            sublime.status_message('Laravel Goto: No log channels with path found in config/logging.php')
+            return
+
+        items = [[name, path] for name, path in self._channels.items()]
+        self.window.show_quick_panel(
+            items,
+            self.on_channel_select,
+            placeholder='Select a log channel'
+        )
+
+    def on_channel_select(self, index):
+        if index == -1:
+            return
+
+        channel_name = list(self._channels.keys())[index]
+        path_expression = self._channels[channel_name]
+
+        log_file = LogFile()
+        self._log_files = log_file.find_log_files(path_expression)
+        if not self._log_files:
+            sublime.status_message('Laravel Goto: No log files found for channel "{}"'.format(channel_name))
+            return
+
+        import os
+        items = [[os.path.basename(f), f] for f in self._log_files]
+        self.window.show_quick_panel(
+            items,
+            self.on_file_select,
+            placeholder='Select a log file to open'
+        )
+
+    def on_file_select(self, index):
+        if index == -1:
+            return
+
+        filepath = self._log_files[index]
+        view = self.window.open_file(filepath)
+        self._scroll_to_bottom(view, 0)
+
+    def _scroll_to_bottom(self, view, attempts):
+        if view.is_loading():
+            if attempts < 20:
+                sublime.set_timeout(lambda: self._scroll_to_bottom(view, attempts + 1), 100)
+            return
+        last_line = view.rowcol(view.size())[0]
+        point = view.text_point(last_line, 0)
+        region = sublime.Region(point, point)
+        view.sel().clear()
+        view.sel().add(region)
+        view.show(region)
 
 
 class GotoLocation(sublime_plugin.EventListener):

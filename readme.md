@@ -55,6 +55,12 @@ Go to the controller via the "Laravel Goto: Go to Controller via Uris" command.
 
 ![](gifs/route.gif)
 
+### Go to Log file
+
+Go to the log file via the "Laravel Goto: Go to Log file" command.
+
+![](gifs/go-to-log.png)
+
 ### Go to Middleware
 
 ![](gifs/middleware.gif)
