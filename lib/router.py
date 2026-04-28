@@ -5,7 +5,7 @@ import json
 from .place import Place
 from . import workspace
 from .setting import Setting
-from .log_manager import info, exception
+from .log_manager import LogManager
 from .route_item import RouteItem
 
 
@@ -19,6 +19,7 @@ class Router:
 
     def __init__(self):
         for folder in workspace.get_folders():
+            self.logger = LogManager('Router')
             self.artisan = workspace.get_path(folder, 'artisan')
             self.dir = workspace.get_folder_path(folder, 'routes')
             if self.dir:
@@ -28,9 +29,9 @@ class Router:
         '''
         update routes if routes folder's files were changed
         '''
-        info('artisan', self.artisan)
-        info('routes folder', self.dir)
-        info('is updating', self.updating)
+        self.logger.info('artisan', self.artisan)
+        self.logger.info('routes folder', self.dir)
+        self.logger.info('is updating', self.updating)
         if not self.artisan or not self.dir:
             return
 
@@ -38,7 +39,7 @@ class Router:
             return
 
         is_routes_changed = self.is_changed(filepath)
-        info('routes changed', is_routes_changed)
+        self.logger.info('routes changed', is_routes_changed)
         if not is_routes_changed:
             return
         self.updating = True
@@ -64,10 +65,10 @@ class Router:
                 )
 
         except subprocess.CalledProcessError as e:
-            exception('route:list failed', e)
+            self.logger.exception('route:list failed', e)
             return
         except FileNotFoundError as e:
-            exception('file not found', e)
+            self.logger.exception('file not found', e)
             return
         finally:
             self.updating = False
@@ -77,7 +78,7 @@ class Router:
             route_rows = json.loads(output)
 
         except ValueError as e:
-            exception('json.loads', e)
+            self.logger.exception('json.loads', e)
             return
         finally:
             self.updating = False
