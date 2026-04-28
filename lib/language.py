@@ -1,6 +1,6 @@
 import os
 from . import workspace
-from .log_manager import info
+from .log_manager import LogManager
 from .place import Place
 
 
@@ -13,7 +13,7 @@ class Language:
     def __init__(self):
         self.base = None
         self.langs = {}
-
+        self.logger = LogManager('Language')
         for folder in workspace.get_folders():
             dir = self.get_lang_dir(folder)
             if not dir:
@@ -29,8 +29,8 @@ class Language:
                     self.langs[dir] = True
                 elif dir.endswith('.json'):
                     self.langs[dir] = False
-            info('lang base', self.base)
-            info('langs', self.langs)
+            self.logger.info('lang base', self.base)
+            self.logger.info('langs', self.langs)
             return
 
     def get_lang_dir(self, base):

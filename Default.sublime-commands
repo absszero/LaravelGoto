@@ -8,6 +8,10 @@
         "command": "goto_controller"
     },
     {
+        "caption": "Laravel Goto: Go to Log File",
+        "command": "goto_log"
+    },
+    {
         "caption": "Laravel Goto: Settings",
         "command": "edit_settings",
         "args": {

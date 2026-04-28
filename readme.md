@@ -47,13 +47,19 @@ Route::resource('photo', 'HelloController', ['only' => [
 
 ### Go to Controller via Uris
 
-Go to the controller via the "Laravel Goto: Go to Controller via Uris" command.
+Go to the controller via the **Laravel Goto: Go to Controller via Uris** command.
 
-![](gifs/controller.gif)
+![](gifs/go-to-controller.gif)
 
 ### Go to Controller from route helper
 
 ![](gifs/route.gif)
+
+### Go to Log file
+
+Go to the log file via the **Laravel Goto: Go to Log file** command.
+
+![](gifs/go-to-log.png)
 
 ### Go to Middleware
 
