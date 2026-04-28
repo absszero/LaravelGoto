@@ -1,6 +1,7 @@
 from .setting import Setting
 import logging
 
+
 class LogManager:
     def __init__(self, subject):
         self.subject = subject
