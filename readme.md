@@ -104,6 +104,19 @@ env('APP_DEBUG', false);
 
 ### 🌐 Localization
 
+Jump to language files:
+
+```php
+__('messages.welcome');
+
+@lang('messages.welcome');
+
+trans('messages.welcome');
+
+trans_choice('messages.apples', 10);
+```
+
+
 Jump to language files or open all matching files with highlighting:
 
 ![](gifs/language.gif)
