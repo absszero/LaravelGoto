@@ -1,11 +1,11 @@
-from re import compile
+from re import compile, IGNORECASE
 from .place import Place
 
 
 class Config:
     config_patterns = [
         compile(r"""Config::[^'"]*(['"])([^'"]*)\1"""),
-        compile(r"""config\([^'"]*(['"])([^'"]*)\1"""),
+        compile(r"""config\([^'"]*(['"])([^'"]*)\1""", IGNORECASE),
     ]
 
     find_pattern = """(['"]{1})%s\\1\\s*=>"""

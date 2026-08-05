@@ -61,14 +61,14 @@ class TestConfig(unittest.ViewTestCase):
     def test_config_get_only_file(self):
         place = self.config.get_place(
             'app',
-            """config('app');"""
+            """conFig('app');"""
             )
         self.assertEqual('config/app.php', place.path)
 
     def test_config_get_helper(self):
         place = self.config.get_place(
             'app.timezone',
-            """config('app.timezone');"""
+            """conFig('app.timezone');"""
             )
         self.assertEqual('config/app.php', place.path)
         self.assertEqual('([\'"]{1})timezone\\1\\s*=>', place.location)
@@ -76,14 +76,14 @@ class TestConfig(unittest.ViewTestCase):
     def test_config_set_helper(self):
         place = self.config.get_place(
             'app',
-            """config(     ['app' => 'UTC']);"""
+            """conFig(     ['app' => 'UTC']);"""
             )
         self.assertEqual('config/app.php', place.path)
 
     def test_not_in_path(self):
         place = self.config.get_place(
             'Foo',
-            """Foo::get(config(     ['app' => 'UTC']);)"""
+            """Foo::get(conFig(     ['app' => 'UTC']);)"""
             )
         self.assertFalse(place)
 
@@ -91,7 +91,7 @@ class TestConfig(unittest.ViewTestCase):
         place = self.config.get_place(
             'app.timezone',
             "'app.timezone' => 'UTC']",
-            """config(     [
+            """conFig(     [
                 'app.timezone' => 'UTC']
             );"""
         )

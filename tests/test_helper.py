@@ -34,5 +34,5 @@ class TestHelper(unittest.ViewTestCase):
         self.assertEqual('storage/logs/laravel.log', place.path)
 
     def test_to_action(self):
-        place = self.helper.get_place('show', """to_action([UserController::class, 'show'], ['user' => 1]);""")
+        place = self.helper.get_place('show', """to_acTion([UserController::class, 'show'], ['user' => 1]);""")
         self.assertEqual('UserController.php@show', place.path)

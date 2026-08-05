@@ -1,14 +1,14 @@
-from re import compile
+from re import compile, IGNORECASE
 from .place import Place
 
 
 class Blade:
     blade_patterns = [
-        compile(r"""\b(?:view|markdown)\b\(\s*(['"])([^'"]*)\1"""),
+        compile(r"""\b(?:view|markdown)\b\(\s*(['"])([^'"]*)\1""", IGNORECASE),
         compile(r"""\$view\s*=\s*(['"])([^'"]*)\1"""),
         compile(r"""\b(?:view|text|html|markdown)\b\s*:\s*(['"])([^'"]*)\1"""),
         compile(r"""view\(\s*['"][^'"]*['"],\s*(['"])([^'"]*)\1"""),
-        compile(r"""[lL]ayout\(\s*(['"])([^'"]*)\1"""),
+        compile(r"""layout\(\s*(['"])([^'"]*)\1""", IGNORECASE),
         compile(r"""['"]layout['"]\s*=>\s*(['"])([^'"]*)\1"""),
         compile(r"""@include(If|Isolated\b)?\(\s*(['"])([^'"]*)\2"""),
         compile(r"""@extends\(\s*(['"])([^'"]*)\1"""),
@@ -26,19 +26,19 @@ class Blade:
         compile(
             r"""View::composer\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""
         ),
-        compile(r"""view\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]"""),
+        compile(r"""view\(\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\]""", IGNORECASE),
         compile(r"""@each\(['"][^'"]+['"]\s*,[^,]+,[^,]+,[^)]+"""),
         compile(r"""View::first[^'"]*(['"])([^'"]*)\1"""),
     ]
 
     fragment_patterns = [
-        compile(r"""->fragment\(\s*['"]([^'"]+)"""),
-        compile(r"""->fragmentIf\(\s*.*,\s*['"]([^'"]+)""")
+        compile(r"""->fragment\(\s*['"]([^'"]+)""", IGNORECASE),
+        compile(r"""->fragmentIf\(\s*.*,\s*['"]([^'"]+)""", IGNORECASE),
     ]
 
     multi_fragments_patterns = [
-        compile(r"""->fragments\(\s*\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\s*\]"""),
-        compile(r"""->fragmentsIf\(\s*.*,\s*\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\s*\]""")
+        compile(r"""->fragments\(\s*\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\s*\]""", IGNORECASE),
+        compile(r"""->fragmentsIf\(\s*.*,\s*\[(\s*['"][^'"]+['"]\s*[,]?\s*){2,}\s*\]""", IGNORECASE)
     ]
 
     location_pattern = """fragment\\(\\s*['"]%s['"]\\s*\\)"""

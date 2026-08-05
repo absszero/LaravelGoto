@@ -130,7 +130,7 @@ class TestFinder(unittest.ViewTestCase):
         self.assertEqual('([\'"]{1})local\\1\\s*=>', place.location)
 
     def test_env(self):
-        self.fixture("""env(   'APP|_DEBUG', false);""")
+        self.fixture("""eNv(   'APP|_DEBUG', false);""")
         place = self.assertPath('.env')
         self.assertEqual('APP_DEBUG', place.location)
 
@@ -141,10 +141,10 @@ class TestFinder(unittest.ViewTestCase):
         self.fixture("""@lang('messages.we|lcome');""")
         self.assertPath('lang/messages.php')
 
-        self.fixture("""trans('messages.we|lcome');""")
+        self.fixture("""trAns('messages.we|lcome');""")
         self.assertPath('lang/messages.php')
 
-        self.fixture("""trans_choice('messages.a|pples', 10);""")
+        self.fixture("""trAns_choice('messages.a|pples', 10);""")
         self.assertPath('lang/messages.php')
 
     def test_relative_path_static_file(self):
@@ -152,7 +152,7 @@ class TestFinder(unittest.ViewTestCase):
         self.assertPath('hello.css')
 
     def test_helper(self):
-        self.fixture("""app_path('Us|er.php');""")
+        self.fixture("""app_Path('Us|er.php');""")
         self.assertPath('app/User.php')
 
     def test_v8_namespace_route(self):
@@ -221,7 +221,7 @@ class TestFinder(unittest.ViewTestCase):
                 'app.t|imezone'
             );""",
             '.env':
-            """env(
+            """eNv(
                 'APP_DEB|UG'
                 , false
             );""",
@@ -259,7 +259,7 @@ class TestFinder(unittest.ViewTestCase):
         self.fixture("""Artisan::call('app:say|-hello --args');""")
         self.assertPath("SayHello.php")
 
-        self.fixture("""command('app:say|-hello --args');""")
+        self.fixture("""commAnd('app:say|-hello --args');""")
         self.assertPath("SayHello.php")
 
     def assertPath(self, expected, msg=None):

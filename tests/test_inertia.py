@@ -8,12 +8,12 @@ class TestInertia(unittest.ViewTestCase):
     def test_inertia_function(self):
         place = self.inertia.get_place(
             'About/AboutComponent',
-            """inertia("About/AboutComponent");""")
+            """inerTia("About/AboutComponent");""")
         self.assertEqual("About/AboutComponent", place.path)
 
         place = self.inertia.get_place(
             'About/AboutComponent',
-            """inertia(component: "About/AboutComponent");""")
+            """inerTia(component: "About/AboutComponent");""")
         self.assertEqual("About/AboutComponent", place.path)
 
     def test_inertia_render(self):
