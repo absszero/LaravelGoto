@@ -8,7 +8,7 @@ class TestBlade(unittest.ViewTestCase):
     def test_view(self):
         place = self.blade.get_place(
             'hello_view',
-            "return view('hello_view');"
+            "return vIEw('hello_view');"
         )
         self.assertEqual("hello_view.blade.php", place.path)
 
@@ -58,7 +58,7 @@ class TestBlade(unittest.ViewTestCase):
         self.assertEqual("pages/welcome.blade.php", place.path)
 
     def test_layout_method(self):
-        place = self.blade.get_place('hello_view', "layout('hello_view');")
+        place = self.blade.get_place('hello_view', "layOUt('hello_view');")
         self.assertEqual("hello_view.blade.php", place.path)
 
     def test_view_in_config_livewire_php(self):
@@ -169,13 +169,13 @@ class TestBlade(unittest.ViewTestCase):
     def test_notification_multi_view(self):
         place = self.blade.get_place(
             'emails.name.html',
-            "view(['emails.name.html', 'emails.name.plain']);"
+            "vIEw(['emails.name.html', 'emails.name.plain']);"
         )
         self.assertEqual("emails/name/html.blade.php", place.path)
 
         place = self.blade.get_place(
             'emails.name.plain',
-            "view(['emails.name.html', 'emails.name.plain']);"
+            "viEW(['emails.name.html', 'emails.name.plain']);"
         )
         self.assertEqual("emails/name/plain.blade.php", place.path)
 
@@ -227,7 +227,7 @@ class TestBlade(unittest.ViewTestCase):
         place = self.blade.get_place(
             'hello_view',
             "'hello_view', ['name' => 'James']",
-            """view(
+            """viEw(
                 'hello_view', ['name' => 'James']
             );"""
         )
@@ -236,7 +236,7 @@ class TestBlade(unittest.ViewTestCase):
     def test_fragment(self):
         place = self.blade.get_place(
             'user-list',
-            "view('dashboard', ['users' => $users])->fragment('user-list');",
+            "viEw('dashboard', ['users' => $users])->fraGment('user-list');",
         )
         self.assertEqual('dashboard.blade.php', place.path)
         self.assertEqual("""fragment\\(\\s*['"]user-list['"]\\s*\\)""", place.location)
@@ -244,7 +244,7 @@ class TestBlade(unittest.ViewTestCase):
     def test_fragmentIf(self):
         place = self.blade.get_place(
             'user-list',
-            "view('dashboard', ['users' => $users])->fragmentIf($request->hasHeader('HX-Request'), 'user-list');",
+            "viEw('dashboard', ['users' => $users])->fraGmentIf($request->hasHeader('HX-Request'), 'user-list');",
         )
         self.assertEqual('dashboard.blade.php', place.path)
         self.assertEqual("""fragment\\(\\s*['"]user-list['"]\\s*\\)""", place.location)
@@ -252,7 +252,7 @@ class TestBlade(unittest.ViewTestCase):
     def test_fragments(self):
         place = self.blade.get_place(
             'user-list',
-            "view('dashboard', ['users' => $users])->fragments(['user-list', 'comment-list']);",
+            "viEw('dashboard', ['users' => $users])->fraGments(['user-list', 'comment-list']);",
         )
         self.assertEqual('dashboard.blade.php', place.path)
         self.assertEqual("""fragment\\(\\s*['"]user-list['"]\\s*\\)""", place.location)
@@ -260,7 +260,7 @@ class TestBlade(unittest.ViewTestCase):
     def test_fragmentsIf(self):
         place = self.blade.get_place(
             'user-list',
-            "view('dashboard', ['users' => $users])->fragmentsIf($request->hasHeader('HX-Request'), ['user-list', 'comment-list']);",
+            "viEw('dashboard', ['users' => $users])->fraGmentsIf($request->hasHeader('HX-Request'), ['user-list', 'comment-list']);",
         )
         self.assertEqual('dashboard.blade.php', place.path)
         self.assertEqual("""fragment\\(\\s*['"]user-list['"]\\s*\\)""", place.location)
@@ -269,8 +269,8 @@ class TestBlade(unittest.ViewTestCase):
         place = self.blade.get_place(
             'user-list',
             "->fragmentsIf($request->hasHeader('HX-Request'), ['user-list', 'comment-list']);",
-            """view('dashboard', ['users' => $users])
-            ->fragmentsIf(
+            """viEw('dashboard', ['users' => $users])
+            ->fraGmentsIf(
                 $request->hasHeader('HX-Request'),
                 ['user-list', 'comment-list']
             );"""

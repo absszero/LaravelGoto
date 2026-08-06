@@ -1,4 +1,4 @@
-from re import compile
+from re import compile, IGNORECASE
 from .place import Place
 
 
@@ -9,8 +9,8 @@ class Inertia:
         compile(r"""Route::inertia\s*\([^,]+,\s*component\s*:\s*['"]([^'"]+)"""),
         compile(r"""Inertia::render\s*\(\s*['"]([^'"]+)"""),
         compile(r"""Inertia::render\s*\(\s*component\s*:\s*['"]([^'"]+)"""),
-        compile(r"""inertia\s*\(\s*['"]([^'"]+)"""),
-        compile(r"""inertia\s*\(\s*component\s*:\s*['"]([^'"]+)"""),
+        compile(r"""inertia\s*\(\s*['"]([^'"]+)""", IGNORECASE),
+        compile(r"""inertia\s*\(\s*component\s*:\s*['"]([^'"]+)""", IGNORECASE),
     ]
 
     def get_place(self, path, line, lines=''):

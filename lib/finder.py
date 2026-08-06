@@ -1,4 +1,4 @@
-from re import compile
+from re import compile, IGNORECASE
 from .namespace import Namespace
 from .place import Place
 from .middleware import Middleware
@@ -141,8 +141,8 @@ def lang_place(path, line, lines, selected):
     lang_patterns = [
         compile(r"""__\([^'"]*(['"])([^'"]*)\1"""),
         compile(r"""@lang\([^'"]*(['"])([^'"]*)\1"""),
-        compile(r"""trans\([^'"]*(['"])([^'"]*)\1"""),
-        compile(r"""trans_choice\([^'"]*(['"])([^'"]*)\1"""),
+        compile(r"""trans\([^'"]*(['"])([^'"]*)\1""", IGNORECASE),
+        compile(r"""trans_choice\([^'"]*(['"])([^'"]*)\1""", IGNORECASE),
     ]
 
     language = None
@@ -172,7 +172,7 @@ def static_file_place(path, line, lines, selected):
 
 
 def env_place(path, line, lines, selected):
-    env_pattern = compile(r"""env\(\s*(['"])([^'"]*)\1""")
+    env_pattern = compile(r"""env\(\s*(['"])([^'"]*)\1""", IGNORECASE)
     matched = env_pattern.search(line) or env_pattern.search(lines)
     find = (matched and path == matched.group(2))
     if find:
@@ -267,7 +267,7 @@ def middleware_place(path, line, lines, selected):
 def command_place(path, line, lines, selected):
     patterns = [
         compile(r"""Artisan::call\(\s*['"]([^\s'"]+)"""),
-        compile(r"""command\(\s*['"]([^\s'"]+)"""),
+        compile(r"""command\(\s*['"]([^\s'"]+)""", IGNORECASE),
     ]
 
     commands = None

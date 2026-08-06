@@ -147,9 +147,11 @@ storage_path('logs/laravel.log');
 
 #### Static Files
 Jump to static assets:
+
 ```php
 $file = 'js/hello.js';
 ```
+
 **Supported extensions:** js, ts, jsx, vue, css, scss, sass, less, styl, htm, html, xhtml, xml, log
 
 #### Log Files
@@ -178,7 +180,7 @@ Clone the repository into your Sublime Text `Packages` directory:
 
 You can customize the extension via `Preferences > Package Settings > LaravelGoto > Settings`.
 
-| Key | Description | Default |
+| Key | Descriƒption | Default |
 | :--- | :--- | :--- |
 | `php_bin` | Path to your PHP executable | `"php"` |
 | `show_hover` | Show hover phantom if available | `true` |
